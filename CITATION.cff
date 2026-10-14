@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software or its results, please cite it as below."
+title: "ArithScope: exact arithmetic position channels for Transformer attention"
+abstract: >-
+  A zero-initialized, Ramanujan-sum relative-position bias for attention heads, with proofs
+  (optimal positive-definite periodic comb, CRT composition, alias partitions, residue-blindness
+  of incommensurate frequency banks such as RoPE), an exact low-rank form for fused attention
+  kernels, and preregistered matched-baseline experiments on length extrapolation.
+type: software
+authors:
+  - family-names: "Hayami"
+    given-names: "A."
+version: "0.1.0"
+date-released: "2026-10-14"
+repository-code: "https://github.com/Akari-H-111/ArithScope"
+keywords:
+  - transformer
+  - attention
+  - positional encoding
+  - length generalization
+  - Ramanujan sums

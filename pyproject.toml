@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arithscope"
+version = "0.1.0"
+description = "Exact arithmetic (Ramanujan-sum) relative-position channels for Transformer attention"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "A. Hayami" }]
+keywords = ["transformer", "attention", "positional encoding", "length generalization", "Ramanujan sums"]
+dependencies = []  # the exact arithmetic core (arithscope.arith) is standard-library only
+
+[project.optional-dependencies]
+torch = ["torch>=2.4", "numpy>=1.24"]
+experiments = ["torch>=2.4", "numpy>=1.24", "scipy>=1.10", "matplotlib>=3.7"]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["arithscope*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
