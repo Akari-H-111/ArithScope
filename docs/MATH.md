@@ -177,6 +177,7 @@ Then $`K_m(i-j)=\langle u_m(i),u_m(j)\rangle`$, hence
 The bias therefore runs inside a fused attention kernel. It adds $`\sum_{m\in M}\varphi(m)`$ dimensions to queries and keys (80 for $`M=\{1,\dots,16\}`$, 55 for $`B_{16}`$) and never builds an $`N\times N`$ bias tensor. The rank $`\sum\varphi(m)`$ is minimal once $`N\ge\mathrm{lcm}(M)`$, because distinct reduced fractions $`a/m`$ give linearly independent characters. Phases use the exact residue $`(a\,(t\bmod m))\bmod m`$.
 *Check:* folded and dense biases agree to $`10^{-12}`$ in float64, including positions near $`10^{15}`$. The explicit, SDPA, and folded backends agree to $`10^{-10}`$, with and without padding.
 *Cost:* compute stays $`O\big(N^2(d+\sum\varphi)\big)`$. **This is not sub-quadratic attention.** Only the $`O(HN^2)`$ bias memory is removed.
+*Implementation:* values are zero-padded to the widened query/key dimension, because fused kernels need one head dimension; without this, CPU SDPA fell back to materializing the attention matrix ([`SPEC.md`](SPEC.md), [`EXECUTION_LEDGER.md`](EXECUTION_LEDGER.md)).
 
 **P2 (exact shift invariance; implementation property).** The dense path indexes a rational table by $`(i-j)\bmod m`$, computed in int64. It is bitwise invariant under any common shift of positions: tested to $`2^{61}`$, and to $`10^{15}`$ for a full model. RoPE instead evaluates $`t\theta`$ in floating point, so its relative-phase error at absolute position $`t`$ grows like $`t\,\theta\,\epsilon_{\text{mach}}`$, a known long-context failure mode (Wang et al., 2024; Liu, 2026).
 

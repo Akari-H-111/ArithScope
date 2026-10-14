@@ -1,6 +1,6 @@
 """Build the ArithScope Lab page from committed summaries.
 
-    python experiments/lab/build.py [--body-out PATH]
+    python experiments/lab/build.py [--body-out PATH] [--ref GIT_REF]
 
 Reads results/summary/theory.json (and summary.json when present) and writes
 docs/lab/index.html, a standalone page. With --body-out it also writes the page
@@ -27,6 +27,7 @@ HEAD = """<!doctype html>
 body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
 """
 VARIANTS = ("rope+arith", "rope+fourier_learned", "rope+fourier_fund", "rope+relbias", "rope")
+REPO = "https://github.com/Akari-H-111/ArithScope"
 
 
 def theory_data() -> dict:
@@ -53,8 +54,8 @@ def results_data() -> dict | None:
             if v in tab:
                 cells = [tab[v][str(L)] for L in lengths]
                 entry[v] = {"mean": [c["mean"] for c in cells],
-                            "lo": [c["lo"] if c["lo"] is not None else c["mean"] for c in cells],
-                            "hi": [c["hi"] if c["hi"] is not None else c["mean"] for c in cells]}
+                            "lo": [max(0.0, c["lo"] if c["lo"] is not None else c["mean"]) for c in cells],
+                            "hi": [min(1.0, c["hi"] if c["hi"] is not None else c["mean"]) for c in cells]}
         e1[p] = entry
     if not e1:
         return None
@@ -85,8 +86,10 @@ def results_data() -> dict | None:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--body-out")
+    parser.add_argument("--ref", default="main", help="git branch, tag, or commit the page's repository links point to")
     args = parser.parse_args()
     body = (Path(__file__).parent / "template.html").read_text()
+    body = body.replace("__REPO__", f"{REPO}/tree/{args.ref}").replace("__BLOB__", f"{REPO}/blob/{args.ref}")
     body = body.replace("__THEORY__", json.dumps(theory_data(), separators=(",", ":")))
     body = body.replace("__RESULTS__", json.dumps(results_data(), separators=(",", ":")))
     out = ROOT / "docs" / "lab" / "index.html"

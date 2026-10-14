@@ -150,4 +150,41 @@ Bayes oracle                                                            1.000   
 
 ## Stage 3: confirmatory runs
 
-Pending: the confirmatory suites (`make experiments`) start after the preregistration commit.
+Command: `python experiments/run_suite.py e1_periodic e2_alias e3_tagged e5_mixed --workers 4`, started 2026-10-14 15:29 UTC, right after the preregistration commit `4e632ed` (15:28:53 UTC). The last run finished at 18:21 UTC.
+
+| Suite | Runs | Failures | Wall time per run (4 in parallel) | Role |
+|---|---|---|---|---|
+| `e1_periodic` | 90 | 0 | 212–328 s (mean 268 s) | C1, C2, S1, S2 |
+| `e2_alias` | 30 | 0 | 160–337 s (mean 188 s) | C3 |
+| `e3_tagged` | 35 | 0 | 148–199 s (mean 182 s) | C4 |
+| `e5_mixed` | 27 | 0 | 145–197 s (mean 179 s) | exploratory |
+
+**Status: PASS.** 182 runs, all `COMPLETED`, every training loss finite. Wall times include evaluation; E1 evaluates up to N = 8,192 and adds the shift tests. Some runs shared the CPU with analysis jobs (the post-hoc shift evaluation from 17:10 to 17:17 UTC, and short test and benchmark checks), so wall times are indicative only.
+
+**Provenance.** Every run file records the git HEAD at completion. The recorded commits are `b7d2f18`, `d2e67d6`, `ec9724c`, `726806c`, `56e5beb`, `19afb78`, and `4380987`, mostly with `git_dirty = true` because documentation and analysis scripts were being edited. For each of them, `git diff --quiet 4e632ed <commit> -- arithscope experiments/suites.py experiments/run_suite.py` succeeds: the library, the suite definitions, and the runner were identical to the preregistration commit for every run. The first change to `arithscope/` (`e15ea97`, 18:22:39 UTC) came after the last run.
+
+## Stage 4: post-hoc analyses (labeled in every table and figure)
+
+| Step | Command | Result |
+|---|---|---|
+| Shift test at the training length | `python experiments/posthoc_shift.py --workers 2` | **PASS**: 90 checkpoints, 17:10–17:17 UTC, `results/posthoc/shift_n64.json` |
+| Attention profile, P = 13, seed 1, N = 1,024 | `python experiments/attention_figure.py` | **PASS**: `results/summary/attention_profile.json`, `results/figures/attention_profile_*.png` |
+| Drift of learned-frequency heads, gate magnitudes | part of `python experiments/analyze.py` | **PASS** |
+
+Reasons for each addition are in [`PREREGISTRATION.md`](PREREGISTRATION.md), Section 8.
+
+## Stage 5: FlexAttention backend and overhead benchmark (after all runs)
+
+| Step | Command | Result |
+|---|---|---|
+| Static checks | `make lint` | **PASS** |
+| Full test suite | `make test` | **PASS**: 56 passed, 1 skipped (the opt-in compiled-kernel test) |
+| Standard-library run | `python3 -m unittest discover -s tests` | **PASS**: 25 run, 32 skipped without torch |
+| Compiled FlexAttention test | `ARITHSCOPE_TEST_COMPILED_FLEX=1 LD_PRELOAD=$CONDA_PREFIX/lib/libsleef.so python -m pytest tests/test_attention.py -k flex` | **PASS**: 2 passed |
+| Overhead benchmark, first run (`e15ea97`, idle machine) | `LD_PRELOAD=$CONDA_PREFIX/lib/libsleef.so python experiments/bench_overhead.py` | **FAIL** for the folded backend: it used more memory than the explicit backend (kept as `results/overhead/overhead_before_folded_padding.json`) |
+| Fix | pad folded q, k, v to one head dimension (`a8c35bf`) | **PASS**: new exactness test; a single-kernel probe at N = 8,192 went from 4.9 GB to 23 MB |
+| Overhead benchmark, rerun (`a8c35bf`, idle machine) | same command | **PASS**: `results/overhead/overhead.json` (100 rows; compiled FlexAttention has forward rows only; two dense training-step rows at N = 8,192 skipped, about 6 GB) |
+
+**Toolchain note.** With the conda-forge PyTorch build, inductor's CPU vector-ISA probe fails because a compiled test library cannot resolve `Sleef_expf8_u10`. Compiled kernels then refuse to build ("trans_b requires AVX512 or AVX2"). Preloading the environment's `libsleef.so` resolves the symbol, and compiled FlexAttention then builds and runs on this CPU. Eager-mode FlexAttention does not need the workaround.
+
+**Why the first benchmark failed.** The folded backend appends 55 or 80 feature dimensions to queries and keys but not to values. In this PyTorch build, CPU `scaled_dot_product_attention` used its fused kernel only when queries, keys, and values had the same head dimension (observed, not looked up in the PyTorch source); with wider queries and keys it silently fell back to a path that materializes the attention matrix. Zero-padding fixes it without changing the function.

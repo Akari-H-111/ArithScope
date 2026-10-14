@@ -20,7 +20,12 @@ Here `γ_h` starts at 0, `α_h` is a learned softmax over the orders `M = {1, �
 </p>
 
 <!-- AUTO:tldr:BEGIN -->
-(results pending)
+- **Length extrapolation.** Trained on 64 tokens, RoPE + ArithScope stays within 0.1 pp of the Bayes-optimal predictor on unseen positions at every tested length up to 8,192 tokens (128× the training length), at both periods. At 8,192 tokens RoPE alone scores 38.4% (period 13) and 42.3% (period 12), against 99.9% for the Bayes oracle.
+- **The basis matters where theory says it should.** A cosine bank with the same periods and parameter count scores 59.3% at period 13 (N = 1,024) against 99.5% for ArithScope. At period 12, where the two channels' optimal comb margins nearly coincide (0.987 vs 1.091), it scores 99.4% against 99.5%.
+- **Gradient descent finds the provably optimal comb.** Offered 16 orders, layer-0 heads trained at period 13 put 100.0% of their mixture weight on order 13, the unique optimum of Theorem T3 (total-variation distance 0.000, 20 heads).
+- **Identifiability theory predicts which banks fail.** In the alias fixture (period 12), banks with lcm 6 stay below their alias ceiling (0.7–1.6 pp below), whatever their size; every bank with 12 | lcm ends within 1.1 pp of the Bayes oracle, including one- and two-order banks.
+- **No measurable cost on aperiodic data.** On tagged denoising, adding ArithScope to RoPE changes accuracy at the training length by -0.01 pp (95% CI [-0.09, +0.07]).
+- **Exact at any absolute position (post hoc).** At period 13 and the training length, shifting every position by 10<sup>9</sup> leaves RoPE + ArithScope at 66.1% and ArithScope alone at 66.1% (unshifted: 66.1% and 66.1%). RoPE alone, whose rotary angles are float32, drops from 66.0% to 52.4%.
 <!-- AUTO:tldr:END -->
 
 > **Scope.** This is computation-layer research on the attention mechanism, done with small models on synthetic tasks on CPU. It makes no claims about natural language, pretrained LLMs, or speed. See [Scope and limitations](#scope-and-limitations).
@@ -30,7 +35,13 @@ Here `γ_h` starts at 0, `α_h` is a learned softmax over the orders `M = {1, �
 The four confirmatory claims and their decision rules were committed in [`4e632ed`](https://github.com/Akari-H-111/ArithScope/commit/4e632edbfa5768215244097853af7084faed4fcd) before the first confirmatory run started ([`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md)). The verdicts below apply those rules mechanically ([`experiments/analyze.py`](experiments/analyze.py), function `findings`):
 
 <!-- AUTO:findings:BEGIN -->
-(results pending)
+- **C1 (periodic extrapolation vs RoPE): supported.** RoPE + ArithScope minus RoPE, unseen positions at N = 1024: P = 12: +60.0 pp, 95% CI [+48.7, +71.4], 5/5 seeds; P = 13: +63.9 pp, 95% CI [+42.9, +84.9], 5/5 seeds.
+- **C2 (prime period vs the matched cosine bank): supported.** P = 13, N = 1024: +40.2 pp, 95% CI [+15.7, +64.7], 5/5 seeds. At P = 12, where theory predicts no meaningful gap: +0.0 pp, 95% CI [-0.0, +0.0], 4/5 seeds.
+- **C3 (identifiability / alias fixture, P = 12): supported.** Aliased banks: {2,3} 50.5% (ceiling 52.1%), {1,2,3,6} 51.4% (ceiling 52.1%). Resolving banks: {12} 98.3% (Bayes 98.4%), {4,6} 97.4% (Bayes 98.4%), {3,4} 98.1% (Bayes 98.4%), {1,2,3,4,6,12} 98.1% (Bayes 98.4%).
+- **C4 (no harm on the aperiodic control): supported.** Tagged denoising, RoPE + ArithScope minus RoPE at N = 64: -0.0 pp, 95% CI [-0.1, +0.1], 3/5 seeds (margin: lower bound > −1 pp).
+- **S1 (drift of learned frequencies, N = 1024 → 8192): observed; ArithScope within 1 pp of Bayes at both lengths: yes.** P = 12: learned frequencies 99.4% → 97.5%, ArithScope 99.5% → 100.0% (Bayes 99.4% → 99.9%); P = 13: learned frequencies 99.2% → 93.3%, ArithScope 99.5% → 99.9% (Bayes 99.5% → 99.9%).
+- **S2 (learned mixtures), P = 12:** layer-0 heads put 100.0% of their mixture mass on divisors of 12 (largest weight: order 12, 35.9%); total-variation distance to the Theorem T3 optimum 0.024; comb margin 1.058 vs optimum 1.091 (20 heads).
+- **S2 (learned mixtures), P = 13:** layer-0 heads put 100.0% of their mixture mass on divisors of 13 (largest weight: order 13, 100.0%); total-variation distance to the Theorem T3 optimum 0.000; comb margin 1.083 vs optimum 1.083 (20 heads).
 <!-- AUTO:findings:END -->
 
 Every comparison is paired. For a given seed, all variants start from bitwise-identical backbone weights and see the same training batches; only the position mechanism differs. Every accuracy is reported next to the exact Bayes oracle computed on the same test examples.
@@ -108,7 +119,22 @@ Full statements, proofs, and evidence labels are in [`docs/MATH.md`](docs/MATH.m
 Trained at length 64, evaluated up to 8,192 (E1); the identifiability fixture (E2); an aperiodic control task (E3); and unlabeled mixed periods (E5, exploratory). All tables, per-seed values, and paired differences are in [`docs/RESULTS.md`](docs/RESULTS.md).
 
 <!-- AUTO:headline:BEGIN -->
-(results pending)
+| period | model | N = 1024 (16× train length) | N = 8192 (128× train length) |
+|---|---|---|---|
+| 12 | RoPE + ArithScope | 99.5 ± 0.0 | 100.0 ± 0.0 |
+| 12 | RoPE | 39.4 ± 11.4 | 42.3 ± 15.1 |
+| 12 | RoPE + matched cosine bank | 99.4 ± 0.0 | 100.0 ± 0.0 |
+| 12 | RoPE + relative bias (clipped) | 69.4 ± 2.0 | 37.0 ± 6.9 |
+| 12 | RoPE + learned frequencies | 99.4 ± 0.1 | 97.5 ± 3.9 |
+| 12 | *Bayes oracle* | 99.4 | 99.9 |
+| 13 | RoPE + ArithScope | 99.5 ± 0.0 | 99.9 ± 0.0 |
+| 13 | RoPE | 35.6 ± 21.0 | 38.4 ± 16.0 |
+| 13 | RoPE + matched cosine bank | 59.3 ± 24.5 | 75.2 ± 21.9 |
+| 13 | RoPE + relative bias (clipped) | 65.5 ± 2.0 | 39.6 ± 3.5 |
+| 13 | RoPE + learned frequencies | 99.2 ± 0.2 | 93.3 ± 7.8 |
+| 13 | *Bayes oracle* | 99.5 | 99.9 |
+
+Accuracy (%) on positions never seen in training (t ≥ 64), mean ± 95% CI over 5 seeds; generated by `experiments/analyze.py`.
 <!-- AUTO:headline:END -->
 
 ### What the trained heads learn
@@ -154,6 +180,16 @@ The ArithScope term reads only `(i − j) mod m` in int64, so it is bitwise inva
 </p>
 
 <!-- AUTO:overhead:BEGIN -->
+### Cost
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="results/figures/overhead_dark.png">
+    <img alt="Forward time and peak memory of one attention layer versus sequence length, by backend" src="results/figures/overhead_light.png" width="920">
+  </picture>
+</p>
+
+One attention layer, inference forward pass, batch 1, CPU with 4 threads (`experiments/bench_overhead.py`). In the LLM-sized configuration (8 heads of dimension 64, prime-power bank `B_16`, 55 folded dimensions) at N = 8,192, ArithScope takes 599.3 ms (folded), 869.3 ms (compiled FlexAttention), 6040.8 ms (explicit bias), against 344.9 ms for RoPE alone in fused SDPA. Peak memory grows by 275 MB (folded), 340 MB (compiled FlexAttention), 2738 MB (explicit bias), 161 MB (RoPE alone). The compiled FlexAttention figure includes one-time compilation; at N = 512 it already adds 201 MB. A training step (forward and backward) at N = 8,192 takes 1905.8 ms and 503 MB with the folded path, against 1089.0 ms and 315 MB for RoPE alone; the explicit and dense-mask paths were not run there (dense [H,N,N] tensors would need ~6.0 GB). These are single-machine CPU measurements, not a speed claim; full tables are in [`docs/RESULTS.md`](docs/RESULTS.md).
 <!-- AUTO:overhead:END -->
 
 ## What did not work
@@ -182,7 +218,7 @@ make oracle        # exact arithmetic checks, standard library only
 make test          # 57 tests (one opt-in): oracle match, masks, gradients, gamma = 0 equivalence, backends, Bayes oracles
 make lint          # ruff
 make theory        # theory figures and results/summary/theory.json
-make experiments   # the four preregistered suites, 182 runs (resumable; about 3.5 hours with 4 CPU workers)
+make experiments   # the four preregistered suites, 182 runs (resumable; about 3 hours with 4 CPU workers)
 make analyze       # regenerates every table, figure, and AUTO block from results/runs/*.json
 make lab           # rebuilds the interactive explainer, docs/lab/index.html
 ```

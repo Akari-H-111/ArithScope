@@ -30,12 +30,18 @@ means exhaustive exact verification on a stated finite range, not a proof.
 
 ## Experiments (synthetic tasks, CPU, tiny models)
 
+Verdicts are computed by `experiments/analyze.py` from the preregistered decision rules; numbers and intervals are in [`RESULTS.md`](RESULTS.md).
+
 | Claim | Status |
 |---|---|
-| C1: periodic extrapolation vs RoPE | pending (see `RESULTS.md` after the confirmatory runs) |
-| C2: prime-period advantage over the matched cosine bank | pending |
-| C3: alias fixture follows the identifiability theory | pending |
-| C4: no harm on aperiodic tasks | pending |
+| C1: RoPE + ArithScope extrapolates periodic structure where RoPE fails (N = 1,024, both periods) | **supported** (EMPIRICAL; 5/5 seeds per period) |
+| C2: at the prime period 13, ArithScope beats the matched cosine bank; no difference at 12 | **supported** (EMPIRICAL); the P = 12 difference is zero, as predicted |
+| C3: alias fixture follows the identifiability theory (lcm decides, not bank size) | **supported** (EMPIRICAL; all six banks meet the preregistered checks) |
+| C4: no harm on the aperiodic control (lower CI bound above −1 pp) | **supported** (EMPIRICAL) |
+| S1: learned frequencies lose accuracy between N = 1,024 and N = 8,192 | **observed** at both periods (secondary) |
+| S2: learned mixtures concentrate on divisors of P; at P = 13 on order 13 | **observed**; at P = 13 they coincide with the T3 optimum (secondary; replicates a pilot observation) |
+| RoPE + ArithScope keeps its accuracy under absolute shifts up to 10^9 at the training length | **observed** (post hoc, not preregistered) |
+| Mixed unlabeled periods (E5) | exploratory, 3 seeds: learned frequencies ahead at short lengths, RoPE + ArithScope ahead at the longest |
 
 ## Not claimed
 

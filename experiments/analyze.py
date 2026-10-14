@@ -139,14 +139,22 @@ def accuracy_table(runs: list[dict], variants: tuple[str, ...], title: str) -> t
 
 
 # ----------------------------------------------------------------------------- figures
-def plot_extrapolation(data: dict, title: str, stem: str, mode: str) -> Path:
+def _band(cells: dict, lens: list[int]) -> tuple[list[float], list[float]]:
+    """95% CI band for plotting, clipped to [0, 1] (an accuracy cannot leave that range; with few seeds the t
+    interval can)."""
+    lo = [cells[L]["lo"] if cells[L]["lo"] is not None else cells[L]["mean"] for L in lens]
+    hi = [cells[L]["hi"] if cells[L]["hi"] is not None else cells[L]["mean"] for L in lens]
+    return [max(x, 0.0) for x in lo], [min(x, 1.0) for x in hi]
+
+
+def plot_extrapolation(data: dict, title: str, stem: str, mode: str, oracle_label: str = "Bayes oracle") -> Path:
     with themed(mode) as th:
         fig, axes = plt.subplots(1, 2, figsize=(10.5, 3.9), sharey=True)
         lens = sorted(data["oracle"])
         for ax, family, sub in ((axes[0], STANDALONE, "Standalone position mechanisms"),
                                 (axes[1], ROPE_FAMILY, "RoPE + additive channel")):
             ax.plot(lens, [data["oracle"][L] for L in lens], color=th["muted"], linewidth=1.2)
-            ax.annotate("Bayes oracle", (lens[-1], data["oracle"][lens[-1]]), textcoords="offset points",
+            ax.annotate(oracle_label, (lens[-1], data["oracle"][lens[-1]]), textcoords="offset points",
                         xytext=(-4, 6), ha="right", color=th["ink2"], fontsize=8.5)
             for v in family:
                 if v not in data:
@@ -156,8 +164,7 @@ def plot_extrapolation(data: dict, title: str, stem: str, mode: str) -> Path:
                 ax.plot(lens, mean, color=color(th, v), label=LABELS[v], marker="o", markersize=5 if hero else 4.5,
                         markeredgecolor=th["surface"], markeredgewidth=1.0, zorder=5 if hero else 3,
                         linewidth=2.6 if hero else 2.0)
-                lo = [data[v][L]["lo"] if data[v][L]["lo"] is not None else data[v][L]["mean"] for L in lens]
-                hi = [data[v][L]["hi"] if data[v][L]["hi"] is not None else data[v][L]["mean"] for L in lens]
+                lo, hi = _band(data[v], lens)
                 ax.fill_between(lens, lo, hi, color=color(th, v), alpha=0.12, linewidth=0)
             ax.axvline(64, color=th["axis"], linewidth=1.0)
             ax.set_xscale("log", base=2)
@@ -203,8 +210,7 @@ def plot_hero(panels: dict, mode: str) -> Path:
                     continue
                 hero = v == "rope+arith"
                 mean = [data[v][L]["mean"] for L in lens]
-                lo = [data[v][L]["lo"] if data[v][L]["lo"] is not None else data[v][L]["mean"] for L in lens]
-                hi = [data[v][L]["hi"] if data[v][L]["hi"] is not None else data[v][L]["mean"] for L in lens]
+                lo, hi = _band(data[v], lens)
                 ax.fill_between(lens, lo, hi, color=color(th, v), alpha=0.12, linewidth=0)
                 ax.plot(lens, mean, color=color(th, v), label=LABELS[v], marker="o", markersize=5 if hero else 4.5,
                         markeredgecolor=th["surface"], markeredgewidth=1.0, zorder=5 if hero else 3,
@@ -348,9 +354,12 @@ def analyze_e1(summary: dict, tables: list[str], suite: str = "e1_periodic", lab
             cells = [fmt_diff(per[L]) if L in per else "–" for L in (64, 256, 1024, 2048)]
             lines.append(f"| {LABELS[other]} | " + " | ".join(cells) + " |")
         tables.append("\n".join(lines))
+        mixed = len(period) > 1
+        what = (f"Mixed periods {', '.join(map(str, period))}, unlabeled" if mixed else f"Periodic denoising, P = {ptxt}")
         for mode in ("light", "dark"):
-            plot_extrapolation(data, f"Periodic denoising, P = {ptxt}: trained at N = 64, tested up to N = "
-                                     f"{max(data['oracle'])}", f"{suite}_P{ptxt.replace('/', '-')}", mode)
+            plot_extrapolation(data, f"{what}: trained at N = 64, tested up to N = {max(data['oracle'])}",
+                               f"{suite}_P{ptxt.replace('/', '-')}", mode,
+                               oracle_label="oracle (told the period)" if mixed else "Bayes oracle")
         if suite == "e1_periodic" and len(period) == 1:
             summary.setdefault("_hero_panels", {})[period[0]] = data
     if suite == "e1_periodic" and summary.get("_hero_panels"):
@@ -662,6 +671,7 @@ MODE_LABELS = {"baseline_sdpa": "RoPE only, fused SDPA (floor)", "arith_explicit
                "arith_sdpa_mask": "ArithScope, SDPA + dense bias mask", "arith_folded": "ArithScope, folded into q/k (fused)",
                "arith_flex": "ArithScope, compiled FlexAttention (forward only)"}
 MODE_SLOT = {"baseline_sdpa": 1, "arith_explicit": 6, "arith_sdpa_mask": 2, "arith_folded": 0, "arith_flex": 3}
+CONFIG_LABELS = {"llm_d64_B16": "8 heads × 64 dims, bank B16", "tiny_d16_M1-16": "4 heads × 16 dims, bank 1–16"}
 
 
 def analyze_overhead(summary: dict, tables: list[str]) -> None:
@@ -711,9 +721,9 @@ def plot_overhead(rows: list[dict], mode: str) -> Path:
                 ax.set_xscale("log", base=2)
                 ax.set_yscale("log")
                 ax.set_xlabel("sequence length N")
-                ax.set_title(f"{config}: {label}", loc="left", fontsize=9.5)
+                ax.set_title(f"{CONFIG_LABELS.get(config, config)}: {label}", loc="left", fontsize=9.5)
         axes[0][0].legend(loc="upper left", bbox_to_anchor=(0.0, -0.2), ncol=2, fontsize=8.5)
-        fig.suptitle("Cost of the ArithScope bias by backend (forward pass, CPU)", x=0.01, ha="left",
+        fig.suptitle("Cost of the ArithScope bias by backend (one layer, inference forward pass, CPU)", x=0.01, ha="left",
                      fontweight="bold", fontsize=11, color=th["ink"])
         return save(fig, FIG, "overhead", mode)
 
@@ -771,12 +781,14 @@ def tldr(summary: dict) -> str:
         alias = [r for r in rows if r["lcm"] % period]
         good = [r for r in rows if r["lcm"] % period == 0]
         if alias and good:
-            gap_alias = max(r["mean"] - r["alias"] for r in alias)
-            gap_bayes = max(r["bayes"] - r["mean"] for r in good)
+            below = [r["alias"] - r["mean"] for r in alias]
+            gap_bayes = math.ceil(1000 * max(r["bayes"] - r["mean"] for r in good)) / 10  # rounded up to 0.1 pp
+            lcms = ", ".join(sorted({str(r["lcm"]) for r in alias}))
+            where = (f"stay below their alias ceiling ({100 * min(below):.1f}–{100 * max(below):.1f} pp below)"
+                     if min(below) > 0 else f"end at most {100 * -min(below):.1f} pp above their alias ceiling")
             out.append(f"- **Identifiability theory predicts which banks fail.** In the alias fixture (period {period}), "
-                       f"banks with lcm {', '.join(sorted({str(r['lcm']) for r in alias}))} end at most "
-                       f"{100 * gap_alias:+.1f} pp from their alias ceiling, whatever their size; every bank with "
-                       f"{period} | lcm ends within {100 * gap_bayes:.1f} pp of Bayes, including two-order banks.")
+                       f"banks with lcm {lcms} {where}, whatever their size; every bank with {period} | lcm ends within "
+                       f"{gap_bayes:.1f} pp of the Bayes oracle, including one- and two-order banks.")
     c4 = summary.get("e3_tagged", {}).get("c4_rope_arith_minus_rope_N64")
     if c4 and c4["lo"] is not None:
         out.append(f"- **No measurable cost on aperiodic data.** On tagged denoising, adding ArithScope to RoPE changes "
@@ -813,7 +825,16 @@ def overhead_md(summary: dict) -> str:
     names = {"arith_folded": "folded", "arith_flex": "compiled FlexAttention", "arith_explicit": "explicit bias",
              "baseline_sdpa": "RoPE alone"}
     order = [m for m in ("arith_folded", "arith_flex", "arith_explicit") if m in modes]
-    longest = max(Lf for (m, Lf) in cell if m == "arith_folded")
+    train = {(r["mode"], r["length"]): r for r in data["rows"] if r["config"] == config and r["backward"]}
+    train_txt = ""
+    if ("arith_folded", L) in train and "median_seconds" in train[("arith_folded", L)]:
+        tf, tb = train[("arith_folded", L)], train.get(("baseline_sdpa", L), {})
+        skipped = train.get(("arith_explicit", L), {}).get("skipped", "")
+        train_txt = (f" A training step (forward and backward) at N = {L:,} takes {1000 * tf['median_seconds']:.1f} ms "
+                     f"and {tf['peak_rss_increase_mb']:.0f} MB with the folded path"
+                     + (f", against {1000 * tb['median_seconds']:.1f} ms and {tb['peak_rss_increase_mb']:.0f} MB for "
+                        "RoPE alone" if "median_seconds" in tb else "")
+                     + (f"; the explicit and dense-mask paths were not run there ({skipped})." if skipped else "."))
     times = ", ".join(f"{ms[m]:.1f} ms ({names[m]})" for m in order)
     mems = ", ".join(f"{mb[m]:.0f} MB ({names[m]})" for m in order + ["baseline_sdpa"])
     flex_floor = ""
@@ -831,8 +852,8 @@ def overhead_md(summary: dict) -> str:
         f"One attention layer, inference forward pass, batch 1, CPU with 4 threads (`experiments/bench_overhead.py`). "
         f"In the LLM-sized configuration (8 heads of dimension 64, prime-power bank `B_16`, 55 folded dimensions) at "
         f"N = {L:,}, ArithScope takes {times}, against {ms['baseline_sdpa']:.1f} ms for RoPE alone in fused SDPA. "
-        f"Peak memory grows by {mems}.{flex_floor} The folded path runs up to N = {longest:,}. These are "
-        "single-machine CPU measurements, not a speed claim; full tables are in [`docs/RESULTS.md`](docs/RESULTS.md).",
+        f"Peak memory grows by {mems}.{flex_floor}{train_txt} These are single-machine CPU measurements, not a "
+        "speed claim; full tables are in [`docs/RESULTS.md`](docs/RESULTS.md).",
     ])
 
 
