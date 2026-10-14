@@ -39,7 +39,8 @@ Every bias is an `OffsetBias`. The call `bias(q_pos [..., Nq], k_pos [..., Nk])`
 - **Orders.** `orders` must be distinct positive ints, otherwise `ValueError`.
 - **`gamma = 0`.** The output is exactly `0.0`. The gradient with respect to `mixture_logits` is exactly 0 (expected, not a bug); the gradient with respect to `gamma` is generally nonzero [`test_gamma_zero_is_exact_zero_and_alpha_gradient_trap`].
 - **Kernel properties.** With `gamma = 1`, the matrix over any positions is symmetric PSD with unit diagonal and `|.| <= 1` [`test_kernel_mixture_is_psd_with_unit_diagonal`].
-- **Shift invariance.** Bitwise invariant under any common shift of `q_pos` and `k_pos` [`test_exact_shift_invariance`].
+- **Shift invariance.** Bitwise invariant under any common shift of `q_pos` and `k_pos` [`test_exact_shift_invariance`]. A shift leaves the set of offsets, and hence the whole computation, unchanged.
+- **Rounding across calls.** The value at a given offset is computed as `gamma * (alpha @ K[:, offsets])`. In calls whose offset *ranges* differ, it can differ by floating-point rounding (observed: 1 ulp in float64 with the pip CPU build of PyTorch). Equality across such calls holds to 1e−12 in float64, not bitwise [`test_dense_shapes_offsets_and_symmetry`].
 - **Folded form.** `key_features(pos) -> [..., N, F]` and `query_features(pos) -> [..., H, N, F]`, with `F = feature_dim = sum_m phi(m)`. They satisfy `query_features(p) @ key_features(p).T == bias(p, p)` up to floating-point rounding: 1e−12 in float64, tested to positions near 1e15 [`test_folded_features_reproduce_dense_bias`].
 
 ### 3.2 Controls

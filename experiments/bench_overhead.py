@@ -66,13 +66,14 @@ def measure(config: str, mode: str, length: int, backward: bool, repeats: int) -
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--quick", action="store_true")
+    parser.add_argument("--out", default=str(ROOT / "results" / "overhead" / "overhead.json"))
     parser.add_argument("--child", nargs=5, metavar=("CONFIG", "MODE", "LENGTH", "BACKWARD", "REPEATS"))
     args = parser.parse_args()
     if args.child:
         config, mode, length, backward, repeats = args.child
         print(json.dumps(measure(config, mode, int(length), backward == "1", int(repeats))))
         return
-    lengths = (512, 1024, 2048) if args.quick else (512, 1024, 2048, 4096, 8192)
+    lengths = (256, 512) if args.quick else (512, 1024, 2048, 4096, 8192)
     rows = []
     for config in CONFIGS:
         for backward in (False, True):
@@ -98,7 +99,7 @@ def main() -> None:
 
     env = environment_info()
     env["torch_threads"] = 4
-    out = ROOT / "results" / "overhead" / "overhead.json"
+    out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"schema_version": "arithscope-overhead-1", "environment": env, "rows": rows}, indent=1))
     print(f"wrote {out}")

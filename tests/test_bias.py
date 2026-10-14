@@ -37,12 +37,15 @@ class RamanujanBiasTests(unittest.TestCase):
         k_pos = torch.arange(0, 47)
         out = self.bias(q_pos, k_pos)
         self.assertEqual(out.shape, (3, 7, 47))
+        # Values for a given offset agree across calls with different offset ranges up to
+        # floating-point rounding (the mixture matmul may round differently by width); calls
+        # with identical offset sets are bitwise identical (see test_exact_shift_invariance).
         values = self.bias.offset_values(torch.arange(-46, 47))
         for i, qi in enumerate(q_pos.tolist()):
             for j, kj in enumerate(k_pos.tolist()):
-                self.assertEqual(out[:, i, j].tolist(), values[:, qi - kj + 46].tolist())
+                self.assertTrue(torch.allclose(out[:, i, j], values[:, qi - kj + 46], atol=1e-12, rtol=0))
         sq = self.bias(k_pos, k_pos)
-        self.assertTrue(torch.equal(sq, sq.transpose(-1, -2)))
+        self.assertTrue(torch.allclose(sq, sq.transpose(-1, -2), atol=1e-12, rtol=0))
         batched = self.bias(torch.stack([q_pos, q_pos + 5]), torch.stack([k_pos, k_pos + 5]))
         self.assertEqual(batched.shape, (2, 3, 7, 47))
         self.assertTrue(torch.equal(batched[0], batched[1]))
