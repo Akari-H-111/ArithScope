@@ -1,0 +1,12 @@
+old_sha	new_sha	subject
+4e632edbfa5768215244097853af7084faed4fcd	cdea384eb0966a544365a2a6427bd6e1bc930ae7	Preregister ArithScope: exact arithmetic attention channel, theory, tests, pilots
+b7d2f1833de6fcbd90c199d4585f4bf517174a4b	88edbef0691c28cc6ba19fa69a64f4024980f172	Make a cross-call bias test tolerance-based; document rounding semantics
+d2e67d65955bc6991ed617afb1a4a9192567f670	7cec74c1b94d8430df307067b16b92fc9e8eeab7	Add analysis pipeline, explainer page, and docs; record first confirmatory runs
+ec9724ca3f8666f546b934fefed444f24273c3d0	2e4519fca3a33830f97f936545327751a8ef02d4	Record further E1 confirmatory run files (suite in progress)
+56e5beb28185db63e539c0c25278b43641db1fe9	33f75c740e640d5b210b7a361e9a77e8c4f0c112	Analyze complete E1 runs: figures, generated summaries, interpretation inputs
+726806c998b58a017ddf5304accfaf0564fb0344	b42bfa4637d26cdb0584e9ab0e2d78fbc8d914fd	Add post-hoc shift results; correct the shift narrative
+19afb785048944fe1e6815276a35bd9897424575	db1f18d43a27d94a7cba2909d76aaa33ef6aa423	Record E2, E3 and most E5 run files; add gate-magnitude table
+4380987ed496657a2d1342f2335aed0b9021022d	fce8c33b99046b67954851660bac19e9e89b2edf	Record further E5 run files (suite in progress)
+e15ea972b79009ce829d041c4f6c976a467550af	d430f01dcbeec27a582da8e9c9b919b3e6cfcc91	Add a FlexAttention backend; enable lint in CI
+a8c35bf9856589fccefb146a320e73e39883d13e	3a7a021dbbef73f76fa5748f8d46cb161a0db590	Pad folded q/k/v to one head dimension so fused SDPA applies
+cead0d9a6d4576acf769c554872341a6379c43a3	ee23df626a87a222cf41e363cbbc83dbd4a9b20c	Report confirmatory results: verdicts, figures, interpretation, ledgers

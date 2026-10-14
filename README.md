@@ -32,7 +32,7 @@ Here `γ_h` starts at 0, `α_h` is a learned softmax over the orders `M = {1, �
 
 ## Preregistered verdicts
 
-The four confirmatory claims and their decision rules were committed in [`4e632ed`](https://github.com/Akari-H-111/ArithScope/commit/4e632edbfa5768215244097853af7084faed4fcd) before the first confirmatory run started ([`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md)). The verdicts below apply those rules mechanically ([`experiments/analyze.py`](experiments/analyze.py), function `findings`):
+The four confirmatory claims and their decision rules were committed in [`cdea384`](https://github.com/Akari-H-111/ArithScope/commit/cdea384eb0966a544365a2a6427bd6e1bc930ae7) before the first confirmatory run started ([`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md)). The verdicts below apply those rules mechanically ([`experiments/analyze.py`](experiments/analyze.py), function `findings`):
 
 <!-- AUTO:findings:BEGIN -->
 - **C1 (periodic extrapolation vs RoPE): supported.** RoPE + ArithScope minus RoPE, unseen positions at N = 1024: P = 12: +60.0 pp, 95% CI [+48.7, +71.4], 5/5 seeds; P = 13: +63.9 pp, 95% CI [+42.9, +84.9], 5/5 seeds.
