@@ -179,7 +179,7 @@ Negative results are kept, with their run files. The first three come from devel
 # Python >= 3.10; torch >= 2.4 (CPU is enough), numpy, scipy, matplotlib, pytest
 # exact environment: environment.yml, results/environment/conda-explicit.lock
 make oracle        # exact arithmetic checks, standard library only
-make test          # 56 tests (one opt-in): oracle match, masks, gradients, gamma = 0 equivalence, backends, Bayes oracles
+make test          # 57 tests (one opt-in): oracle match, masks, gradients, gamma = 0 equivalence, backends, Bayes oracles
 make lint          # ruff
 make theory        # theory figures and results/summary/theory.json
 make experiments   # the four preregistered suites, 182 runs (resumable; about 3.5 hours with 4 CPU workers)

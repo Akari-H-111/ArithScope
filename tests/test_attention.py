@@ -74,6 +74,21 @@ class BackendAndMaskTests(unittest.TestCase):
             layer = self._attn(name)
             self.assertTrue(torch.allclose(layer(x, pos, backend="explicit"), layer(x, pos, backend="sdpa"), atol=1e-10))
 
+    def test_folded_backend_pads_head_dims_exactly(self):
+        # Prime-power bank B_16: 55 folded features + head dim 8 = 63, padded to 64 for fused kernels.
+        torch.manual_seed(2)
+        orders = (2, 3, 4, 5, 7, 8, 9, 11, 13, 16)
+        layer = CausalSelfAttention(32, 4, PositionConfig.from_name("rope+arith", orders=orders)).double()
+        with torch.no_grad():
+            for p in layer.biases["arith"].parameters():
+                p.normal_()
+        x = torch.randn(2, 29, 32, dtype=torch.float64)
+        pos = torch.arange(29)
+        self.assertTrue(torch.allclose(layer(x, pos), layer(x, pos, backend="folded"), atol=1e-10))
+        valid = torch.ones(2, 29, dtype=torch.bool)
+        valid[1, :4] = False
+        self.assertTrue(torch.allclose(layer(x, pos, valid), layer(x, pos, valid, backend="folded"), atol=1e-10))
+
     def test_backends_agree_with_padding_and_batched_positions(self):
         layer = self._attn("rope+arith")
         x = torch.randn(2, 20, 32, dtype=torch.float64)

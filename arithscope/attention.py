@@ -101,6 +101,12 @@ def allowed_mask(q_pos: torch.Tensor, k_pos: torch.Tensor,
     return allowed
 
 
+def _allowed_and_row_ok(positions: torch.Tensor, key_padding_mask: torch.Tensor | None):
+    """Mask ``[B|1, 1, N, N]`` for the fused backends, and whether each query row has any allowed key."""
+    allowed = allowed_mask(positions, positions, key_padding_mask).unsqueeze(1)
+    return allowed, allowed.any(-1, keepdim=True)
+
+
 class CausalSelfAttention(nn.Module):
     def __init__(self, d_model: int, num_heads: int, pos: PositionConfig) -> None:
         super().__init__()
@@ -149,19 +155,18 @@ class CausalSelfAttention(nn.Module):
             out, attn = self._explicit(q, k, v, positions, key_padding_mask, scale, return_attention)
             out = self.proj(out.transpose(1, 2).reshape(b, n, d))
             return (out, attn) if return_attention else out
-        allowed = allowed_mask(positions, positions, key_padding_mask).unsqueeze(1)  # [B|1, 1, N, N]
-        row_ok = allowed.any(-1, keepdim=True)
         if backend == "sdpa":
             bias = self.total_bias(positions)
             if bias is None and key_padding_mask is None and positions.dim() == 1:
                 out = F.scaled_dot_product_attention(q, k, v, is_causal=True, scale=scale)
             else:
+                allowed, row_ok = _allowed_and_row_ok(positions, key_padding_mask)
                 zero = torch.zeros((), dtype=q.dtype)
                 mask = torch.where(allowed, zero if bias is None else bias, float("-inf"))
                 mask = torch.where(row_ok, mask, zero)
                 out = F.scaled_dot_product_attention(q, k, v, attn_mask=mask, scale=scale) * row_ok
         elif backend == "folded":
-            out = self._folded(q, k, v, positions, key_padding_mask, allowed, row_ok, scale)
+            out = self._folded(q, k, v, positions, key_padding_mask, scale)
         else:
             raise ValueError(f"unknown backend {backend!r}")
         if return_attention:
@@ -192,7 +197,7 @@ class CausalSelfAttention(nn.Module):
             outs.append(attn @ v)
         return torch.cat(outs, dim=-2), (attn if keep_attention else None)
 
-    def _folded(self, q, k, v, positions, key_padding_mask, allowed, row_ok, scale):
+    def _folded(self, q, k, v, positions, key_padding_mask, scale):
         kinds = set(self.biases.keys())
         if kinds != {"arith"}:
             raise ValueError(f"folded backend supports only the 'arith' bias (optionally with RoPE), got {sorted(kinds)}")
@@ -202,8 +207,15 @@ class CausalSelfAttention(nn.Module):
         kf = arith_bias.key_features(positions).unsqueeze(-3)  # [B|.., 1, N, F]
         q2 = torch.cat((q, qf.expand(*q.shape[:-1], qf.shape[-1]).to(q.dtype)), dim=-1)
         k2 = torch.cat((k, kf.expand(*k.shape[:-1], kf.shape[-1]).to(k.dtype)), dim=-1)
+        # Fused SDPA kernels need one head dimension for q, k and v (a multiple of 8 on some devices).
+        # Zero columns change no dot product and no output column we keep, so padding is exact.
+        width = -(-max(q2.shape[-1], v.shape[-1]) // 8) * 8
+        q2, k2 = F.pad(q2, (0, width - q2.shape[-1])), F.pad(k2, (0, width - k2.shape[-1]))
+        v2 = F.pad(v, (0, width - v.shape[-1]))
         if key_padding_mask is None and positions.dim() == 1:
-            return F.scaled_dot_product_attention(q2, k2, v, is_causal=True, scale=scale)
+            return F.scaled_dot_product_attention(q2, k2, v2, is_causal=True, scale=scale)[..., : v.shape[-1]]
+        allowed, row_ok = _allowed_and_row_ok(positions, key_padding_mask)
         mask = torch.where(allowed & row_ok, 0.0, float("-inf")).to(q.dtype)
         mask = torch.where(row_ok, mask, torch.zeros((), dtype=q.dtype))
-        return F.scaled_dot_product_attention(q2, k2, v, attn_mask=mask, scale=scale) * row_ok
+        out = F.scaled_dot_product_attention(q2, k2, v2, attn_mask=mask, scale=scale) * row_ok
+        return out[..., : v.shape[-1]]
