@@ -270,15 +270,34 @@ def plot_shift(data: dict, mode: str, title: str = "Absolute-position shift at f
                ylabel: str = "accuracy, N = 256") -> Path:
     with themed(mode) as th:
         fig, ax = plt.subplots(figsize=(6.4, 3.8))
-        for v, curve in data.items():
+        hero = ("rope+arith", "arith")
+        order = [v for v in data if v not in hero] + [v for v in hero if v in data]  # ArithScope drawn last, on top
+        for v in order:
+            curve = data[v]
             xs = sorted(curve)
+            on_top = v in hero
             ax.plot([max(x, 1) for x in xs], [curve[x]["mean"] for x in xs], color=color(th, v), label=LABELS[v],
-                    marker="o", markersize=4.5, markeredgecolor=th["surface"], markeredgewidth=1.0)
+                    marker="o", markersize=4.5, markeredgecolor=th["surface"], markeredgewidth=1.0,
+                    linewidth=2.6 if on_top else 2.0, zorder=5 if on_top else 3,
+                    linestyle=(0, (4, 2)) if v == "arith" else "-")
+        if "rope+arith" in data:
+            ref = data["rope+arith"]
+            same = [LABELS[v] for v in data if v != "rope+arith"
+                    and all(abs(data[v][x]["mean"] - ref[x]["mean"]) < 0.0015 for x in ref)]
+            if same:
+                y = min(ref[x]["mean"] for x in ref)
+                ax.annotate("same accuracy at every shift (lines overlap):\nRoPE + ArithScope, " + ", ".join(same),
+                            (1, y), xytext=(4, -8), textcoords="offset points", va="top", ha="left",
+                            color=th["ink2"], fontsize=8)
         ax.set_xscale("log")
         ax.set_xlabel("constant shift added to every position (0 plotted at 1)")
         ax.set_ylabel(ylabel)
         ax.set_title(title, loc="left", fontsize=10)
-        ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.18), ncol=2, fontsize=8.5)
+        handles, labels = ax.get_legend_handles_labels()
+        want = [LABELS[v] for v in data]  # legend in the caller's order, not the drawing order
+        idx = [labels.index(w) for w in want if w in labels]
+        ax.legend([handles[i] for i in idx], [labels[i] for i in idx], loc="upper left", bbox_to_anchor=(0.0, -0.18),
+                  ncol=2, fontsize=8.5)
         return save(fig, FIG, "e1_shift", mode)
 
 
@@ -353,7 +372,7 @@ def analyze_shift(summary: dict, tables: list[str]) -> None:
                     per_shift[t["position_shift"]].append(t["all"]["acc"])
             curves[v] = {s: ci95(vals) for s, vals in sorted(per_shift.items())}
         out[period] = curves
-    summary["E1_shift"] = {str(p): {v: {str(s): c for s, c in cur.items()} for v, cur in curves.items()}
+    summary["E1_shift"] = {"/".join(map(str, p)): {v: {str(s): c for s, c in cur.items()} for v, cur in curves.items()}
                            for p, curves in out.items()}
     period = sorted(out)[-1]
     curves = out[period]
@@ -744,13 +763,14 @@ def tldr(summary: dict) -> str:
                    f"accuracy at the training length by {100 * c4['mean']:+.2f} pp (95% CI [{100 * c4['lo']:+.2f}, "
                    f"{100 * c4['hi']:+.2f}]).")
     sh = summary.get("posthoc_shift_n64", {}).get("13", {})
-    if sh.get("arith") and sh.get("rope"):
-        top = max(int(s) for s in sh["arith"])
-        out.append(f"- **Exact at any absolute position (post hoc).** Shifting every position by "
-                   f"10<sup>{len(str(top)) - 1}</sup> leaves "
-                   f"ArithScope-only models at {fmt(sh['arith'][str(top)]['mean'])}% (unshifted "
-                   f"{fmt(sh['arith']['0']['mean'])}%); RoPE models, whose angles are float32, drop from "
-                   f"{fmt(sh['rope']['0']['mean'])}% to {fmt(sh['rope'][str(top)]['mean'])}%.")
+    if sh.get("arith") and sh.get("rope") and sh.get("rope+arith"):
+        top = str(max(int(k) for k in sh["arith"]))
+        out.append(f"- **Exact at any absolute position (post hoc).** At period 13 and the training length, shifting "
+                   f"every position by 10<sup>{len(top) - 1}</sup> leaves RoPE + ArithScope at "
+                   f"{fmt(sh['rope+arith'][top]['mean'])}% and ArithScope alone at {fmt(sh['arith'][top]['mean'])}% "
+                   f"(unshifted: {fmt(sh['rope+arith']['0']['mean'])}% and {fmt(sh['arith']['0']['mean'])}%). "
+                   f"RoPE alone, whose rotary angles are float32, drops from {fmt(sh['rope']['0']['mean'])}% to "
+                   f"{fmt(sh['rope'][top]['mean'])}%.")
     return "\n".join(out) if out else "(results pending)"
 
 

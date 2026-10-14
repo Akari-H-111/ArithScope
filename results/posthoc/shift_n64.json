@@ -1,0 +1,4978 @@
+{
+ "status": "POST-HOC EXPLORATORY (not preregistered)",
+ "length": 64,
+ "sequences": 1024,
+ "shifts": [
+  0,
+  1000,
+  10000,
+  100000,
+  1000000,
+  10000000,
+  100000000,
+  1000000000
+ ],
+ "environment": {
+  "python": "3.13.16",
+  "torch": "2.14.1",
+  "platform": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "torch_threads": 4,
+  "device": "cpu",
+  "dtype": "float32",
+  "git_commit": "ec9724ca3f8666f546b934fefed444f24273c3d0",
+  "git_dirty": true
+ },
+ "runs": [
+  {
+   "experiment": "e1_p12",
+   "variant": "alibi",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5337677001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "alibi",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5338287353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "alibi",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5341796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "alibi",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5338592529296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "alibi",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.53399658203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "arith",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "arith",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.681304931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "arith",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6801300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "arith",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "arith",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.68206787109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "nope",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5332794189453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "nope",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5334320068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "nope",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.533294677734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "nope",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5329742431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "nope",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5331268310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+arith",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.680938720703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.680938720703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.680938720703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.680938720703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6810150146484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6813201904296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6813812255859375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+arith",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.68084716796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.68084716796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6810150146484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.68157958984375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6800689697265625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+arith",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.680816650390625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6808319091796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6806793212890625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.680633544921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.680877685546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+arith",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6807708740234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6807708740234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6807708740234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6807708740234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.680755615234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6808929443359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.680755615234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.680511474609375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+arith",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681182861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681182861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681182861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681182861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.681121826171875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6811981201171875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6809234619140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6823883056640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_full",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6799774169921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6799774169921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6799774169921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6799774169921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.680023193359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6800537109375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.68017578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.679412841796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_full",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681732177734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681732177734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681732177734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681732177734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6817626953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.68170166015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.681732177734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6808013916015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_full",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6798095703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6798095703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6798095703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6798095703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6798095703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.679779052734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.680023193359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6806640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_full",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6807861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6807861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6807861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6807861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.680816650390625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6806640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.680145263671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6809234619140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_full",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681793212890625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681793212890625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681793212890625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681793212890625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6817626953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6818084716796875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6820068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.68255615234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_fund",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6803741455078125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6803741455078125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6803741455078125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6803741455078125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.680419921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.680206298828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.680816650390625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6809844970703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_fund",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6815185546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6815185546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6815185546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6815185546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.68145751953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6815643310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.681732177734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.681182861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_fund",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.679931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.679931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.679931640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6798858642578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.679901123046875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6797027587890625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.68023681640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6799774169921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_fund",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6809234619140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6804962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_fund",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.681121826171875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.68060302734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.680999755859375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_learned",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6813201904296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6813201904296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6813201904296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6813201904296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6813201904296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.68115234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6814117431640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.681243896484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_learned",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6820526123046875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6820526123046875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6820526123046875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6820526123046875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.682037353515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6819000244140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6822509765625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.682403564453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_learned",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6793060302734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6793060302734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6793060302734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6792755126953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.67938232421875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.67926025390625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.67950439453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.67962646484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_learned",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681671142578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681671142578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6816864013671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681671142578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.681671142578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6815643310546875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.681884765625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.68133544921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+fourier_learned",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681396484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681396484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681396484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681396484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.681427001953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6812591552734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.680633544921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.681060791015625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+relbias",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.681243896484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.681243896484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.681243896484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.681243896484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6812744140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.681182861328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6812591552734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6809234619140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+relbias",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6812286376953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6812286376953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6812286376953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6812286376953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6812286376953125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6811981201171875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6812896728515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.68096923828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+relbias",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6803436279296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6803436279296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6803436279296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6803436279296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6802978515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6801605224609375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.679901123046875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.679962158203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+relbias",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6809844970703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6809844970703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6809844970703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.680999755859375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6810302734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.680999755859375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6816864013671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6810150146484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope+relbias",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6812896728515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6812896728515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6812896728515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6812896728515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.68133544921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6813812255859375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.68096923828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6798858642578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6763153076171875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6763153076171875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6762542724609375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.676300048828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.676177978515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.67645263671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5206298828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.523101806640625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6785888671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6785888671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6786041259765625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6785888671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6789703369140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.678985595703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5079345703125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.51239013671875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.677703857421875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.677703857421875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6776885986328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.677764892578125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6778106689453125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6772003173828125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.45928955078125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5185089111328125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6780242919921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6780242919921875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.678009033203125,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.677978515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.678070068359375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6772308349609375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5210418701171875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5289764404296875,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p12",
+   "variant": "rope",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6802978515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6802978515625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6802825927734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6802825927734375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6805572509765625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6790771484375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.524505615234375,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5244140625,
+     "oracle_acc": 0.6812184453010559,
+     "digest": "7a6c4ddcb0c4d0c3ca2a62ad2dd2ef6d77daf673a3ecc369d519372dc13d5dd5"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "alibi",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5328369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "alibi",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.532501220703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "alibi",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.532470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "alibi",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.53289794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "alibi",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5325164794921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "arith",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "arith",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "arith",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "arith",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.659149169921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "arith",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6635284423828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "nope",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.532318115234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "nope",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5319366455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "nope",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.53240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "nope",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5323638916015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "nope",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5317840576171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+arith",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6611785888671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6611785888671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6611785888671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6611785888671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.661224365234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6610870361328125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.661346435546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6608123779296875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+arith",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6610260009765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6610260009765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.661041259765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6610260009765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6610260009765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.66094970703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6610565185546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+arith",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.661376953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.661376953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.661376953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.661376953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6614227294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.66107177734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6617431640625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6621856689453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+arith",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6599578857421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6599578857421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.659942626953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.659942626953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.660003662109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6601409912109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.66094970703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+arith",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6622467041015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6622467041015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6622467041015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6622314453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.662322998046875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.662078857421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6621551513671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.662811279296875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_full",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6602630615234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6602630615234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6602630615234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6602783203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.660247802734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6602783203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6611328125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_full",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6622772216796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6622772216796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6622772216796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6622772216796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6622314453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.662322998046875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6616973876953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6617584228515625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_full",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.66162109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.66162109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.66162109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6616363525390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.661651611328125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6614990234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.66094970703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.66156005859375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_full",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6599578857421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6599578857421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6599578857421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6599578857421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.65997314453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.660186767578125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6600799560546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.660430908203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_full",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6620330810546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6620330810546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6620330810546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6620330810546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66204833984375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6619415283203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6623992919921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6639251708984375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_fund",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.660369873046875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.660369873046875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.660369873046875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6603546142578125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6603546142578125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.65875244140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.27886962890625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.40557861328125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_fund",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6614227294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6614227294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.661407470703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.661346435546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66107177734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.661468505859375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.4167633056640625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.5340423583984375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_fund",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6593170166015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6593170166015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6593170166015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6592559814453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6596221923828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6597747802734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.533905029296875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6067352294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_fund",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6600189208984375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6600189208984375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6599884033203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6596832275390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66094970703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6603240966796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.3931884765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.528167724609375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_fund",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.66259765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.66259765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.66265869140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6625518798828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66278076171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6611175537109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.41680908203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.53369140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_learned",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6613922119140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6613922119140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6613922119140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6613922119140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.661376953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.66131591796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6619873046875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_learned",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6609649658203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6609649658203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6609649658203125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6609344482421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.660888671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6610565185546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.661163330078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6617279052734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_learned",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6617584228515625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6617584228515625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6617584228515625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6617584228515625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.661712646484375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6615753173828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.662689208984375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6626434326171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_learned",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.66082763671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6604766845703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+fourier_learned",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6624603271484375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6624603271484375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6624603271484375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.662445068359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6624298095703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6622467041015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.661956787109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.66241455078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+relbias",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66131591796875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.66107177734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.660247802734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.66070556640625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+relbias",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.661285400390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6612091064453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6616058349609375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6627197265625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+relbias",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.662628173828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.662628173828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6626129150390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6626129150390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6625518798828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.662567138671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6622467041015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.66180419921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+relbias",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6607666015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6607666015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6607666015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6607666015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6608123779296875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.660919189453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.6603546142578125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.66119384765625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope+relbias",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6621246337890625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6621246337890625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6621246337890625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6621246337890625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66217041015625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.662200927734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.662750244140625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.6611175537109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope",
+   "seed": 1,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.662567138671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.662567138671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.662506103515625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6625823974609375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66143798828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6577606201171875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.482818603515625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.50537109375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope",
+   "seed": 2,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6603851318359375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6603546142578125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6604461669921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6602325439453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.659393310546875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5233917236328125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.531768798828125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope",
+   "seed": 3,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.657257080078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.657257080078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.657257080078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6573486328125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6576080322265625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.6558380126953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5145263671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.519622802734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope",
+   "seed": 4,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6586761474609375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.658660888671875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.6586761474609375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.6587982177734375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.6577301025390625,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.657989501953125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.5266571044921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.530120849609375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  },
+  {
+   "experiment": "e1_p13",
+   "variant": "rope",
+   "seed": 5,
+   "rows": [
+    {
+     "shift": 0,
+     "acc": 0.6612091064453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000,
+     "acc": 0.6612396240234375,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000,
+     "acc": 0.661163330078125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000,
+     "acc": 0.661102294921875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000,
+     "acc": 0.66094970703125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 10000000,
+     "acc": 0.655029296875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 100000000,
+     "acc": 0.517547607421875,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    },
+    {
+     "shift": 1000000000,
+     "acc": 0.53106689453125,
+     "oracle_acc": 0.6621477603912354,
+     "digest": "664bfaf57fc5583beb79fd9fceaa61fac645e0ea20e568b389f237a8897deaa3"
+    }
+   ]
+  }
+ ]
+}

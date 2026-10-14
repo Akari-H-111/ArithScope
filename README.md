@@ -144,7 +144,7 @@ Theory (P1, T4) says an ArithScope head cannot tell offsets apart unless the ban
 
 ### Absolute position (post hoc)
 
-The ArithScope term reads only `(i − j) mod m` in int64, so it is bitwise invariant under any common shift of positions. RoPE evaluates `tθ` in float32. This test was added after the preregistration and is labeled post hoc; see [`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md), Section 8.
+The ArithScope term reads only `(i − j) mod m` in int64, so it is bitwise invariant under any common shift of positions. RoPE evaluates `tθ` in float32. In the test below, models that carry the period in an exact additive channel keep their accuracy at every shift. RoPE alone loses it at the largest shifts, and so does the matched cosine bank at period 13, which leans on its rotary part. The test was added after the preregistration and is labeled post hoc; see [`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md), Section 8.
 
 <p align="center">
   <picture>
@@ -163,8 +163,7 @@ Negative results are kept, with their run files. The first three come from devel
 - **MQAR was dropped before the confirmatory runs.** No variant learned multi-query associative recall within the budget (6–27% against a 100% oracle; 19% in an easier setting). A floor effect cannot test "no harm", so claim C4 rests on the tagged-denoising control alone.
 - **The first alias fixture leaked information.** In dense denoising, the model's own noisy token breaks the tie between aliased candidates, so the model beat the "alias ceiling" (72% vs about 53%). The fixture was redesigned with uninformative query tokens before any confirmatory run.
 - **A correct comb is not enough to generalize.** With period 24 and training length 64, a resolving bank learned exactly the right mixture but did not extrapolate (52% against a 95% Bayes oracle): a query saw at most three comb positions in training, so the content readout met a distribution shift at long lengths. Period 12 shows six comb positions per window and was adopted instead.
-- **RoPE + ArithScope inherits RoPE's floating-point error.** The ArithScope term is exact, but at shifts near 10⁹ the RoPE part of the logit is not. The ArithScope-only model is the one that is exactly shift invariant.
-- **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) find the comb inside the tested range. The theory predicts drift only at offsets of about `1/|ε|`; see claim S1.
+- **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) come within about a point of ArithScope up to 2,048 tokens. They lose accuracy only at the longest lengths, after their comb has drifted, as the corollary of Theorem T5 predicts (claim S1, and the post-hoc drift analysis in [`docs/RESULTS.md`](docs/RESULTS.md)).
 
 ## Scope and limitations
 
