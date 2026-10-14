@@ -423,7 +423,7 @@ function drawAttention(a) {
       el("text", { x: L - 6, y: Y(10 ** e, top) + 4, "text-anchor": "end" }, s).textContent = e === 0 ? "1" : `1e${e}`; }
     el("path", { d: w.map((v, n) => `M${X(n).toFixed(1)} ${Y(1e-7, top).toFixed(1)}V${Y(v, top).toFixed(1)}`).join(""), stroke: css(col), "stroke-width": 1 }, s);
     el("text", { x: L + 4, y: top - 6, fill: css("--ink") }, s).textContent =
-      `${label}: ${(100 * a.profiles[key].comb_mass_beyond_train).toFixed(0)}% of attention beyond the training window on multiples of ${a.period}`;
+      `${label}: ${(100 * a.profiles[key].comb_mass_beyond_train).toFixed(1)}% of attention beyond the training window on multiples of ${a.period}`;
     const hit = el("rect", { x: L, y: top, width: W - L - R, height: ph, fill: "transparent" }, s);
     hit.addEventListener("pointermove", e => { const b = s.getBoundingClientRect(), px = (e.clientX - b.left) / b.width * W;
       const n = Math.max(0, Math.min(N - 1, Math.round((px - L) / (W - L - R) * (N - 1))));

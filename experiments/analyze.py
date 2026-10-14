@@ -190,7 +190,8 @@ def plot_hero(panels: dict, mode: str) -> Path:
     """P = 12 next to P = 13: where theory says the matched cosine bank should and should not work."""
     with themed(mode) as th:
         periods = sorted(panels)
-        fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 3.9), sharey=True, squeeze=False)
+        fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 4.2), sharey=True, squeeze=False)
+        notes: dict[int, list[str]] = {}
         for ax, p in zip(axes[0], periods):
             data = panels[p]
             lens = sorted(data["oracle"])
@@ -209,19 +210,23 @@ def plot_hero(panels: dict, mode: str) -> Path:
                         markeredgecolor=th["surface"], markeredgewidth=1.0, zorder=5 if hero else 3,
                         linewidth=2.6 if hero else 2.0)
             ax.axvline(64, color=th["axis"], linewidth=1.0)
-            if "rope+fourier_fund" in data and "rope+arith" in data:
-                gap = max(abs(data["rope+fourier_fund"][L]["mean"] - data["rope+arith"][L]["mean"]) for L in lens)
-                if gap < 0.01:  # below the plateau and above RoPE's curve, where no line runs
-                    ax.text(0.30, 0.62, "matched cosine bank ≈ ArithScope\n(their lines overlap)",
-                            transform=ax.transAxes, ha="left", va="center", color=th["ink2"], fontsize=8)
             ax.set_xscale("log", base=2)
             ax.set_xticks(lens)
             ax.set_xticklabels([str(L) for L in lens], fontsize=8)
             ax.set_xlabel("evaluation length N (trained at 64)")
-            kind = "prime" if arith.factorize(p) == ((p, 1),) else "composite"
             m = MARGINS.get(p)
-            margin = f": comb margin {m[1]:.3f} (cosine bank) vs {m[0]:.3f} (ArithScope)" if m else ""
-            ax.set_title(f"P = {p}, {kind}{margin}", loc="left", fontsize=9.5)
+            note = [f"best comb margin: cosine bank {m[1]:.3f}, ArithScope {m[0]:.3f}"] if m else []
+            if "rope+fourier_fund" in data and "rope+arith" in data:
+                gap = max(abs(data["rope+fourier_fund"][L]["mean"] - data["rope+arith"][L]["mean"]) for L in lens)
+                if gap < 0.01:
+                    note.append("the cosine-bank curve lies under ArithScope's")
+            notes[p] = note
+        lines = max(len(n) for n in notes.values())
+        for ax, p in zip(axes[0], periods):
+            kind = "prime" if arith.factorize(p) == ((p, 1),) else "composite"
+            ax.set_title(f"Period P = {p} ({kind})", loc="left", fontsize=10, pad=8 + 12 * lines)
+            ax.text(0.0, 1.015, "\n".join(notes[p]), transform=ax.transAxes, ha="left", va="bottom",
+                    color=th["ink2"], fontsize=8.5, linespacing=1.3)
         axes[0][0].set_ylabel("accuracy on unseen positions")
         handles, labels = axes[0][0].get_legend_handles_labels()
         order = [labels.index(LABELS[v]) for v in HERO_VARIANTS if LABELS[v] in labels]
@@ -230,8 +235,8 @@ def plot_hero(panels: dict, mode: str) -> Path:
         any_p = panels[periods[0]]
         n_seeds = any_p["rope+arith"][min(any_p["oracle"])]["n"] if "rope+arith" in any_p else 0
         fig.suptitle(f"Periodic denoising: trained on 64 tokens, tested on up to {max(any_p['oracle'])} "
-                     f"({n_seeds} seed{'s' if n_seeds != 1 else ''} per model, mean and 95% CI)", x=0.01, ha="left", fontweight="bold",
-                     fontsize=11, color=th["ink"])
+                     f"({n_seeds} seed{'s' if n_seeds != 1 else ''} per model, mean and 95% CI)", x=0.01, y=1.0 + 0.035 * lines,
+                     ha="left", fontweight="bold", fontsize=11, color=th["ink"])
         return save(fig, FIG, "hero", mode)
 
 
@@ -698,14 +703,17 @@ def tldr(summary: dict) -> str:
     """README summary bullets. Every number is read from the summary; wording does not depend on outcomes."""
     out = []
     t13, t12 = summary.get("E1_P13", {}).get("table", {}), summary.get("E1_P12", {}).get("table", {})
-    if t13.get("rope+arith") and t13.get("rope"):
+    if t13.get("rope+arith") and t13.get("rope") and t12.get("rope+arith") and t12.get("rope"):
         L = max(t13["oracle"])
-        p12 = (f" At period 12: {fmt(t12['rope+arith'][L]['mean'])}% vs {fmt(t12['rope'][L]['mean'])}% "
-               f"(Bayes {fmt(t12['oracle'][L])}%)." if t12.get("rope+arith") and t12.get("rope") and L in t12["oracle"] else "")
-        out.append(f"- **Length extrapolation.** Trained on 64 tokens and tested on {L:,} ({L // 64}× longer), "
-                   f"RoPE + ArithScope scores {fmt(t13['rope+arith'][L]['mean'])}% on unseen positions at period 13; "
-                   f"the Bayes-optimal predictor scores {fmt(t13['oracle'][L])}% and RoPE alone "
-                   f"{fmt(t13['rope'][L]['mean'])}%.{p12}")
+        gap = max(abs(t["rope+arith"][n]["mean"] - t["oracle"][n]) for t in (t12, t13) for n in t["oracle"])
+        gap_pp = math.ceil(1000 * gap) / 10  # rounded up to 0.1 pp
+        out.append(f"- **Length extrapolation.** Trained on 64 tokens, RoPE + ArithScope stays within {gap_pp:.1f} pp "
+                   f"of the Bayes-optimal predictor on unseen positions at every tested length up to {L:,} tokens "
+                   f"({L // 64}× the training length), at both periods. At {L:,} tokens RoPE alone scores "
+                   f"{fmt(t13['rope'][L]['mean'])}% (period 13) and {fmt(t12['rope'][L]['mean'])}% (period 12), "
+                   + (f"against {fmt(t13['oracle'][L])}% for the Bayes oracle."
+                      if fmt(t13["oracle"][L]) == fmt(t12["oracle"][L]) else
+                      f"against {fmt(t13['oracle'][L])}% and {fmt(t12['oracle'][L])}% for the Bayes oracle."))
     if t13.get("rope+fourier_fund") and t12.get("rope+fourier_fund") and 1024 in t13["oracle"]:
         out.append(f"- **The basis matters where theory says it should.** A cosine bank with the same periods and parameter "
                    f"count scores {fmt(t13['rope+fourier_fund'][1024]['mean'])}% at period 13 (N = 1,024) against "

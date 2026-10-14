@@ -75,6 +75,7 @@ INTERPRETATION_PENDING
 | Training | 2000 steps, batch 32, training length 64, AdamW, preregistered hyperparameter rule |
 | Design | For each seed, every variant starts from bitwise-identical backbone weights and sees identical training batches |
 | Evaluation | Fixed test sets shared by all variants (SHA-256 digests in every run file), scored against the exact Bayes oracle on the same examples |
+| Bayes oracle | Expected accuracy of the exact Bayes rule with uniform tie-breaking: a plurality vote over the positions seen so far that share the target symbol's group (its residue class mod P; its tag in E3). On a finite test set a model can exceed it by a few hundredths of a point by winning ties. In E5 the oracle is told each sequence's period, so there it is an upper bound rather than the exact Bayes rule |
 | Extrapolation region | Above the training length, only positions `t >= 64` are scored |
 | Seeds | 5 for E1–E3, 3 for E5 |
 | Statistics | Paired per-seed differences, 95% t intervals, sign counts; no multiplicity correction |

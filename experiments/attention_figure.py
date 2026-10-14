@@ -85,7 +85,7 @@ def main() -> None:
                 ax.set_ylim(max(w.min(), 1e-7), 1.0)
                 ax.set_ylabel("weight")
                 frac = profiles[variant]["comb_mass_beyond_train"]
-                ax.set_title(f"{LABELS[variant]}: {100 * frac:.0f}% of attention beyond the training window lands on "
+                ax.set_title(f"{LABELS[variant]}: {100 * frac:.1f}% of attention beyond the training window lands on "
                              f"multiples of {args.period}", loc="left", fontsize=9.5)
             for ax in axes:
                 ax.text(32, 0.97, "training\nwindow", transform=ax.get_xaxis_transform(), ha="center", va="top",
