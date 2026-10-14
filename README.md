@@ -252,6 +252,6 @@ Each run writes one immutable JSON file with its config, environment, test-set h
 
 A literature screen (2026-10-14) found no prior use of Ramanujan sums as an attention bias. The screen is not exhaustive. Ramanujan sums, Fourier position features, and relative biases are each classical; the contribution is their combination into this attention channel, its theory, and the measured comparison. Full references are in [`docs/MATH.md`](docs/MATH.md).
 
-## Citation
+## Citation and license
 
-See [`CITATION.cff`](CITATION.cff).
+See [`CITATION.cff`](CITATION.cff). Code, documentation, and results are released under the [MIT License](LICENSE).

@@ -30,4 +30,4 @@ questions, and exact commands.
   - state-of-the-art claims
   - natural-language claims
   - calibration or e-value claims
-- **External actions.** Do not publish, license, or create repositories without explicit authorization from the repository owner.
+- **External actions.** The repository owner chose the MIT License and public release (2026-10-14). Do not change the license, publish elsewhere, or create repositories without explicit authorization from the repository owner.

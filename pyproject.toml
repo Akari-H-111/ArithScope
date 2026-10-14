@@ -7,6 +7,7 @@ name = "arithscope"
 version = "0.1.0"
 description = "Exact arithmetic (Ramanujan-sum) relative-position channels for Transformer attention"
 readme = "README.md"
+license = { text = "MIT" }
 requires-python = ">=3.10"
 authors = [{ name = "A. Hayami" }]
 keywords = ["transformer", "attention", "positional encoding", "length generalization", "Ramanujan sums"]

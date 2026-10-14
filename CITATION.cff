@@ -11,6 +11,7 @@ authors:
   - family-names: "Hayami"
     given-names: "A."
 version: "0.1.0"
+license: MIT
 date-released: "2026-10-14"
 repository-code: "https://github.com/Akari-H-111/ArithScope"
 keywords:
