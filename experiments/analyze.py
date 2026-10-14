@@ -625,6 +625,26 @@ def analyze_controls(summary: dict, tables: list[str]) -> None:
             tables.append(f"*{title} — C4 check:* RoPE + ArithScope minus RoPE at N = 64: {fmt_diff(p)} → {verdict}.")
 
 
+def analyze_gates(summary: dict, tables: list[str]) -> None:
+    """Exploratory: how far training opens the ArithScope gate gamma, by suite and variant."""
+    lines = ["**ArithScope gate magnitudes** (exploratory; largest |γ| over the heads of each layer, all layers and "
+             "seeds; γ starts at 0):", "", "| suite | variant | layers | median | min | max |", "|---|---|---|---|---|---|"]
+    out = {}
+    for suite in ("e1_periodic", "e2_alias", "e3_tagged", "e5_mixed"):
+        for (variant,), rs in sorted(group(load(suite), "variant").items()):
+            gates = [float(np.abs(layer["arith"]["gamma"]).max()) for r in rs for layer in r["positional"]
+                     if "arith" in layer]
+            if not gates:
+                continue
+            out[f"{suite}/{variant}"] = {"median": float(np.median(gates)), "min": min(gates), "max": max(gates),
+                                         "layers": len(gates)}
+            lines.append(f"| {suite} | {LABELS[variant]} | {len(gates)} | {np.median(gates):.2f} | {min(gates):.2f} | "
+                         f"{max(gates):.2f} |")
+    if out:
+        summary["gates"] = out
+        tables.append("\n".join(lines))
+
+
 def analyze_meta(summary: dict, tables: list[str]) -> None:
     runs = load("e1_periodic")
     if not runs:
@@ -909,6 +929,7 @@ def main() -> None:
     analyze_alias(summary, tables)
     analyze_controls(summary, tables)
     analyze_e1(summary, tables, suite="e5_mixed", label="E5")
+    analyze_gates(summary, tables)
     analyze_meta(summary, tables)
     analyze_overhead(summary, tables)
     summary.pop("_hero_panels", None)
