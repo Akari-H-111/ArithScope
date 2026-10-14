@@ -1,0 +1,8 @@
+# pip alternative (CPU PyTorch wheels: pip install torch --index-url https://download.pytorch.org/whl/cpu).
+# Experiments were run with the conda environment in environment.yml; versions below are minimums.
+torch>=2.4
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+pytest>=7
+ruff==0.17.0  # make lint

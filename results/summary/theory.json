@@ -1,0 +1,474 @@
+{
+ "margins": [
+  {
+   "period": 2,
+   "optimal_pd": 2.0,
+   "ramanujan_bank": 2.0,
+   "fundamental_cosine_bank": 2.0,
+   "single_ramanujan": 2.0,
+   "single_cosine": 2.0
+  },
+  {
+   "period": 3,
+   "optimal_pd": 1.5,
+   "ramanujan_bank": 1.5,
+   "fundamental_cosine_bank": 1.5000000000000004,
+   "single_ramanujan": 1.5,
+   "single_cosine": 1.4999999999999998
+  },
+  {
+   "period": 4,
+   "optimal_pd": 1.3333333333333333,
+   "ramanujan_bank": 1.3333333333333335,
+   "fundamental_cosine_bank": 1.3333333333333335,
+   "single_ramanujan": 1.0,
+   "single_cosine": 0.9999999999999999
+  },
+  {
+   "period": 5,
+   "optimal_pd": 1.25,
+   "ramanujan_bank": 1.25,
+   "fundamental_cosine_bank": 0.6909830056250528,
+   "single_ramanujan": 1.25,
+   "single_cosine": 0.6909830056250525
+  },
+  {
+   "period": 6,
+   "optimal_pd": 1.2,
+   "ramanujan_bank": 1.2,
+   "fundamental_cosine_bank": 1.2,
+   "single_ramanujan": 0.5,
+   "single_cosine": 0.4999999999999999
+  },
+  {
+   "period": 7,
+   "optimal_pd": 1.1666666666666667,
+   "ramanujan_bank": 1.1666666666666667,
+   "fundamental_cosine_bank": 0.3765101981412666,
+   "single_ramanujan": 1.1666666666666667,
+   "single_cosine": 0.3765101981412664
+  },
+  {
+   "period": 8,
+   "optimal_pd": 1.1428571428571428,
+   "ramanujan_bank": 1.1428571428571428,
+   "fundamental_cosine_bank": 0.9507721595960689,
+   "single_ramanujan": 1.0,
+   "single_cosine": 0.2928932188134524
+  },
+  {
+   "period": 9,
+   "optimal_pd": 1.125,
+   "ramanujan_bank": 1.125,
+   "fundamental_cosine_bank": 0.8134359538572384,
+   "single_ramanujan": 1.0,
+   "single_cosine": 0.233955556881022
+  },
+  {
+   "period": 10,
+   "optimal_pd": 1.1111111111111112,
+   "ramanujan_bank": 1.1111111111111112,
+   "fundamental_cosine_bank": 0.889991055592133,
+   "single_ramanujan": 0.75,
+   "single_cosine": 0.19098300562505255
+  },
+  {
+   "period": 11,
+   "optimal_pd": 1.1,
+   "ramanujan_bank": 1.1,
+   "fundamental_cosine_bank": 0.1587464671688188,
+   "single_ramanujan": 1.1,
+   "single_cosine": 0.1587464671688188
+  },
+  {
+   "period": 12,
+   "optimal_pd": 1.0909090909090908,
+   "ramanujan_bank": 1.0909090909090908,
+   "fundamental_cosine_bank": 0.9872723694104371,
+   "single_ramanujan": 0.5,
+   "single_cosine": 0.1339745962155613
+  },
+  {
+   "period": 13,
+   "optimal_pd": 1.0833333333333333,
+   "ramanujan_bank": 1.0833333333333333,
+   "fundamental_cosine_bank": 0.11454397434678998,
+   "single_ramanujan": 1.0833333333333333,
+   "single_cosine": 0.11454397434679009
+  },
+  {
+   "period": 14,
+   "optimal_pd": 1.0769230769230769,
+   "ramanujan_bank": 1.0769230769230769,
+   "fundamental_cosine_bank": 0.6965924550368288,
+   "single_ramanujan": 0.8333333333333334,
+   "single_cosine": 0.09903113209758085
+  },
+  {
+   "period": 15,
+   "optimal_pd": 1.0714285714285714,
+   "ramanujan_bank": 1.0714285714285714,
+   "fundamental_cosine_bank": 0.7940604360664294,
+   "single_ramanujan": 0.875,
+   "single_cosine": 0.08645454235739913
+  },
+  {
+   "period": 16,
+   "optimal_pd": 1.0666666666666667,
+   "ramanujan_bank": 1.0666666666666667,
+   "fundamental_cosine_bank": 0.7433581441784389,
+   "single_ramanujan": 1.0,
+   "single_cosine": 0.07612046748871326
+  },
+  {
+   "period": 17,
+   "optimal_pd": 1.0625,
+   "ramanujan_bank": 1.0625,
+   "fundamental_cosine_bank": 0.06752777059564419,
+   "single_ramanujan": 1.0625,
+   "single_cosine": 0.06752777059564419
+  },
+  {
+   "period": 18,
+   "optimal_pd": 1.0588235294117647,
+   "ramanujan_bank": 1.0588235294117647,
+   "fundamental_cosine_bank": 0.8075058795052354,
+   "single_ramanujan": 0.5,
+   "single_cosine": 0.06030737921409157
+  },
+  {
+   "period": 19,
+   "optimal_pd": 1.0555555555555556,
+   "ramanujan_bank": 1.0555555555555556,
+   "fundamental_cosine_bank": 0.05418275829936536,
+   "single_ramanujan": 1.0555555555555556,
+   "single_cosine": 0.05418275829936536
+  },
+  {
+   "period": 20,
+   "optimal_pd": 1.0526315789473684,
+   "ramanujan_bank": 1.0526315789473684,
+   "fundamental_cosine_bank": 0.7552083645264726,
+   "single_ramanujan": 0.75,
+   "single_cosine": 0.04894348370484647
+  },
+  {
+   "period": 21,
+   "optimal_pd": 1.05,
+   "ramanujan_bank": 1.05,
+   "fundamental_cosine_bank": 0.6116460824138512,
+   "single_ramanujan": 0.9166666666666666,
+   "single_cosine": 0.04442719421385932
+  },
+  {
+   "period": 22,
+   "optimal_pd": 1.0476190476190477,
+   "ramanujan_bank": 1.0476190476190477,
+   "fundamental_cosine_bank": 0.42512930596830645,
+   "single_ramanujan": 0.9,
+   "single_cosine": 0.04050702638550263
+  },
+  {
+   "period": 23,
+   "optimal_pd": 1.0454545454545454,
+   "ramanujan_bank": 1.0454545454545454,
+   "fundamental_cosine_bank": 0.03708271265220098,
+   "single_ramanujan": 1.0454545454545454,
+   "single_cosine": 0.037082712652200756
+  },
+  {
+   "period": 24,
+   "optimal_pd": 1.0434782608695652,
+   "ramanujan_bank": 1.0434782608695652,
+   "fundamental_cosine_bank": 0.8382010059305658,
+   "single_ramanujan": 0.5,
+   "single_cosine": 0.03407417371093169
+  },
+  {
+   "period": 25,
+   "optimal_pd": 1.0416666666666667,
+   "ramanujan_bank": 1.0416666666666667,
+   "fundamental_cosine_bank": 0.35352841927382805,
+   "single_ramanujan": 1.0,
+   "single_cosine": 0.031416838871368924
+  },
+  {
+   "period": 26,
+   "optimal_pd": 1.04,
+   "ramanujan_bank": 1.04,
+   "fundamental_cosine_bank": 0.33771686323490546,
+   "single_ramanujan": 0.9166666666666666,
+   "single_cosine": 0.029058182573947988
+  },
+  {
+   "period": 27,
+   "optimal_pd": 1.0384615384615385,
+   "ramanujan_bank": 1.0384615384615385,
+   "fundamental_cosine_bank": 0.5567069228088372,
+   "single_ramanujan": 1.0,
+   "single_cosine": 0.026955129420176194
+  },
+  {
+   "period": 28,
+   "optimal_pd": 1.037037037037037,
+   "ramanujan_bank": 1.037037037037037,
+   "fundamental_cosine_bank": 0.7070453212979655,
+   "single_ramanujan": 0.8333333333333334,
+   "single_cosine": 0.02507208781817638
+  },
+  {
+   "period": 29,
+   "optimal_pd": 1.0357142857142858,
+   "ramanujan_bank": 1.0357142857142858,
+   "fundamental_cosine_bank": 0.023379444289913343,
+   "single_ramanujan": 1.0357142857142858,
+   "single_cosine": 0.023379444289913343
+  },
+  {
+   "period": 30,
+   "optimal_pd": 1.0344827586206897,
+   "ramanujan_bank": 1.0344827586206897,
+   "fundamental_cosine_bank": 0.7991571565185641,
+   "single_ramanujan": 0.5,
+   "single_cosine": 0.02185239926619431
+  },
+  {
+   "period": 31,
+   "optimal_pd": 1.0333333333333334,
+   "ramanujan_bank": 1.0333333333333334,
+   "fundamental_cosine_bank": 0.020470058747505737,
+   "single_ramanujan": 1.0333333333333334,
+   "single_cosine": 0.020470058747505515
+  },
+  {
+   "period": 32,
+   "optimal_pd": 1.032258064516129,
+   "ramanujan_bank": 1.032258064516129,
+   "fundamental_cosine_bank": 0.6097565717206589,
+   "single_ramanujan": 1.0,
+   "single_cosine": 0.01921471959676957
+  },
+  {
+   "period": 33,
+   "optimal_pd": 1.03125,
+   "ramanujan_bank": 1.03125,
+   "fundamental_cosine_bank": 0.5249648561434348,
+   "single_ramanujan": 0.95,
+   "single_cosine": 0.018071302737293293
+  },
+  {
+   "period": 34,
+   "optimal_pd": 1.0303030303030303,
+   "ramanujan_bank": 1.0303030303030303,
+   "fundamental_cosine_bank": 0.22312349775030216,
+   "single_ramanujan": 0.9375,
+   "single_cosine": 0.017026900316098215
+  },
+  {
+   "period": 35,
+   "optimal_pd": 1.0294117647058822,
+   "ramanujan_bank": 1.0294117647058822,
+   "fundamental_cosine_bank": 0.4664584992127744,
+   "single_ramanujan": 0.9583333333333334,
+   "single_cosine": 0.016070411401370333
+  },
+  {
+   "period": 36,
+   "optimal_pd": 1.0285714285714285,
+   "ramanujan_bank": 1.0285714285714285,
+   "fundamental_cosine_bank": 0.76693236982308,
+   "single_ramanujan": 0.5,
+   "single_cosine": 0.01519224698779198
+  }
+ ],
+ "comb_mass": {
+  "ArithScope 8\u00b7K\u2081\u2083 (budget 8)": {
+   "length": [
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768,
+    65536,
+    131072,
+    262144,
+    524288,
+    1048576
+   ],
+   "comb_mass": [
+    0.9979717814106871,
+    0.9979717814106855,
+    0.9979717814106897,
+    0.9979717814106883,
+    0.9979439892829756,
+    0.9979439892830019,
+    0.9979439892830024,
+    0.9979404658273536,
+    0.9979386999178831,
+    0.9979378159151969,
+    0.997937815915459,
+    0.9979375948054416,
+    0.9979374842340222,
+    0.9979374842340549,
+    0.9979374842176213
+   ],
+   "max_abs_score": 8.0
+  },
+  "matched cosine 8\u00b7cos(2\u03c0n/13) (budget 8)": {
+   "length": [
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768,
+    65536,
+    131072,
+    262144,
+    524288,
+    1048576
+   ],
+   "comb_mass": [
+    0.5602550737487734,
+    0.5489252604138238,
+    0.5425129306268227,
+    0.5393495492574529,
+    0.5378013491624389,
+    0.537010960731584,
+    0.5370109607315793,
+    0.5364347564302887,
+    0.5363214472272831,
+    0.5362721447509611,
+    0.5362475310917246,
+    0.5362351492904405,
+    0.5362285203199323,
+    0.5362258937265769,
+    0.5362243585465735
+   ],
+   "max_abs_score": 8.0
+  },
+  "learned frequency off by \u03b5 = 10\u207b\u00b3 (budget 8)": {
+   "length": [
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768,
+    65536,
+    131072,
+    262144,
+    524288,
+    1048576
+   ],
+   "comb_mass": [
+    0.5580576216047523,
+    0.5396129328773958,
+    0.5017266437433203,
+    0.4011453566302418,
+    0.23822783608988876,
+    0.11977131436549793,
+    0.0598428158466571,
+    0.08888046638492358,
+    0.07396973936192694,
+    0.08122838994871458,
+    0.07748807927844104,
+    0.07565057677623918,
+    0.07652751324216943,
+    0.07698133574956881,
+    0.0767599818972842
+   ],
+   "max_abs_score": 8.0
+  },
+  "RoPE d=64 fit on 64 tokens (budget 8)": {
+   "length": [
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768,
+    65536,
+    131072,
+    262144,
+    524288,
+    1048576
+   ],
+   "comb_mass": [
+    0.2858348844586628,
+    0.2389908921665057,
+    0.20114700112619413,
+    0.17333665747666596,
+    0.1475765570853644,
+    0.12999469973512107,
+    0.115605170813735,
+    0.10187998355653115,
+    0.09134779326298464,
+    0.08232829385612819,
+    0.07913089824985652,
+    0.07816591316308028,
+    0.07756155675290406,
+    0.07712817612468927,
+    0.07693619566456557
+   ],
+   "max_abs_score": 5.687052078563115
+  },
+  "RoPE d=64 fit on 64 tokens (budget 32)": {
+   "length": [
+    64,
+    128,
+    256,
+    512,
+    1024,
+    2048,
+    4096,
+    8192,
+    16384,
+    32768,
+    65536,
+    131072,
+    262144,
+    524288,
+    1048576
+   ],
+   "comb_mass": [
+    0.9914685930685763,
+    0.9906568999938646,
+    0.9896496973077158,
+    0.9895112283994425,
+    0.9892797098823364,
+    0.9891180538122929,
+    0.9889078342827251,
+    0.9883289985483795,
+    0.9835852494741865,
+    0.8034138373519183,
+    0.6721197928000652,
+    0.4548680315932743,
+    0.2917342603580687,
+    0.19833852337008562,
+    0.12189654034376105
+   ],
+   "max_abs_score": 18.875868941161166
+  }
+ },
+ "period": 13,
+ "window": 64,
+ "budget": 8.0
+}

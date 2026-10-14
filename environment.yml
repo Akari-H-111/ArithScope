@@ -1,0 +1,15 @@
+# CPU environment used for all experiments (conda-forge). The exact lock is
+# results/environment/conda-explicit.lock (linux-64).
+name: arithscope
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13
+  - pytorch=2.14.1=cpu_mkl*
+  - numpy=2.5.4
+  - scipy=1.18.1
+  - matplotlib=3.11.2
+  - pytest=9.1.1
+  - pip
+  - pip:
+      - ruff==0.17.0  # lint only (make lint)
