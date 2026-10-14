@@ -1,5 +1,7 @@
 """Attention/model semantics: gamma=0 equivalence, backends, masks, gradients, training."""
+import os
 import unittest
+import warnings
 from importlib.util import find_spec
 
 HAS_TORCH = find_spec("torch") is not None
@@ -82,6 +84,45 @@ class BackendAndMaskTests(unittest.TestCase):
         for backend in ("sdpa", "folded"):
             got = layer(x, pos, valid, backend=backend)
             self.assertTrue(torch.allclose(ref, got, atol=1e-10), backend)
+
+    def test_flex_backend_matches_explicit(self):
+        from arithscope import flex
+
+        if not flex.available():
+            self.skipTest("FlexAttention is not available in this torch build")
+        x = torch.randn(2, 37, 32, dtype=torch.float64)
+        pos = torch.stack([torch.arange(37), torch.arange(37) + 1000])
+        valid = torch.ones(2, 37, dtype=torch.bool)
+        valid[0, :3] = False  # rows 0-2 of the first sequence have no valid key
+        for name in ("rope+arith", "arith", "rope+fourier_full", "rope+fourier_learned", "rope+relbias", "alibi",
+                     "rope", "nope"):
+            layer = self._attn(name)
+            with torch.no_grad(), warnings.catch_warnings():  # FlexAttention has no CPU backward
+                warnings.simplefilter("ignore", UserWarning)  # eager (uncompiled) FlexAttention warns
+                ref = layer(x, pos, valid, backend="explicit")
+                got = layer(x, pos, valid, backend="flex")
+            self.assertTrue(torch.allclose(ref, got, atol=1e-12, rtol=0), name)
+
+    @unittest.skipUnless(os.environ.get("ARITHSCOPE_TEST_COMPILED_FLEX") == "1",
+                         "opt-in: set ARITHSCOPE_TEST_COMPILED_FLEX=1 to compile FlexAttention kernels (slow)")
+    def test_compiled_flex_backend_matches_explicit(self):
+        from arithscope import flex
+
+        layer = self._attn("rope+arith").float()
+        x = torch.randn(2, 300, 32)
+        pos = torch.stack([torch.arange(300), torch.arange(300) + 10**6])
+        valid = torch.ones(2, 300, dtype=torch.bool)
+        valid[0, :5] = False
+        try:
+            flex.compile_kernels(True)
+            with torch.no_grad(), warnings.catch_warnings():
+                warnings.simplefilter("ignore", UserWarning)
+                got = layer(x, pos, valid, backend="flex")
+                ref = layer(x, pos, valid, backend="explicit")
+        finally:
+            flex.compile_kernels(False)
+        self.assertTrue(torch.allclose(ref, got, atol=1e-5, rtol=0))
+        self.assertTrue(torch.equal(got[0, :5], torch.zeros(5, 32)))
 
     def test_explicit_query_blocking_is_exact(self):
         import arithscope.attention as attention_module

@@ -15,6 +15,9 @@ Backends compute the same function:
 * ``folded``   -- ArithScope only: the Ramanujan bias is folded into extra q/k
   feature dimensions (exact rank-``sum phi(m)`` factorization), so no ``[N, N]``
   bias tensor is formed and fused causal kernels can be used.
+* ``flex``     -- FlexAttention: every bias becomes a ``score_mod`` that reads a
+  per-head table of offset values (:mod:`arithscope.flex`; eager by default,
+  fused after ``flex.compile_kernels()``). Forward only on CPU.
 """
 from __future__ import annotations
 
@@ -135,6 +138,13 @@ class CausalSelfAttention(nn.Module):
         q, k, v = self._qkv(x, positions)
         scale = 1.0 / math.sqrt(self.head_dim)
         attn = None
+        if backend == "flex":
+            if return_attention:
+                raise ValueError("return_attention requires backend='explicit'")
+            from . import flex
+
+            out = flex.attention(q, k, v, list(self.biases.values()), positions, key_padding_mask, scale)
+            return self.proj(out.transpose(1, 2).reshape(b, n, d))
         if backend == "explicit":
             out, attn = self._explicit(q, k, v, positions, key_padding_mask, scale, return_attention)
             out = self.proj(out.transpose(1, 2).reshape(b, n, d))

@@ -16,7 +16,7 @@ import platform
 import subprocess
 import sys
 import time
-from dataclasses import asdict, dataclass, field, replace
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import torch
