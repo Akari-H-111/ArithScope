@@ -58,7 +58,7 @@ Every bias is an `OffsetBias`. The call `bias(q_pos [..., Nq], k_pos [..., Nk])`
 
 ```
 forward(x [B, N, D], positions [N] | [B, N], key_padding_mask [B, N] (True = valid) | None,
-        backend in {"explicit", "sdpa", "folded"}, return_attention=False)
+        backend in {"explicit", "sdpa", "folded", "flex"}, return_attention=False)
 ```
 
 **Logits.** `<q, k>/sqrt(d_head)`, with q and k rotated by RoPE when enabled, plus the sum of all configured biases.
@@ -71,12 +71,13 @@ forward(x [B, N, D], positions [N] | [B, N], key_padding_mask [B, N] (True = val
 - `explicit` is the reference. It is the only backend that can return attention weights. Softmax runs in float32 for half-precision inputs, otherwise in the input dtype.
 - `sdpa` passes the summed bias as `attn_mask`.
 - `folded` requires the bias set to be exactly `{"arith"}` (RoPE allowed). It concatenates `sqrt(d_head) * query_features` to q and `key_features` to k, then calls SDPA with `scale = 1/sqrt(d_head)`. Without padding and with shared 1-D positions it uses `is_causal=True`, so no `[N, N]` tensor is built.
+- `flex` uses FlexAttention (`torch.nn.attention.flex_attention`; module `arithscope.flex`). The summed bias is evaluated once on the offsets `−s … s`, where `s` is the largest position span of any sequence in the batch, and a `score_mod` reads it by offset; a `mask_mod` applies the mask rule above. It needs a PyTorch build that provides FlexAttention. Eager mode is the default; `arithscope.flex.compile_kernels()` switches to `torch.compile(flex_attention)`. On CPU only the forward pass is available (call it under `torch.no_grad()`). Its output matches `explicit` to 1e−12 in float64 in eager mode, with padding and per-sequence positions [`test_flex_backend_matches_explicit`], and to 1e−5 in float32 with compiled kernels [`test_compiled_flex_backend_matches_explicit`, opt-in via `ARITHSCOPE_TEST_COMPILED_FLEX=1`]. Gradients and GPU kernels are not tested in this repository.
 
 **Zero-init equivalence.** If every additive channel is at its zero init, a `rope+X` model with the same shared weights produces bitwise-identical outputs and gradients to `rope` [`GammaZeroEquivalenceTests`]. The same holds for `arith` vs `nope` and `alibi+arith` vs `alibi`.
 
 ## 5. Known numerical boundaries
 
-- **RoPE angles.** RoPE computes `pos * inv_freq` in `rope_angle_dtype` (default float32, as in common LLM code). Relative-position exactness therefore degrades at large absolute positions. This is a property of RoPE, measured in the E1 shift evaluation, not a bug of this package.
+- **RoPE angles.** RoPE computes `pos * inv_freq` in `rope_angle_dtype` (default float32, as in common LLM code). Relative-position exactness therefore degrades at large absolute positions. This is a property of RoPE, not a bug of this package; the post-hoc shift test at the training length measures it (`experiments/posthoc_shift.py`, [`RESULTS.md`](RESULTS.md)).
 - **Feature dimension.** `feature_dim` grows as `sum_m phi(m)`. The folded backend trades `O(H N^2)` bias memory for `F` extra q/k dimensions. Compute stays quadratic in `N`.
 
 ## 6. Model and harness

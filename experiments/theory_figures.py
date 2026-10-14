@@ -93,6 +93,37 @@ def plot_comb_mass(data: dict, mode: str) -> Path:
         return save(fig, FIG_DIR, "theory_comb_mass", mode)
 
 
+def plot_mechanism(mode: str, period: int = 12, size: int = 72) -> Path:
+    """The bias ArithScope adds to a head's logits: the T3-optimal comb for one period, causal-masked."""
+    from matplotlib.colors import LinearSegmentedColormap
+
+    weights = arith.optimal_comb_weights(period)
+    profile = np.array([float(arith.mixture_value(weights, n)) for n in range(size)])
+    i, j = np.meshgrid(np.arange(size), np.arange(size), indexing="ij")
+    bias = np.where(j <= i, profile[np.clip(i - j, 0, None)], np.nan)
+    with themed(mode) as th:
+        ramp = ["#cde2fb", "#86b6ef", "#3987e5", "#1c5cab", "#0d366b"] if mode == "light" else \
+               ["#1a2a40", "#184f95", "#2a78d6", "#6da7ec", "#cde2fb"]
+        cmap = LinearSegmentedColormap.from_list("seq", ramp)
+        cmap.set_bad(th["surface"])
+        fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(10.2, 4.0), gridspec_kw={"width_ratios": [1, 1.35]})
+        ax0.imshow(bias, cmap=cmap, vmin=profile.min(), vmax=1.0, interpolation="nearest")
+        ax0.set_xlabel("key position j")
+        ax0.set_ylabel("query position i")
+        ax0.grid(False)
+        ax0.set_title(f"Bias matrix b(i − j), causal, P = {period}", loc="left", fontsize=10)
+        colors = [th["series"][0] if n % period == 0 else th["grid"] for n in range(size)]
+        ax1.bar(np.arange(size), profile, color=colors, width=0.7)
+        ax1.axhline(0, color=th["axis"], linewidth=1.0)
+        ax1.set_xlabel("offset n = i − j")
+        ax1.set_ylabel("bias / γ")
+        ax1.set_title(f"One row: 1 on multiples of {period}, −1/{period - 1} elsewhere (Theorem T3 optimum)",
+                      loc="left", fontsize=10)
+        fig.suptitle("What ArithScope adds to a head's attention logits", x=0.01, ha="left", fontweight="bold",
+                     fontsize=11, color=th["ink"])
+        return save(fig, FIG_DIR, "mechanism", mode)
+
+
 def main() -> None:
     rows = margin_data()
     mass = comb_mass_data()
@@ -102,6 +133,7 @@ def main() -> None:
     for mode in ("light", "dark"):
         print(plot_margins(rows, mode))
         print(plot_comb_mass(mass, mode))
+        print(plot_mechanism(mode))
 
 
 if __name__ == "__main__":

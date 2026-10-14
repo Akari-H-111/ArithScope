@@ -1,6 +1,9 @@
 """Runtime and peak-memory overhead of the ArithScope bias backends (CPU).
 
 Each measurement runs in a fresh subprocess so peak RSS is attributable to it.
+Forward rows run under ``torch.no_grad()`` (inference); forward+backward rows run a
+training step. ``arith_flex`` uses compiled FlexAttention kernels, which have no CPU
+backward, so it has forward rows only; its peak RSS includes compilation.
 Run on an otherwise idle machine; results go to results/overhead/overhead.json.
 
     python experiments/bench_overhead.py [--quick]
@@ -9,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import resource
 import statistics
 import subprocess
@@ -24,7 +28,7 @@ CONFIGS = {
     "tiny_d16_M1-16": (64, 4, tuple(range(1, 17))),
     "llm_d64_B16": (512, 8, (2, 3, 4, 5, 7, 8, 9, 11, 13, 16)),
 }
-MODES = ("baseline_sdpa", "arith_explicit", "arith_sdpa_mask", "arith_folded")
+MODES = ("baseline_sdpa", "arith_explicit", "arith_sdpa_mask", "arith_folded", "arith_flex")
 
 
 def measure(config: str, mode: str, length: int, backward: bool, repeats: int) -> dict:
@@ -40,15 +44,21 @@ def measure(config: str, mode: str, length: int, backward: bool, repeats: int) -
         with torch.no_grad():
             layer.biases["arith"].gamma.fill_(1.0)
     backend = {"baseline_sdpa": "sdpa", "arith_explicit": "explicit", "arith_sdpa_mask": "sdpa",
-               "arith_folded": "folded"}[mode]
+               "arith_folded": "folded", "arith_flex": "flex"}[mode]
+    if mode == "arith_flex":
+        from arithscope import flex
+
+        flex.compile_kernels(True)
     x = torch.randn(1, length, d_model, requires_grad=backward)
     pos = torch.arange(length)
     rss_before = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
     def step():
-        out = layer(x, pos, backend=backend)
         if backward:
-            out.sum().backward()
+            layer(x, pos, backend=backend).sum().backward()
+        else:
+            with torch.no_grad():
+                layer(x, pos, backend=backend)
 
     step()  # warmup
     times = []
@@ -81,7 +91,11 @@ def main() -> None:
                 for mode in MODES:
                     heads = CONFIGS[config][1]
                     dense_gb = heads * length * length * 4 * (3 if backward else 1) / 2**30
-                    if mode != "baseline_sdpa" and mode != "arith_folded" and dense_gb > 4:
+                    if mode == "arith_flex" and backward:
+                        rows.append({"config": config, "mode": mode, "length": length, "backward": backward,
+                                     "skipped": "FlexAttention has no CPU backward"})
+                        continue
+                    if mode in ("arith_explicit", "arith_sdpa_mask") and dense_gb > 4:
                         rows.append({"config": config, "mode": mode, "length": length, "backward": backward,
                                      "skipped": f"dense [H,N,N] tensors would need ~{dense_gb:.1f} GB"})
                         continue
@@ -99,6 +113,7 @@ def main() -> None:
 
     env = environment_info()
     env["torch_threads"] = 4
+    env["ld_preload"] = os.environ.get("LD_PRELOAD", "")  # e.g. libsleef.so for compiled kernels on conda-forge builds
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps({"schema_version": "arithscope-overhead-1", "environment": env, "rows": rows}, indent=1))

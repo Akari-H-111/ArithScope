@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>ArithScope Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a lab notebook. A 68ch reading column; each instrument (controls + live figure) widens to 960px. */
+:root {
+  --paper: #f3f5f8;      /* page ground: cool graph-paper grey */
+  --panel: #fbfcfd;      /* instrument surface */
+  --ink: #131b2a;        /* primary text */
+  --ink-2: #4b5567;      /* secondary text */
+  --muted: #8a93a3;      /* axes, captions */
+  --rule: #dde2e9;       /* hairlines, grid */
+  --link: #1f5cb8;       /* text accent (AA on paper) */
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s8: #e34948;
+  --comb: var(--s1);     /* comb / ArithScope */
+  --off: #c4cbd6;        /* off-comb bars */
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f141b; --panel: #151b24; --ink: #e8edf3; --ink-2: #b6c0cd; --muted: #7f8998; --rule: #27303c;
+    --link: #7fb0f5; --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s8: #e66767;
+    --off: #3a4555; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f141b; --panel: #151b24; --ink: #e8edf3; --ink-2: #b6c0cd; --muted: #7f8998; --rule: #27303c;
+  --link: #7fb0f5; --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s8: #e66767;
+  --off: #3a4555; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 64px;
+}
+main { max-width: 960px; margin: 0 auto; display: grid; gap: 56px; }
+.prose { max-width: 68ch; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.4rem, 6vw, 3.6rem); line-height: 1.05; }
+h2 { font-size: clamp(1.5rem, 3.2vw, 2rem); line-height: 1.15; }
+p { margin: 0; }
+.stack { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-2); }
+.lede { font-size: 1.18rem; color: var(--ink-2); }
+a { color: var(--link); text-underline-offset: 3px; }
+a:focus-visible, input:focus-visible, select:focus-visible, button:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+.formula {
+  font-family: var(--font-mono); font-size: 0.95rem; background: var(--panel); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 14px 16px; overflow-x: auto; white-space: pre; color: var(--ink);
+}
+.links { display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 0.95rem; }
+.instrument { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 20px; display: grid; gap: 16px; min-width: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; }
+.control { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--ink-2); }
+.control output, .readout b { font-family: var(--font-mono); color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+input[type="range"] { width: min(260px, 60vw); accent-color: var(--s1); }
+select { font: inherit; font-family: var(--font-mono); padding: 4px 6px; border-radius: 6px; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
+.checks { display: flex; flex-wrap: wrap; gap: 6px; }
+.chk { display: inline-flex; }
+.chk input { position: absolute; opacity: 0; pointer-events: none; }
+.chk span {
+  font-family: var(--font-mono); font-size: 0.85rem; min-width: 2.6em; text-align: center; padding: 4px 8px; border-radius: 6px;
+  border: 1px solid var(--rule); color: var(--ink-2); cursor: pointer; user-select: none; background: var(--paper);
+}
+.chk input:checked + span { background: var(--s1); border-color: var(--s1); color: #fff; }
+.chk input:focus-visible + span { outline: 2px solid var(--link); outline-offset: 2px; }
+.figure { width: 100%; overflow-x: auto; }
+.figure svg { display: block; width: 100%; height: auto; }
+.figure.wide svg { min-width: 520px; }
+.readout { display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 0.95rem; color: var(--ink-2); }
+.verdict { font-size: 0.95rem; padding: 10px 12px; border-radius: 6px; border: 1px solid var(--rule); background: var(--paper); }
+.verdict strong { font-family: var(--font-mono); }
+.pill { display: inline-block; font-family: var(--font-mono); font-size: 0.8rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); margin: 2px 4px 2px 0; color: var(--ink); background: var(--paper); }
+.pill.on { border-color: var(--s1); color: var(--s1); }
+.caption { font-size: 0.9rem; color: var(--ink-2); max-width: 75ch; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.grid2 > * { min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--ink-2); }
+.legend i { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.status { font-size: 0.9rem; color: var(--ink-2); border-left: 3px solid var(--rule); padding-left: 12px; }
+svg text { font-family: var(--font-mono); font-size: 11px; fill: var(--ink-2); }
+svg .axis { stroke: var(--rule); }
+#tip {
+  position: fixed; pointer-events: none; z-index: 10; background: var(--ink); color: var(--paper); font-family: var(--font-mono);
+  font-size: 12px; line-height: 1.45; padding: 6px 9px; border-radius: 6px; max-width: 260px; opacity: 0; transition: opacity 0.08s;
+}
+footer { font-size: 0.85rem; color: var(--muted); max-width: 75ch; }
+@media (prefers-reduced-motion: reduce) { #tip { transition: none; } }
+</style>
+
+</head>
+<body>
+<main>
+  <header class="stack">
+    <div class="eyebrow">Interactive companion · attention mechanism research</div>
+    <h1>ArithScope Lab</h1>
+    <p class="lede prose">Can an attention head reliably look every <em>P</em> tokens back, at any context length? This page computes, exactly and live, the number theory behind ArithScope: a zero-initialized Ramanujan-sum bias added to each attention head.</p>
+    <div class="formula" aria-label="ArithScope attention logit">logit(i, j) = ⟨q_i, k_j⟩ / √d  +  γ_h · Σ_m α_(h,m) · c_m(i − j) / φ(m)
+c_m(n) = Σ_(gcd(a,m)=1) e^(2πi·a·n/m)  ∈ ℤ          (the Ramanujan sum)
+K_m(n) = c_m(n)/φ(m) = μ(q)/φ(q),  q = m / gcd(m, n)</div>
+    <div class="links">
+      <a href="https://github.com/Akari-H-111/ArithScope">Repository</a>
+      <a href="https://github.com/Akari-H-111/ArithScope/blob/main/docs/MATH.md">Proofs (MATH.md)</a>
+      <a href="https://github.com/Akari-H-111/ArithScope/blob/main/docs/PREREGISTRATION.md">Preregistration</a>
+      <a href="https://github.com/Akari-H-111/ArithScope/blob/main/docs/RESULTS.md">Results</a>
+    </div>
+  </header>
+
+  <section class="stack" aria-labelledby="h-kernel">
+    <div class="prose stack">
+      <div class="eyebrow">Lemma L2 · the comb gap</div>
+      <h2 id="h-kernel">One order, one exact comb</h2>
+      <p>Each kernel <code>K_m</code> equals 1 exactly on multiples of <code>m</code> and is at most ½ everywhere else. It is a table lookup on <code>n mod m</code> in integer arithmetic, so the comb never drifts, whether at offset 10 or offset 10<sup>15</sup>.</p>
+    </div>
+    <div class="instrument">
+      <div class="controls">
+        <label class="control" for="m">order m <input id="m" type="range" min="1" max="36" value="12"><output id="m-out">12</output></label>
+      </div>
+      <div class="figure wide" id="fig-kernel" role="img" aria-label="Bar chart of K_m(n) for offsets 0 to 71"></div>
+      <div class="readout" id="kernel-readout"></div>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-opt">
+    <div class="prose stack">
+      <div class="eyebrow">Theorem T3 · optimality</div>
+      <h2 id="h-opt">The best possible periodic attention bias</h2>
+      <p>Among all positive-definite <em>P</em>-periodic biases with unit diagonal, the largest gap between the comb and everything else is <code>P/(P−1)</code>. Only one function reaches it: the convex Ramanujan mixture <code>Σ φ(d)/(P−1)·K_d</code> over divisors <code>d &gt; 1</code> of <em>P</em>. The natural Fourier control with the same periods and the same parameter count falls far short whenever <em>P</em> is prime.</p>
+    </div>
+    <div class="instrument">
+      <div class="controls">
+        <label class="control" for="p">period P <input id="p" type="range" min="2" max="36" value="13"><output id="p-out">13</output></label>
+      </div>
+      <div class="grid2">
+        <div class="figure" id="fig-comb" role="img" aria-label="Optimal comb and single cosine over two periods"></div>
+        <div class="figure" id="fig-margin" role="img" aria-label="Comb margin versus period for three bias families"></div>
+      </div>
+      <div class="legend" id="opt-legend"></div>
+      <div class="readout" id="opt-readout"></div>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-alias">
+    <div class="prose stack">
+      <div class="eyebrow">Theorem T4 and Proposition P1 · identifiability</div>
+      <h2 id="h-alias">Which periods can a bank of orders see?</h2>
+      <p>A head with orders <em>M</em> can make exactly the combs <code>lcm(S)·ℤ</code>, <code>S ⊆ M</code>, its strict argmax. Offsets with the same kernel signature are indistinguishable to every such head. Pick a bank and a target period: what matters is the lcm, not the number of orders.</p>
+    </div>
+    <div class="instrument">
+      <div class="controls">
+        <div class="checks" id="bank" role="group" aria-label="Orders in the bank"></div>
+        <label class="control" for="target">target period <select id="target"></select></label>
+      </div>
+      <div class="figure wide" id="fig-alias" role="img" aria-label="Offsets 0 to 95 colored by alias class"></div>
+      <div class="legend" id="alias-legend"></div>
+      <div class="verdict" id="alias-verdict"></div>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-rope">
+    <div class="prose stack">
+      <div class="eyebrow">Theorem T5 · why exact periods are necessary</div>
+      <h2 id="h-rope">RoPE cannot hold a comb forever</h2>
+      <p>RoPE frequencies <code>b^(−2k/d)</code> are algebraic numbers, so by Lindemann's theorem none of their integer combinations is a nonzero rational multiple of 2π. Weyl equidistribution then forces the attention mass of any fixed RoPE head on a residue class mod <em>P</em> toward the uniform share 1/<em>P</em> as the context grows. Learned real frequencies drift the same way at about 1/|ε| tokens. Large logits only delay the decay: in the curves below, a RoPE head with 4× the budget holds the comb to about 16K tokens, then fades.</p>
+    </div>
+    <div class="instrument">
+      <div class="figure wide" id="fig-mass" role="img" aria-label="Attention mass on the 13-comb versus context length"></div>
+      <div class="legend" id="mass-legend"></div>
+      <p class="caption">Positional-only scores for P = 13, with logit budget B = max|score|. RoPE coefficients are fit on a 64-token window; all values come from <code>experiments/theory_figures.py</code>.</p>
+    </div>
+  </section>
+
+  <section class="stack" aria-labelledby="h-results" id="results-section">
+    <div class="prose stack">
+      <div class="eyebrow">Preregistered experiments</div>
+      <h2 id="h-results">What trained models do</h2>
+      <p id="results-intro">Tiny decoder-only Transformers (2 layers, d = 64) are trained on 64-token sequences and tested on positions they never saw. The protocol was frozen and pushed before any confirmatory run.</p>
+    </div>
+    <div class="instrument" id="results-box">
+      <p class="status" id="results-status">Results load here once the confirmatory runs finish.</p>
+      <div class="grid2" id="results-grid" hidden>
+        <div class="figure" id="fig-res13" role="img" aria-label="Accuracy versus length, period 13"></div>
+        <div class="figure" id="fig-res12" role="img" aria-label="Accuracy versus length, period 12"></div>
+      </div>
+      <div class="legend" id="res-legend" hidden></div>
+      <div id="verdicts" class="stack caption" hidden></div>
+    </div>
+  </section>
+
+  <footer>Everything above is computed in your browser from exact integer formulas, except the RoPE curves and the experiment results, which come from the repository's run files. Small models, synthetic tasks, CPU only: this is a mechanism study, not a language-model benchmark.</footer>
+</main>
+<div id="tip" role="tooltip"></div>
+
+<script>
+const THEORY = {"margins":[{"P":2,"opt":2.0,"cos":2.0,"kp":2.0,"c1":2.0},{"P":3,"opt":1.5,"cos":1.5,"kp":1.5,"c1":1.5},{"P":4,"opt":1.3333,"cos":1.3333,"kp":1.0,"c1":1.0},{"P":5,"opt":1.25,"cos":0.691,"kp":1.25,"c1":0.691},{"P":6,"opt":1.2,"cos":1.2,"kp":0.5,"c1":0.5},{"P":7,"opt":1.1667,"cos":0.3765,"kp":1.1667,"c1":0.3765},{"P":8,"opt":1.1429,"cos":0.9508,"kp":1.0,"c1":0.2929},{"P":9,"opt":1.125,"cos":0.8134,"kp":1.0,"c1":0.234},{"P":10,"opt":1.1111,"cos":0.89,"kp":0.75,"c1":0.191},{"P":11,"opt":1.1,"cos":0.1587,"kp":1.1,"c1":0.1587},{"P":12,"opt":1.0909,"cos":0.9873,"kp":0.5,"c1":0.134},{"P":13,"opt":1.0833,"cos":0.1145,"kp":1.0833,"c1":0.1145},{"P":14,"opt":1.0769,"cos":0.6966,"kp":0.8333,"c1":0.099},{"P":15,"opt":1.0714,"cos":0.7941,"kp":0.875,"c1":0.0865},{"P":16,"opt":1.0667,"cos":0.7434,"kp":1.0,"c1":0.0761},{"P":17,"opt":1.0625,"cos":0.0675,"kp":1.0625,"c1":0.0675},{"P":18,"opt":1.0588,"cos":0.8075,"kp":0.5,"c1":0.0603},{"P":19,"opt":1.0556,"cos":0.0542,"kp":1.0556,"c1":0.0542},{"P":20,"opt":1.0526,"cos":0.7552,"kp":0.75,"c1":0.0489},{"P":21,"opt":1.05,"cos":0.6116,"kp":0.9167,"c1":0.0444},{"P":22,"opt":1.0476,"cos":0.4251,"kp":0.9,"c1":0.0405},{"P":23,"opt":1.0455,"cos":0.0371,"kp":1.0455,"c1":0.0371},{"P":24,"opt":1.0435,"cos":0.8382,"kp":0.5,"c1":0.0341},{"P":25,"opt":1.0417,"cos":0.3535,"kp":1.0,"c1":0.0314},{"P":26,"opt":1.04,"cos":0.3377,"kp":0.9167,"c1":0.0291},{"P":27,"opt":1.0385,"cos":0.5567,"kp":1.0,"c1":0.027},{"P":28,"opt":1.037,"cos":0.707,"kp":0.8333,"c1":0.0251},{"P":29,"opt":1.0357,"cos":0.0234,"kp":1.0357,"c1":0.0234},{"P":30,"opt":1.0345,"cos":0.7992,"kp":0.5,"c1":0.0219},{"P":31,"opt":1.0333,"cos":0.0205,"kp":1.0333,"c1":0.0205},{"P":32,"opt":1.0323,"cos":0.6098,"kp":1.0,"c1":0.0192},{"P":33,"opt":1.0312,"cos":0.525,"kp":0.95,"c1":0.0181},{"P":34,"opt":1.0303,"cos":0.2231,"kp":0.9375,"c1":0.017},{"P":35,"opt":1.0294,"cos":0.4665,"kp":0.9583,"c1":0.0161},{"P":36,"opt":1.0286,"cos":0.7669,"kp":0.5,"c1":0.0152}],"comb_mass":{"ArithScope 8\u00b7K\u2081\u2083 (budget 8)":{"N":[64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576],"mass":[0.998,0.998,0.998,0.998,0.9979,0.9979,0.9979,0.9979,0.9979,0.9979,0.9979,0.9979,0.9979,0.9979,0.9979]},"matched cosine 8\u00b7cos(2\u03c0n/13) (budget 8)":{"N":[64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576],"mass":[0.5603,0.5489,0.5425,0.5393,0.5378,0.537,0.537,0.5364,0.5363,0.5363,0.5362,0.5362,0.5362,0.5362,0.5362]},"learned frequency off by \u03b5 = 10\u207b\u00b3 (budget 8)":{"N":[64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576],"mass":[0.5581,0.5396,0.5017,0.4011,0.2382,0.1198,0.0598,0.0889,0.074,0.0812,0.0775,0.0757,0.0765,0.077,0.0768]},"RoPE d=64 fit on 64 tokens (budget 8)":{"N":[64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576],"mass":[0.2858,0.239,0.2011,0.1733,0.1476,0.13,0.1156,0.1019,0.0913,0.0823,0.0791,0.0782,0.0776,0.0771,0.0769]},"RoPE d=64 fit on 64 tokens (budget 32)":{"N":[64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576],"mass":[0.9915,0.9907,0.9896,0.9895,0.9893,0.9891,0.9889,0.9883,0.9836,0.8034,0.6721,0.4549,0.2917,0.1983,0.1219]}}};
+const RESULTS = null;
+
+// ---------- exact arithmetic ----------
+const gcd = (a, b) => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a; };
+const lcm = (a, b) => a / gcd(a, b) * b;
+function factor(n) { const f = []; for (let p = 2; p * p <= n; p++) { if (n % p === 0) { let e = 0; while (n % p === 0) { n /= p; e++; } f.push([p, e]); } } if (n > 1) f.push([n, 1]); return f; }
+const mobius = n => { const f = factor(n); return f.some(([, e]) => e > 1) ? 0 : (f.length % 2 ? -1 : 1); };
+const phi = n => factor(n).reduce((r, [p]) => r / p * (p - 1), n);
+const divisors = n => { const d = []; for (let i = 1; i <= n; i++) if (n % i === 0) d.push(i); return d; };
+const Kq = (m, n) => m / gcd(m, n);                                  // q = m / gcd(m, n)
+const K = (m, n) => mobius(Kq(m, n)) / phi(Kq(m, n));
+function frac(num, den) { if (num === 0) return "0"; const g = gcd(num, den); num /= g; den /= g; return den === 1 ? `${num}` : `${num < 0 ? "−" : ""}${Math.abs(num)}/${den}`; }
+const Kfrac = (m, n) => frac(mobius(Kq(m, n)), phi(Kq(m, n)));
+
+// ---------- svg helpers ----------
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs = {}, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function svg(container, w, h) { container.innerHTML = ""; return el("svg", { viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: "xMidYMid meet" }, container); }
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const tip = document.getElementById("tip");
+function showTip(evt, html) { tip.innerHTML = html; tip.style.opacity = 1; const x = Math.min(evt.clientX + 14, window.innerWidth - tip.offsetWidth - 8); tip.style.left = x + "px"; tip.style.top = (evt.clientY + 14) + "px"; }
+function hideTip() { tip.style.opacity = 0; }
+function bindTip(node, html) { node.addEventListener("pointermove", e => showTip(e, html)); node.addEventListener("pointerleave", hideTip); }
+
+// ---------- instrument 1: kernel bars ----------
+function drawKernel() {
+  const m = +document.getElementById("m").value;
+  document.getElementById("m-out").textContent = m;
+  const N = 72, W = 920, H = 230, L = 44, R = 10, T = 14, B = 34;
+  const s = svg(document.getElementById("fig-kernel"), W, H);
+  const y = v => T + (1 - v) / 2 * (H - T - B);       // value range [-1, 1]
+  const bw = (W - L - R) / N;
+  for (const v of [1, 0.5, 0, -0.5, -1]) {
+    el("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), class: "axis", "stroke-width": v === 0 ? 1 : 0.6 }, s);
+    el("text", { x: L - 8, y: y(v) + 4, "text-anchor": "end" }, s).textContent = v === 0.5 ? "½" : v === -0.5 ? "−½" : v;
+  }
+  el("line", { x1: L, x2: W - R, y1: y(0.5), y2: y(0.5), stroke: css("--s4"), "stroke-width": 1.2, "stroke-dasharray": "4 3" }, s);
+  for (let n = 0; n < N; n++) {
+    const v = K(m, n), on = n % m === 0;
+    const x = L + n * bw + bw * 0.18, w = Math.max(2, bw * 0.64);
+    const top = y(Math.max(v, 0)), bot = y(Math.min(v, 0));
+    const r = el("rect", { x, y: top, width: w, height: Math.max(1.5, bot - top), rx: 1.5, fill: on ? css("--comb") : css("--off") }, s);
+    const hit = el("rect", { x: L + n * bw, y: T, width: bw, height: H - T - B, fill: "transparent" }, s);
+    bindTip(hit, `n = ${n}<br>gcd(m, n) = ${gcd(m, n)}<br>q = ${Kq(m, n)}<br>K<sub>${m}</sub>(n) = ${Kfrac(m, n)}${on ? "<br><b>on the comb</b>" : ""}`);
+    if (n % 6 === 0) el("text", { x: L + n * bw + bw / 2, y: H - B + 16, "text-anchor": "middle" }, s).textContent = n;
+  }
+  el("text", { x: W - R, y: H - 6, "text-anchor": "end" }, s).textContent = "offset n = i − j";
+  // The largest off-comb value is mu(q)/phi(q) maximized over divisors q > 1 of m (Lemma L2).
+  const best = m > 1 ? divisors(m).filter(q => q > 1).reduce((a, q) => mobius(q) / phi(q) > mobius(a) / phi(a) ? q : a) : null;
+  const maxOff = best ? frac(mobius(best), phi(best)) : "—";
+  const gap = best ? frac(phi(best) - mobius(best), phi(best)) : "—";
+  const note = m > 1 ? (m % 6 === 0 ? "(= ½, since 6 | m)" : "(> ½)") : "(no off-comb offsets)";
+  document.getElementById("kernel-readout").innerHTML =
+    `<span>φ(${m}) = <b>${phi(m)}</b></span><span>largest off-comb value = <b>${maxOff}</b></span>` +
+    `<span>comb gap Δ = <b>${gap}</b> ${note}</span><span>folded features = <b>${phi(m)}</b></span>`;
+}
+
+// ---------- instrument 2: optimal comb and margins ----------
+function drawOptimal() {
+  const P = +document.getElementById("p").value;
+  document.getElementById("p-out").textContent = P;
+  const W = 460, H = 240, L = 40, R = 10, T = 14, B = 34, N = 2 * P;
+  let s = svg(document.getElementById("fig-comb"), W, H);
+  const y = v => T + (1 - v) / 2 * (H - T - B);
+  for (const v of [1, 0, -1]) { el("line", { x1: L, x2: W - R, y1: y(v), y2: y(v), class: "axis" }, s); el("text", { x: L - 6, y: y(v) + 4, "text-anchor": "end" }, s).textContent = v; }
+  const bw = (W - L - R) / N;
+  for (let n = 0; n < N; n++) {
+    const f = n % P === 0 ? 1 : -1 / (P - 1), c = Math.cos(2 * Math.PI * n / P);
+    const x = L + n * bw;
+    el("rect", { x: x + bw * 0.12, y: y(Math.max(f, 0)), width: Math.max(1.5, bw * 0.42), height: Math.max(1.5, Math.abs(y(f) - y(0))), rx: 1, fill: css("--s1") }, s);
+    el("rect", { x: x + bw * 0.54, y: y(Math.max(c, 0)), width: Math.max(1.5, bw * 0.34), height: Math.max(1.5, Math.abs(y(c) - y(0))), rx: 1, fill: css("--s3") }, s);
+    const hit = el("rect", { x, y: T, width: bw, height: H - T - B, fill: "transparent" }, s);
+    bindTip(hit, `n = ${n}<br>optimal comb = ${n % P === 0 ? "1" : frac(-1, P - 1)}<br>cos(2πn/${P}) = ${c.toFixed(3)}`);
+    if (n % Math.max(1, Math.round(N / 8)) === 0) el("text", { x: x + bw / 2, y: H - B + 16, "text-anchor": "middle" }, s).textContent = n;
+  }
+  el("text", { x: W - R, y: H - 4, "text-anchor": "end" }, s).textContent = "offset n";
+
+  s = svg(document.getElementById("fig-margin"), W, H);
+  const rows = THEORY.margins, Ps = rows.map(r => r.P);
+  const lx = p => L + (p - Ps[0]) / (Ps[Ps.length - 1] - Ps[0]) * (W - L - R);
+  const lo = Math.log10(0.01), hi = Math.log10(2.5), ly = v => T + (hi - Math.log10(v)) / (hi - lo) * (H - T - B);
+  for (const v of [2, 1, 0.1, 0.01]) { el("line", { x1: L, x2: W - R, y1: ly(v), y2: ly(v), class: "axis" }, s); el("text", { x: L - 6, y: ly(v) + 4, "text-anchor": "end" }, s).textContent = v; }
+  for (const p of [5, 10, 15, 20, 25, 30, 35]) el("text", { x: lx(p), y: H - B + 16, "text-anchor": "middle" }, s).textContent = p;
+  el("text", { x: W - R, y: H - 4, "text-anchor": "end" }, s).textContent = "period P (margin, log)";
+  for (const [key, col] of [["c1", "--s2"], ["cos", "--s3"], ["opt", "--s1"]]) {
+    el("polyline", { points: rows.map(r => `${lx(r.P)},${ly(r[key])}`).join(" "), fill: "none", stroke: css(col), "stroke-width": 2, "stroke-linejoin": "round" }, s);
+  }
+  const cur = rows.find(r => r.P === P);
+  el("line", { x1: lx(P), x2: lx(P), y1: T, y2: H - B, stroke: css("--muted"), "stroke-width": 1 }, s);
+  for (const [key, col] of [["c1", "--s2"], ["cos", "--s3"], ["opt", "--s1"]]) el("circle", { cx: lx(P), cy: ly(cur[key]), r: 4.5, fill: css(col), stroke: css("--panel"), "stroke-width": 2 }, s);
+  rows.forEach(r => { const hit = el("rect", { x: lx(r.P) - 5, y: T, width: 10, height: H - T - B, fill: "transparent" }, s); bindTip(hit, `P = ${r.P}<br>optimum P/(P−1) = ${r.opt.toFixed(3)}<br>matched cosine bank = ${r.cos.toFixed(3)}<br>single cosine = ${r.c1.toFixed(3)}`); });
+
+  document.getElementById("opt-legend").innerHTML =
+    `<span><i style="background:var(--s1)"></i>ArithScope optimum (Ramanujan mixture)</span><span><i style="background:var(--s3)"></i>matched cosine bank, same periods</span><span><i style="background:var(--s2)"></i>single cosine cos(2πn/P)</span>`;
+  const w = divisors(P).filter(d => d > 1).map(d => `<span class="pill">K<sub>${d}</sub>: ${frac(phi(d), P - 1)}</span>`).join("");
+  const ratio = cur.opt / cur.cos;
+  document.getElementById("opt-readout").innerHTML =
+    `<span>optimal weights φ(d)/(P−1): ${w}</span><span>margin: ArithScope <b>${cur.opt.toFixed(3)}</b> vs matched cosine <b>${cur.cos.toFixed(3)}</b> (${ratio < 1.05 ? "about equal" : ratio.toFixed(1) + "× smaller"})</span>`;
+}
+
+// ---------- instrument 3: alias classes ----------
+const ORDERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 24];
+function setupAlias() {
+  const bank = document.getElementById("bank");
+  ORDERS.forEach(m => { const lab = document.createElement("label"); lab.className = "chk"; lab.innerHTML = `<input type="checkbox" id="o${m}" value="${m}"${[2, 3].includes(m) ? " checked" : ""}><span>${m}</span>`; bank.appendChild(lab); });
+  const sel = document.getElementById("target");
+  for (let p = 2; p <= 48; p++) { const o = document.createElement("option"); o.value = p; o.textContent = p; if (p === 12) o.selected = true; sel.appendChild(o); }
+  bank.addEventListener("change", drawAlias); sel.addEventListener("change", drawAlias);
+}
+function drawAlias() {
+  const M = ORDERS.filter(m => document.getElementById("o" + m).checked);
+  const P = +document.getElementById("target").value;
+  const N = 96, W = 920, H = 120, L = 10, R = 10, T = 16, B = 30;
+  const s = svg(document.getElementById("fig-alias"), W, H);
+  const bw = (W - L - R) / N;
+  const verdict = document.getElementById("alias-verdict");
+  if (!M.length) { verdict.innerHTML = "Select at least one order."; return; }
+  const sig = n => M.map(m => Kfrac(m, n)).join(",");
+  const combSig = sig(0);
+  for (let n = 0; n < N; n++) {
+    const inClass = sig(n) === combSig, onTarget = n % P === 0;
+    const fill = inClass ? (onTarget ? css("--s1") : css("--s8")) : (onTarget ? "none" : css("--off"));
+    const x = L + n * bw;
+    const r = el("rect", { x: x + 1, y: T, width: Math.max(2, bw - 2), height: 46, rx: 2, fill, stroke: onTarget && !inClass ? css("--s1") : "none", "stroke-width": 1.5 }, s);
+    bindTip(r, `n = ${n}<br>signature (${M.map(m => "K" + m).join(", ")}) = (${sig(n)})<br>${inClass ? "same class as offset 0" : "different class"}<br>${onTarget ? "on the target " + P + "-comb" : "off the target comb"}`);
+    if (n % 12 === 0) el("text", { x: x + bw / 2, y: T + 66, "text-anchor": "middle" }, s).textContent = n;
+  }
+  el("text", { x: W - R, y: H - 4, "text-anchor": "end" }, s).textContent = "offset n";
+  document.getElementById("alias-legend").innerHTML =
+    `<span><i style="background:var(--s1)"></i>target comb, resolved</span><span><i style="background:var(--s8)"></i>alias: same class as 0 but off the target</span><span><i style="background:transparent;outline:1.5px solid var(--s1)"></i>target comb the bank cannot isolate</span>`;
+  const sel = new Set();
+  for (let mask = 1; mask < (1 << M.length); mask++) { let v = 1; for (let i = 0; i < M.length; i++) if (mask >> i & 1) v = lcm(v, M[i]); sel.add(v); }
+  const L_ = M.reduce(lcm, 1), selectable = [...sel].sort((a, b) => a - b);
+  const ok = sel.has(P), g = gcd(P, L_);
+  const shown = selectable.filter(v => v <= 360).map(v => `<span class="pill${v === P ? " on" : ""}">${v}</span>`).join("") + (selectable.some(v => v > 360) ? " …" : "");
+  verdict.innerHTML = `Bank {${M.join(", ")}} · lcm = <strong>${L_}</strong> · selectable combs: ${shown}<br>` +
+    (ok ? `The ${P}-comb is exactly selectable: a convex mixture over a subset with lcm ${P} makes it the strict argmax.`
+        : (L_ % P === 0 ? `The ${P}-comb is not a selectable comb: every subset's lcm misses ${P}. A head can isolate a finer comb, but then it loses part of the ${P}-comb.`
+                        : `The bank cannot resolve period ${P}: offsets in the same class as 0 repeat every ${g} tokens, so a head confuses multiples of ${g} that are not multiples of ${P} (red) with the true comb.`));
+}
+
+// ---------- instrument 4: comb mass vs context ----------
+function lineChart(container, series, opts) {
+  const W = opts.W || 920, H = opts.H || 300, L = 48, R = 14, T = 14, B = 46;
+  const s = svg(container, W, H);
+  const xs = series[0].x, x0 = Math.log2(xs[0]), x1 = Math.log2(xs[xs.length - 1]);
+  const X = v => L + (Math.log2(v) - x0) / (x1 - x0) * (W - L - R);
+  const [y0, y1] = opts.y || [0, 1], Y = v => T + (y1 - v) / (y1 - y0) * (H - T - B);
+  for (const v of opts.yticks) { el("line", { x1: L, x2: W - R, y1: Y(v), y2: Y(v), class: "axis" }, s); el("text", { x: L - 8, y: Y(v) + 4, "text-anchor": "end" }, s).textContent = v; }
+  const tick = v => v >= 1048576 ? (v / 1048576) + "M" : v >= 1024 ? (v / 1024) + "K" : String(v);
+  xs.forEach((v, i) => { if (i % (opts.xevery || 1) === 0) el("text", { x: X(v), y: H - B + 18, "text-anchor": "middle" }, s).textContent = tick(v); });
+  if (opts.vline) el("line", { x1: X(opts.vline), x2: X(opts.vline), y1: T, y2: H - B, stroke: css("--muted"), "stroke-width": 1 }, s);
+  if (opts.hline != null) el("line", { x1: L, x2: W - R, y1: Y(opts.hline), y2: Y(opts.hline), stroke: css("--muted"), "stroke-width": 1 }, s);
+  for (const se of series) {
+    if (se.lo) el("polygon", { points: se.x.map((v, i) => `${X(v)},${Y(se.hi[i])}`).concat(se.x.map((v, i) => `${X(v)},${Y(se.lo[i])}`).reverse()).join(" "), fill: css(se.color), opacity: 0.13 }, s);
+    el("polyline", { points: se.x.map((v, i) => `${X(v)},${Y(se.y[i])}`).join(" "), fill: "none", stroke: css(se.color), "stroke-width": se.bold ? 2.6 : 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, s);
+    se.x.forEach((v, i) => el("circle", { cx: X(v), cy: Y(se.y[i]), r: 3.5, fill: css(se.color), stroke: css("--panel"), "stroke-width": 1.5 }, s));
+  }
+  const cross = el("line", { x1: 0, x2: 0, y1: T, y2: H - B, stroke: css("--muted"), "stroke-width": 1, opacity: 0 }, s);
+  const hit = el("rect", { x: L, y: T, width: W - L - R, height: H - T - B, fill: "transparent" }, s);
+  hit.addEventListener("pointermove", e => {
+    const box = s.getBoundingClientRect(), px = (e.clientX - box.left) / box.width * W;
+    let bi = 0, bd = Infinity; xs.forEach((v, i) => { const d = Math.abs(X(v) - px); if (d < bd) { bd = d; bi = i; } });
+    cross.setAttribute("x1", X(xs[bi])); cross.setAttribute("x2", X(xs[bi])); cross.setAttribute("opacity", 1);
+    showTip(e, `${opts.xlabel} = ${xs[bi]}<br>` + series.map(se => `${se.short}: ${(100 * se.y[bi]).toFixed(1)}%`).join("<br>"));
+  });
+  hit.addEventListener("pointerleave", () => { cross.setAttribute("opacity", 0); hideTip(); });
+  el("text", { x: W - R, y: H - 4, "text-anchor": "end" }, s).textContent = opts.xtitle;
+}
+function drawMass() {
+  const cm = THEORY.comb_mass, keys = Object.keys(cm);
+  const spec = [[keys.find(k => k.startsWith("ArithScope")), "--s1", "ArithScope, budget 8", true],
+                [keys.find(k => k.includes("budget 32")), "--s4", "RoPE, budget 32", false],
+                [keys.find(k => k.startsWith("matched")), "--s3", "matched cosine, budget 8", false],
+                [keys.find(k => k.startsWith("learned")), "--s5", "learned frequency off by 10⁻³", false],
+                [keys.find(k => k.startsWith("RoPE") && k.includes("budget 8")), "--s2", "RoPE, budget 8", false]];
+  const series = spec.map(([k, color, short, bold]) => ({ x: cm[k].N, y: cm[k].mass, color, short, bold }));
+  lineChart(document.getElementById("fig-mass"), series, { yticks: [0, 0.25, 0.5, 0.75, 1], xevery: 2, vline: 64, hline: 1 / 13, xlabel: "N", xtitle: "context length N, log scale" });
+  document.getElementById("mass-legend").innerHTML = spec.map(([, c, short]) => `<span><i style="background:var(${c})"></i>${short}</span>`).join("") + `<span><i style="background:var(--muted)"></i>uniform share 1/13</span>`;
+}
+
+// ---------- results ----------
+function drawResults() {
+  if (!RESULTS) return;
+  document.getElementById("results-status").hidden = true;
+  document.getElementById("results-grid").hidden = false;
+  document.getElementById("res-legend").hidden = false;
+  const variants = [["rope+arith", "--s1", "RoPE + ArithScope", true], ["rope+fourier_learned", "--s5", "RoPE + learned frequencies", false],
+                    ["rope+fourier_fund", "--s3", "RoPE + matched cosine bank", false], ["rope+relbias", "--s8", "RoPE + relative bias", false], ["rope", "--s2", "RoPE", false]];
+  for (const P of ["13", "12"]) {
+    const tab = RESULTS.e1[P]; if (!tab) continue;
+    const series = variants.filter(([v]) => tab[v]).map(([v, color, short, bold]) => ({ x: tab.lengths, y: tab[v].mean, lo: tab[v].lo, hi: tab[v].hi, color, short, bold }));
+    series.push({ x: tab.lengths, y: tab.oracle, color: "--muted", short: "Bayes oracle", bold: false });
+    lineChart(document.getElementById("fig-res" + P), series, { W: 460, H: 280, y: [0.4, 1], yticks: [0.4, 0.6, 0.8, 1], xevery: 1, vline: 64, xlabel: "N", xtitle: `P = ${P} · accuracy on unseen positions` });
+  }
+  document.getElementById("res-legend").innerHTML = variants.map(([, c, short]) => `<span><i style="background:var(${c})"></i>${short}</span>`).join("") + `<span><i style="background:var(--muted)"></i>Bayes oracle</span>`;
+  const v = document.getElementById("verdicts"); v.hidden = false; v.innerHTML = RESULTS.verdicts.map(t => `<p>${t}</p>`).join("");
+  document.getElementById("results-intro").textContent = RESULTS.intro;
+}
+
+// ---------- boot ----------
+document.getElementById("m").addEventListener("input", drawKernel);
+document.getElementById("p").addEventListener("input", drawOptimal);
+setupAlias();
+function drawAll() { drawKernel(); drawOptimal(); drawAlias(); drawMass(); drawResults(); }
+drawAll();
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", drawAll);
+new MutationObserver(drawAll).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
+
+</body>
+</html>

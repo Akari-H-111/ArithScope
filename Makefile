@@ -4,7 +4,7 @@ PY ?= python3
 WORKERS ?= 4
 SUITES = e1_periodic e2_alias e3_tagged e5_mixed
 
-.PHONY: help oracle test theory pilots experiments analyze bench all
+.PHONY: help oracle test lint theory pilots experiments analyze lab bench all
 
 help:  ## list targets
 	@grep -E '^[a-z_]+:.*## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
@@ -14,6 +14,9 @@ oracle:  ## stdlib-only exact checks (no torch needed; torch tests are skipped)
 
 test:  ## full test suite (needs torch)
 	$(PY) -m pytest
+
+lint:  ## static checks (ruff)
+	$(PY) -m ruff check arithscope experiments tests examples
 
 theory:  ## theory figures and tables (no training)
 	$(PY) experiments/theory_figures.py
@@ -27,6 +30,9 @@ experiments:  ## confirmatory suites in one worker pool (resumable; finished run
 
 analyze:  ## regenerate every results table/figure from run JSON files
 	$(PY) experiments/analyze.py
+
+lab:  ## build the interactive explainer docs/lab/index.html from committed summaries
+	$(PY) experiments/lab/build.py
 
 bench:  ## runtime / memory overhead of the bias backends (run on an idle machine)
 	$(PY) experiments/bench_overhead.py

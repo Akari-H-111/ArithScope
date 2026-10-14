@@ -1,6 +1,5 @@
 """Exact checks of the arithmetic lemmas in docs/MATH.md (stdlib only, no floats unless noted)."""
 import cmath
-import itertools
 import unittest
 from fractions import Fraction
 from math import gcd
@@ -34,6 +33,8 @@ class ExactArithmeticTests(unittest.TestCase):
             gap = arith.comb_gap(m)
             self.assertGreaterEqual(gap, Fraction(1, 2))
             self.assertEqual(gap == Fraction(1, 2), m % 6 == 0)
+            if m % 6 and m > 1:
+                self.assertLessEqual(max(table[1:]), Fraction(1, 4))  # refinement stated in L2
             if arith.is_prime_power(m):
                 self.assertTrue(all(v <= 0 for v in table[1:]))
                 self.assertGreaterEqual(gap, 1)
@@ -98,6 +99,14 @@ class ExactArithmeticTests(unittest.TestCase):
             for cls in arith.alias_classes(bank, range(0, 96)):
                 if 0 in cls:
                     return set(cls)
+        def comb_class12(bank):
+            for cls in arith.alias_classes(bank, range(0, 48)):
+                if 0 in cls:
+                    return set(cls)
+        for bank in ((2, 3), (1, 2, 3, 6)):                  # E2 aliased banks: lcm 6
+            self.assertIn(6, comb_class12(bank))
+        for bank in ((3, 4), (4, 6), (12,), (1, 2, 3, 4, 6, 12)):  # E2 resolving banks: lcm 12
+            self.assertEqual(comb_class12(bank), set(range(0, 48, 12)))
         self.assertIn(12, comb_class((2, 3, 4, 6, 12)))   # lcm 12: aliased despite five orders
         self.assertIn(12, comb_class((4, 6)))             # lcm 12
         self.assertNotIn(12, comb_class((3, 8)))          # lcm 24 via CRT: resolved with two orders

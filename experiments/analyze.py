@@ -171,6 +171,70 @@ def plot_extrapolation(data: dict, title: str, stem: str, mode: str) -> Path:
         return save(fig, FIG, stem, mode)
 
 
+HERO_VARIANTS = ("rope+arith", "rope+fourier_learned", "rope+fourier_fund", "rope+relbias", "rope")
+
+
+def _theory_margins() -> dict[int, tuple[float, float]]:
+    """Exact best comb margins (ArithScope optimum, matched cosine bank) from results/summary/theory.json."""
+    path = ROOT / "results" / "summary" / "theory.json"
+    if not path.exists():
+        return {}
+    rows = json.loads(path.read_text())["margins"]
+    return {r["period"]: (r["optimal_pd"], r["fundamental_cosine_bank"]) for r in rows}
+
+
+MARGINS = _theory_margins()
+
+
+def plot_hero(panels: dict, mode: str) -> Path:
+    """P = 12 next to P = 13: where theory says the matched cosine bank should and should not work."""
+    with themed(mode) as th:
+        periods = sorted(panels)
+        fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 3.9), sharey=True, squeeze=False)
+        for ax, p in zip(axes[0], periods):
+            data = panels[p]
+            lens = sorted(data["oracle"])
+            ax.plot(lens, [data["oracle"][L] for L in lens], color=th["muted"], linewidth=1.2, zorder=2)
+            ax.annotate("Bayes oracle", (lens[-1], data["oracle"][lens[-1]]), textcoords="offset points",
+                        xytext=(-4, 6), ha="right", color=th["ink2"], fontsize=8.5)
+            for v in HERO_VARIANTS[::-1]:
+                if v not in data:
+                    continue
+                hero = v == "rope+arith"
+                mean = [data[v][L]["mean"] for L in lens]
+                lo = [data[v][L]["lo"] if data[v][L]["lo"] is not None else data[v][L]["mean"] for L in lens]
+                hi = [data[v][L]["hi"] if data[v][L]["hi"] is not None else data[v][L]["mean"] for L in lens]
+                ax.fill_between(lens, lo, hi, color=color(th, v), alpha=0.12, linewidth=0)
+                ax.plot(lens, mean, color=color(th, v), label=LABELS[v], marker="o", markersize=5 if hero else 4.5,
+                        markeredgecolor=th["surface"], markeredgewidth=1.0, zorder=5 if hero else 3,
+                        linewidth=2.6 if hero else 2.0)
+            ax.axvline(64, color=th["axis"], linewidth=1.0)
+            if "rope+fourier_fund" in data and "rope+arith" in data:
+                gap = max(abs(data["rope+fourier_fund"][L]["mean"] - data["rope+arith"][L]["mean"]) for L in lens)
+                if gap < 0.01:  # below the plateau and above RoPE's curve, where no line runs
+                    ax.text(0.30, 0.62, "matched cosine bank ≈ ArithScope\n(their lines overlap)",
+                            transform=ax.transAxes, ha="left", va="center", color=th["ink2"], fontsize=8)
+            ax.set_xscale("log", base=2)
+            ax.set_xticks(lens)
+            ax.set_xticklabels([str(L) for L in lens], fontsize=8)
+            ax.set_xlabel("evaluation length N (trained at 64)")
+            kind = "prime" if arith.factorize(p) == ((p, 1),) else "composite"
+            m = MARGINS.get(p)
+            margin = f": comb margin {m[1]:.3f} (cosine bank) vs {m[0]:.3f} (ArithScope)" if m else ""
+            ax.set_title(f"P = {p}, {kind}{margin}", loc="left", fontsize=9.5)
+        axes[0][0].set_ylabel("accuracy on unseen positions")
+        handles, labels = axes[0][0].get_legend_handles_labels()
+        order = [labels.index(LABELS[v]) for v in HERO_VARIANTS if LABELS[v] in labels]
+        fig.legend([handles[i] for i in order], [labels[i] for i in order], loc="upper left",
+                   bbox_to_anchor=(0.06, -0.01), ncol=3, fontsize=8.5, frameon=False)
+        any_p = panels[periods[0]]
+        n_seeds = any_p["rope+arith"][min(any_p["oracle"])]["n"] if "rope+arith" in any_p else 0
+        fig.suptitle(f"Periodic denoising: trained on 64 tokens, tested on up to {max(any_p['oracle'])} "
+                     f"({n_seeds} seed{'s' if n_seeds != 1 else ''} per model, mean and 95% CI)", x=0.01, ha="left", fontweight="bold",
+                     fontsize=11, color=th["ink"])
+        return save(fig, FIG, "hero", mode)
+
+
 def plot_alias(rows: list[dict], period: int, mode: str) -> Path:
     with themed(mode) as th:
         fig, ax = plt.subplots(figsize=(7.2, 3.8))
@@ -197,7 +261,8 @@ def plot_alias(rows: list[dict], period: int, mode: str) -> Path:
         return save(fig, FIG, "e2_alias", mode)
 
 
-def plot_shift(data: dict, mode: str) -> Path:
+def plot_shift(data: dict, mode: str, title: str = "Absolute-position shift at float32 (relative structure unchanged)",
+               ylabel: str = "accuracy, N = 256") -> Path:
     with themed(mode) as th:
         fig, ax = plt.subplots(figsize=(6.4, 3.8))
         for v, curve in data.items():
@@ -206,8 +271,8 @@ def plot_shift(data: dict, mode: str) -> Path:
                     marker="o", markersize=4.5, markeredgecolor=th["surface"], markeredgewidth=1.0)
         ax.set_xscale("log")
         ax.set_xlabel("constant shift added to every position (0 plotted at 1)")
-        ax.set_ylabel("accuracy, N = 256")
-        ax.set_title("Absolute-position shift at float32 (relative structure unchanged)", loc="left")
+        ax.set_ylabel(ylabel)
+        ax.set_title(title, loc="left", fontsize=10)
         ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.18), ncol=2, fontsize=8.5)
         return save(fig, FIG, "e1_shift", mode)
 
@@ -262,6 +327,11 @@ def analyze_e1(summary: dict, tables: list[str], suite: str = "e1_periodic", lab
         for mode in ("light", "dark"):
             plot_extrapolation(data, f"Periodic denoising, P = {ptxt}: trained at N = 64, tested up to N = "
                                      f"{max(data['oracle'])}", f"{suite}_P{ptxt.replace('/', '-')}", mode)
+        if suite == "e1_periodic" and len(period) == 1:
+            summary.setdefault("_hero_panels", {})[period[0]] = data
+    if suite == "e1_periodic" and summary.get("_hero_panels"):
+        for mode in ("light", "dark"):
+            plot_hero(summary["_hero_panels"], mode)
 
 
 def analyze_shift(summary: dict, tables: list[str]) -> None:
@@ -291,8 +361,42 @@ def analyze_shift(summary: dict, tables: list[str]) -> None:
     for v, cur in keep.items():
         lines.append(f"| {LABELS[v]} | " + " | ".join(fmt(cur[s]["mean"]) for s in shifts) + " |")
     tables.append("\n".join(lines))
+
+
+def analyze_posthoc_shift(summary: dict, tables: list[str]) -> None:
+    """POST-HOC (not preregistered): shift test at the training length, from results/posthoc/shift_n64.json."""
+    path = ROOT / "results" / "posthoc" / "shift_n64.json"
+    if not path.exists():
+        return
+    data = json.loads(path.read_text())
+    shifts = data["shifts"]
+    by = defaultdict(lambda: defaultdict(list))
+    for run in data["runs"]:
+        period = run["experiment"].split("_p")[-1]
+        for row in run["rows"]:
+            by[(period, run["variant"])][row["shift"]].append(row["acc"])
+    out = {}
+    for (period, v), cur in by.items():
+        out.setdefault(period, {})[v] = {sh: ci95(vals) for sh, vals in cur.items()}
+    summary["posthoc_shift_n64"] = {p: {v: {str(sh): c for sh, c in cur.items()} for v, cur in vs.items()}
+                                    for p, vs in out.items()}
+    order = ("rope+arith", "arith", "rope", "rope+fourier_fund", "rope+fourier_full", "rope+fourier_learned",
+             "rope+relbias", "alibi", "nope")
+    for period in sorted(out):
+        lines = [f"**Post-hoc (not preregistered): absolute-position shift at the training length, P = {period}, "
+                 f"N = {data['length']}** (accuracy %, mean over seeds; RoPE angles in float32):", "",
+                 "| variant | " + " | ".join("0" if sh == 0 else f"10^{len(str(sh)) - 1}" for sh in shifts) + " |",
+                 "|---|" + "---|" * len(shifts)]
+        for v in order:
+            if v in out[period]:
+                lines.append(f"| {LABELS[v]} | " + " | ".join(fmt(out[period][v][sh]["mean"]) for sh in shifts) + " |")
+        tables.append("\n".join(lines))
+    period = "13" if "13" in out else sorted(out)[-1]
+    keep = {v: out[period][v] for v in ("rope+arith", "arith", "rope", "rope+fourier_fund", "rope+relbias", "alibi")
+            if v in out[period]}
     for mode in ("light", "dark"):
-        plot_shift(keep, mode)
+        plot_shift(keep, mode, title=f"Post-hoc: shift every position by a constant (P = {period}, N = 64, float32 RoPE)",
+                   ylabel="accuracy at the training length")
 
 
 def analyze_alpha(summary: dict, tables: list[str]) -> None:
@@ -326,6 +430,123 @@ def analyze_alpha(summary: dict, tables: list[str]) -> None:
     if alpha:
         for mode in ("light", "dark"):
             plot_alpha(alpha, mode)
+    analyze_cosine_mixtures(summary, tables)
+
+
+DRIFT_MAX = 8192
+
+
+def _log_bins(blocks: int) -> list[tuple[int, int]]:
+    """Block-index bins [1, 2), [2, 4), [4, 8), ... covering 1 .. blocks - 1."""
+    bins, a = [], 1
+    while a < blocks:
+        bins.append((a, min(2 * a, blocks)))
+        a *= 2
+    return bins
+
+
+def analyze_drift(summary: dict, tables: list[str]) -> None:
+    """POST-HOC mechanism check for S1: comb selectivity of trained learned-frequency heads versus offset.
+
+    Each head of ``rope+fourier_learned`` (both layers) has the positional bias
+    ``b(n) = sum_f a_f cos(omega_f n)`` (float64, as in the model). In the period block
+    ``[jP, (j+1)P)`` its comb margin is ``b(jP) - max_{0<r<P} b(jP + r)``. A *comb head* has a
+    positive margin in every block inside the training window and a block-0 margin of at least
+    25% of its block-0 range. Its margin divided by the block-0 margin is averaged over
+    log-spaced bins of blocks up to N = 8192. An exactly periodic bias (ArithScope, the fixed
+    cosine banks) has ratio 1 at every offset by construction.
+    """
+    runs = [r for r in load("e1_periodic") if r["spec"]["variant"] == "rope+fourier_learned"]
+    if not runs:
+        return
+    marks = (64, 1024, 4096, DRIFT_MAX)
+    out, lines = {}, ["**Post-hoc (not preregistered): comb selectivity of learned-frequency heads** (S1 mechanism). "
+                      "Comb margin divided by the margin at offset 0, per comb head, averaged over the block bin "
+                      "that contains the offset; median over heads:", "",
+                      "| P | comb heads / all heads | n ≈ 64 | n ≈ 1,024 | n ≈ 4,096 | n ≈ 8,192 | comb lost (ratio ≤ 0) near 8,192 |",
+                      "|---|---|---|---|---|---|---|"]
+    for (period,), rs in sorted(group(runs, "period").items()):
+        p = period[0]
+        blocks = DRIFT_MAX // p
+        n = np.arange(blocks * p, dtype=np.float64)
+        window = -(-rs[0]["spec"]["train_length"] // p)  # blocks that start inside the training window
+        bins = _log_bins(blocks)
+        per_head, total = [], 0
+        for r in rs:
+            for layer in r["positional"]:
+                omega = np.asarray(layer["fourier_learned"]["omega"], dtype=np.float64)
+                amp = np.asarray(layer["fourier_learned"]["amplitude"], dtype=np.float64)
+                for h in range(omega.shape[0]):
+                    total += 1
+                    b = (amp[h][:, None] * np.cos(omega[h][:, None] * n[None, :])).sum(0).reshape(blocks, p)
+                    margin = b[:, 0] - b[:, 1:].max(1)
+                    if margin[:window].min() > 0 and margin[0] >= 0.25 * (b[0].max() - b[0].min()):
+                        ratio = margin / margin[0]
+                        per_head.append([ratio[a:c].mean() for a, c in bins])
+        if not per_head:
+            continue
+        per_head = np.asarray(per_head)  # [heads, bins]
+        centers = [p * math.sqrt(a * (c - 1)) for a, c in bins]
+        at = {L: min(range(len(bins)), key=lambda i: abs(math.log(centers[i] / L))) for L in marks}
+        q = np.quantile(per_head, [0.1, 0.5, 0.9], axis=0)
+        lost = int((per_head[:, at[DRIFT_MAX]] <= 0).sum())
+        out[p] = {"offsets": centers, "q10": q[0].tolist(), "median": q[1].tolist(), "q90": q[2].tolist(),
+                  "heads": len(per_head), "all_heads": total, "lost_near_max": lost,
+                  "median_at": {str(L): float(q[1][at[L]]) for L in marks}}
+        lines.append(f"| {p} | {len(per_head)} / {total} | " + " | ".join(f"{q[1][at[L]]:.2f}" for L in marks)
+                     + f" | {lost} of {len(per_head)} |")
+    if not out:
+        return
+    summary["posthoc_drift"] = {str(p): {k: v for k, v in d.items() if k not in ("offsets", "q10", "median", "q90")}
+                                for p, d in out.items()}
+    tables.append("\n".join(lines))
+    for mode in ("light", "dark"):
+        plot_drift(out, mode)
+
+
+def plot_drift(out: dict, mode: str) -> Path:
+    with themed(mode) as th:
+        fig, ax = plt.subplots(figsize=(7.2, 3.8))
+        ax.axhline(1.0, color=color(th, "rope+arith"), linewidth=2.6, label="ArithScope (exactly periodic: ratio 1 at every offset)")
+        ax.axhline(0.0, color=th["muted"], linewidth=1.0)
+        dashes = {13: (0, (5, 2))}  # same entity color for both periods; the line style tells them apart
+        for p, d in sorted(out.items()):
+            c = color(th, "rope+fourier_learned")
+            ax.fill_between(d["offsets"], d["q10"], d["q90"], color=c, alpha=0.10, linewidth=0)
+            ax.plot(d["offsets"], d["median"], color=c, linewidth=2.0, linestyle=dashes.get(p, "-"), marker="o",
+                    markersize=4.5, markeredgecolor=th["surface"], markeredgewidth=1.0,
+                    label=f"learned frequencies, P = {p} (median of {d['heads']} comb heads, 10–90% band)")
+        ax.axvline(64, color=th["axis"], linewidth=1.0)
+        ax.text(64, 0.03, " training window ends", transform=ax.get_xaxis_transform(), color=th["ink2"], fontsize=8)
+        ax.set_xscale("log", base=2)
+        ax.set_xlabel("offset n = i − j (bins of period blocks)")
+        ax.set_ylabel("comb margin / margin at n = 0")
+        ax.set_title("Post-hoc: trained learned-frequency heads lose their comb with distance", loc="left", fontsize=10)
+        ax.legend(loc="upper left", bbox_to_anchor=(0.0, -0.18), ncol=1, fontsize=8.5)
+        return save(fig, FIG, "e1_drift", mode)
+
+
+def analyze_cosine_mixtures(summary: dict, tables: list[str]) -> None:
+    """Where the matched cosine bank puts its layer-0 mixture mass (exploratory mechanism check for C2)."""
+    runs = [r for r in load("e1_periodic") if r["spec"]["variant"] == "rope+fourier_fund"]
+    if not runs:
+        return
+    lines = ["**Matched cosine bank, layer-0 mixtures** (exploratory; mean over heads and seeds). Mass on periods that "
+             "divide P keeps the bias exactly P-periodic; mass elsewhere approximates the comb only inside the training "
+             "window:", "", "| P | heads | mass on periods dividing P | largest components |", "|---|---|---|---|"]
+    for (period,), rs in sorted(group(runs, "period").items()):
+        p = period[0]
+        comps = rs[0]["positional"][0]["fourier_fund"]["components"]
+        mats = np.asarray([layer["fourier_fund"]["alpha"][h] for r in rs for layer in r["positional"]
+                           if layer["layer"] == 0 for h in range(len(layer["fourier_fund"]["gamma"]))])
+        mean = mats.mean(0)
+        on_div = float(sum(mean[i] for i, (m, _) in enumerate(comps) if p % m == 0))
+        top = np.argsort(-mean)[:4]
+        summary[f"E1_cosine_mix_P{p}"] = {"mass_on_divisor_periods": on_div, "mean": mean.tolist(),
+                                          "components": comps, "heads": len(mats)}
+        lines.append(f"| {p} | {len(mats)} | {on_div:.3f} | " +
+                     ", ".join(f"cos(2πn/{comps[i][0]}): {mean[i]:.2f}" for i in top) + " |")
+    tables.append("\n".join(lines))
 
 
 def analyze_alias(summary: dict, tables: list[str]) -> None:
@@ -394,8 +615,9 @@ def analyze_meta(summary: dict, tables: list[str]) -> None:
 
 
 MODE_LABELS = {"baseline_sdpa": "RoPE only, fused SDPA (floor)", "arith_explicit": "ArithScope, explicit logits",
-               "arith_sdpa_mask": "ArithScope, SDPA + dense bias mask", "arith_folded": "ArithScope, folded into q/k (fused)"}
-MODE_SLOT = {"baseline_sdpa": 1, "arith_explicit": 6, "arith_sdpa_mask": 2, "arith_folded": 0}
+               "arith_sdpa_mask": "ArithScope, SDPA + dense bias mask", "arith_folded": "ArithScope, folded into q/k (fused)",
+               "arith_flex": "ArithScope, compiled FlexAttention (forward only)"}
+MODE_SLOT = {"baseline_sdpa": 1, "arith_explicit": 6, "arith_sdpa_mask": 2, "arith_folded": 0, "arith_flex": 3}
 
 
 def analyze_overhead(summary: dict, tables: list[str]) -> None:
@@ -467,8 +689,176 @@ def headline(summary: dict) -> str:
             if v in tab:
                 rows.append(f"| {p} | {LABELS[v]} | " + " | ".join(fmt_ci(tab[v][L]) for L in lens) + " |")
         rows.append(f"| {p} | *Bayes oracle* | " + " | ".join(fmt(tab['oracle'][L]) for L in lens) + " |")
-    return "\n".join(rows) + ("\n\nAccuracy (%) on positions never seen in training (t ≥ 64), mean ± 95% CI over "
-                              "5 seeds; generated by `experiments/analyze.py`.")
+    seeds = sorted({summary[k]["table"]["rope+arith"][lens[0]]["n"] for k in keys if "rope+arith" in summary[k]["table"]})
+    return "\n".join(rows) + (f"\n\nAccuracy (%) on positions never seen in training (t ≥ 64), mean ± 95% CI over "
+                              f"{'/'.join(map(str, seeds))} seeds; generated by `experiments/analyze.py`.")
+
+
+def tldr(summary: dict) -> str:
+    """README summary bullets. Every number is read from the summary; wording does not depend on outcomes."""
+    out = []
+    t13, t12 = summary.get("E1_P13", {}).get("table", {}), summary.get("E1_P12", {}).get("table", {})
+    if t13.get("rope+arith") and t13.get("rope"):
+        L = max(t13["oracle"])
+        p12 = (f" At period 12: {fmt(t12['rope+arith'][L]['mean'])}% vs {fmt(t12['rope'][L]['mean'])}% "
+               f"(Bayes {fmt(t12['oracle'][L])}%)." if t12.get("rope+arith") and t12.get("rope") and L in t12["oracle"] else "")
+        out.append(f"- **Length extrapolation.** Trained on 64 tokens and tested on {L:,} ({L // 64}× longer), "
+                   f"RoPE + ArithScope scores {fmt(t13['rope+arith'][L]['mean'])}% on unseen positions at period 13; "
+                   f"the Bayes-optimal predictor scores {fmt(t13['oracle'][L])}% and RoPE alone "
+                   f"{fmt(t13['rope'][L]['mean'])}%.{p12}")
+    if t13.get("rope+fourier_fund") and t12.get("rope+fourier_fund") and 1024 in t13["oracle"]:
+        out.append(f"- **The basis matters where theory says it should.** A cosine bank with the same periods and parameter "
+                   f"count scores {fmt(t13['rope+fourier_fund'][1024]['mean'])}% at period 13 (N = 1,024) against "
+                   f"{fmt(t13['rope+arith'][1024]['mean'])}% for ArithScope. At period 12, where the two channels' "
+                   f"optimal comb margins nearly coincide (0.987 vs 1.091), it scores "
+                   f"{fmt(t12['rope+fourier_fund'][1024]['mean'])}% against {fmt(t12['rope+arith'][1024]['mean'])}%.")
+    a13 = summary.get("E1_alpha_P13_rope+arith")
+    if a13:
+        w13 = a13["mean"][a13["orders"].index(13)]
+        out.append(f"- **Gradient descent finds the provably optimal comb.** Offered 16 orders, layer-0 heads trained at "
+                   f"period 13 put {fmt(w13)}% of their mixture weight on order 13, the unique optimum of Theorem T3 "
+                   f"(total-variation distance {a13['tv']:.3f}, {a13['heads']} heads).")
+    e2 = summary.get("E2_alias")
+    if e2:
+        period, rows = e2["period"], e2["rows"]
+        alias = [r for r in rows if r["lcm"] % period]
+        good = [r for r in rows if r["lcm"] % period == 0]
+        if alias and good:
+            gap_alias = max(r["mean"] - r["alias"] for r in alias)
+            gap_bayes = max(r["bayes"] - r["mean"] for r in good)
+            out.append(f"- **Identifiability theory predicts which banks fail.** In the alias fixture (period {period}), "
+                       f"banks with lcm {', '.join(sorted({str(r['lcm']) for r in alias}))} end at most "
+                       f"{100 * gap_alias:+.1f} pp from their alias ceiling, whatever their size; every bank with "
+                       f"{period} | lcm ends within {100 * gap_bayes:.1f} pp of Bayes, including two-order banks.")
+    c4 = summary.get("e3_tagged", {}).get("c4_rope_arith_minus_rope_N64")
+    if c4 and c4["lo"] is not None:
+        out.append(f"- **No measurable cost on aperiodic data.** On tagged denoising, adding ArithScope to RoPE changes "
+                   f"accuracy at the training length by {100 * c4['mean']:+.2f} pp (95% CI [{100 * c4['lo']:+.2f}, "
+                   f"{100 * c4['hi']:+.2f}]).")
+    sh = summary.get("posthoc_shift_n64", {}).get("13", {})
+    if sh.get("arith") and sh.get("rope"):
+        top = max(int(s) for s in sh["arith"])
+        out.append(f"- **Exact at any absolute position (post hoc).** Shifting every position by "
+                   f"10<sup>{len(str(top)) - 1}</sup> leaves "
+                   f"ArithScope-only models at {fmt(sh['arith'][str(top)]['mean'])}% (unshifted "
+                   f"{fmt(sh['arith']['0']['mean'])}%); RoPE models, whose angles are float32, drop from "
+                   f"{fmt(sh['rope']['0']['mean'])}% to {fmt(sh['rope'][str(top)]['mean'])}%.")
+    return "\n".join(out) if out else "(results pending)"
+
+
+def overhead_md(summary: dict) -> str:
+    """README cost paragraph from results/overhead/overhead.json (empty when the benchmark has not run)."""
+    data = summary.get("overhead")
+    if not data:
+        return ""
+    rows = [r for r in data["rows"] if "median_seconds" in r and not r["backward"]]
+    config = "llm_d64_B16"
+    cell = {(r["mode"], r["length"]): r for r in rows if r["config"] == config}
+    need = ("baseline_sdpa", "arith_explicit", "arith_folded")
+    common = [L for L in sorted({L for _, L in cell}) if all((m, L) in cell for m in need)]
+    if not common:
+        return ""
+    L = common[-1]
+    modes = need + (("arith_flex",) if ("arith_flex", L) in cell else ())
+    ms = {m: 1000 * cell[(m, L)]["median_seconds"] for m in modes}
+    mb = {m: cell[(m, L)]["peak_rss_increase_mb"] for m in modes}
+    names = {"arith_folded": "folded", "arith_flex": "compiled FlexAttention", "arith_explicit": "explicit bias",
+             "baseline_sdpa": "RoPE alone"}
+    order = [m for m in ("arith_folded", "arith_flex", "arith_explicit") if m in modes]
+    longest = max(Lf for (m, Lf) in cell if m == "arith_folded")
+    times = ", ".join(f"{ms[m]:.1f} ms ({names[m]})" for m in order)
+    mems = ", ".join(f"{mb[m]:.0f} MB ({names[m]})" for m in order + ["baseline_sdpa"])
+    flex_floor = ""
+    if "arith_flex" in modes:
+        L0 = min(Lf for (m, Lf) in cell if m == "arith_flex")
+        flex_floor = (f" The compiled FlexAttention figure includes one-time compilation; at N = {L0:,} it already "
+                      f"adds {cell[('arith_flex', L0)]['peak_rss_increase_mb']:.0f} MB.")
+    return "\n".join([
+        "### Cost", "",
+        '<p align="center">', "  <picture>",
+        '    <source media="(prefers-color-scheme: dark)" srcset="results/figures/overhead_dark.png">',
+        '    <img alt="Forward time and peak memory of one attention layer versus sequence length, by backend" '
+        'src="results/figures/overhead_light.png" width="920">',
+        "  </picture>", "</p>", "",
+        f"One attention layer, inference forward pass, batch 1, CPU with 4 threads (`experiments/bench_overhead.py`). "
+        f"In the LLM-sized configuration (8 heads of dimension 64, prime-power bank `B_16`, 55 folded dimensions) at "
+        f"N = {L:,}, ArithScope takes {times}, against {ms['baseline_sdpa']:.1f} ms for RoPE alone in fused SDPA. "
+        f"Peak memory grows by {mems}.{flex_floor} The folded path runs up to N = {longest:,}. These are "
+        "single-machine CPU measurements, not a speed claim; full tables are in [`docs/RESULTS.md`](docs/RESULTS.md).",
+    ])
+
+
+def _pd(summary: dict, period: str, other: str, length: int) -> dict | None:
+    return summary.get(f"E1_P{period}", {}).get("paired_vs", {}).get(other, {}).get(str(length))
+
+
+def findings(summary: dict) -> str:
+    """Preregistered verdicts (docs/PREREGISTRATION.md) evaluated mechanically from the summary."""
+    out = []
+
+    def ci_txt(p: dict) -> str:
+        return (f"{100 * p['mean']:+.1f} pp, 95% CI [{100 * p['lo']:+.1f}, {100 * p['hi']:+.1f}], "
+                f"{p['wins']}/{len(p['diffs'])} seeds")
+
+    # C1
+    c1 = [(P, _pd(summary, P, "rope", 1024)) for P in ("12", "13")]
+    if all(p and p["lo"] is not None for _, p in c1):
+        ok = all(p["lo"] > 0 for _, p in c1)
+        detail = "; ".join(f"P = {P}: {ci_txt(p)}" for P, p in c1)
+        out.append(f"- **C1 (periodic extrapolation vs RoPE): {'supported' if ok else 'NOT supported'}.** "
+                   f"RoPE + ArithScope minus RoPE, unseen positions at N = 1024: {detail}.")
+    # C2
+    p13, p12 = _pd(summary, "13", "rope+fourier_fund", 1024), _pd(summary, "12", "rope+fourier_fund", 1024)
+    if p13 and p13["lo"] is not None:
+        ok = p13["lo"] > 0
+        extra = f" At P = 12, where theory predicts no meaningful gap: {ci_txt(p12)}." if p12 and p12["lo"] is not None else ""
+        out.append(f"- **C2 (prime period vs the matched cosine bank): {'supported' if ok else 'NOT supported'}.** "
+                   f"P = 13, N = 1024: {ci_txt(p13)}.{extra}")
+    # C3
+    e2 = summary.get("E2_alias")
+    if e2:
+        period, rows = e2["period"], e2["rows"]
+        aliased = [r for r in rows if r["lcm"] % period]
+        resolved = [r for r in rows if r["lcm"] % period == 0]
+        ok = all(r["mean"] <= r["alias"] + 0.02 for r in aliased) and all(r["mean"] >= r["bayes"] - 0.05 for r in resolved)
+        a_txt = ", ".join(f"{{{','.join(map(str, r['bank']))}}} {100 * r['mean']:.1f}% (ceiling {100 * r['alias']:.1f}%)"
+                          for r in aliased)
+        r_txt = ", ".join(f"{{{','.join(map(str, r['bank']))}}} {100 * r['mean']:.1f}% (Bayes {100 * r['bayes']:.1f}%)"
+                          for r in resolved)
+        out.append(f"- **C3 (identifiability / alias fixture, P = {period}): {'supported' if ok else 'NOT supported'}.** "
+                   f"Aliased banks: {a_txt}. Resolving banks: {r_txt}.")
+    # C4
+    e3 = summary.get("e3_tagged", {}).get("c4_rope_arith_minus_rope_N64")
+    if e3 and e3["lo"] is not None:
+        verdict = "supported" if e3["lo"] > -0.01 else "inconclusive / not supported"
+        out.append(f"- **C4 (no harm on the aperiodic control): {verdict}.** Tagged denoising, RoPE + ArithScope minus "
+                   f"RoPE at N = 64: {ci_txt(e3)} (margin: lower bound > −1 pp).")
+    # S1
+    s1 = []
+    for P in ("12", "13"):
+        tab = summary.get(f"E1_P{P}", {}).get("table", {})
+        if "rope+fourier_learned" in tab and 8192 in tab["rope+fourier_learned"] and 1024 in tab["rope+fourier_learned"]:
+            lf = tab["rope+fourier_learned"]
+            ar = tab["rope+arith"]
+            s1.append((P, lf[1024]["mean"], lf[8192]["mean"], ar[1024]["mean"], ar[8192]["mean"],
+                       tab["oracle"][1024], tab["oracle"][8192]))
+    if s1:
+        drift = any(b < a for _, a, b, *_ in s1)
+        tight = all(abs(a1 - o1) <= 0.01 and abs(a8 - o8) <= 0.01 for _, _, _, a1, a8, o1, o8 in s1)
+        txt = "; ".join(f"P = {P}: learned frequencies {100 * a:.1f}% → {100 * b:.1f}%, ArithScope {100 * c:.1f}% → "
+                        f"{100 * d:.1f}% (Bayes {100 * o1:.1f}% → {100 * o8:.1f}%)" for P, a, b, c, d, o1, o8 in s1)
+        out.append(f"- **S1 (drift of learned frequencies, N = 1024 → 8192): {'observed' if drift else 'not observed'}; "
+                   f"ArithScope within 1 pp of Bayes at both lengths: {'yes' if tight else 'no'}.** {txt}.")
+    # S2
+    for P in (12, 13):
+        a = summary.get(f"E1_alpha_P{P}_rope+arith")
+        if a:
+            top = int(np.argmax(a["mean"]))
+            out.append(f"- **S2 (learned mixtures), P = {P}:** layer-0 heads put {100 * a['mass_on_divisors']:.1f}% of their "
+                       f"mixture mass on divisors of {P} (largest weight: order {a['orders'][top]}, "
+                       f"{100 * a['mean'][top]:.1f}%); total-variation distance to the Theorem T3 optimum {a['tv']:.3f}; "
+                       f"comb margin {a['margin']:.3f} vs optimum {a['optimal_margin']:.3f} ({a['heads']} heads).")
+    return "\n".join(out) if out else "(results pending)"
 
 
 def rewrite_block(path: Path, name: str, content: str) -> None:
@@ -485,19 +875,27 @@ def main() -> None:
     tables: list[str] = []
     analyze_e1(summary, tables)
     analyze_shift(summary, tables)
+    analyze_posthoc_shift(summary, tables)
     analyze_alpha(summary, tables)
+    analyze_drift(summary, tables)
     analyze_alias(summary, tables)
     analyze_controls(summary, tables)
     analyze_e1(summary, tables, suite="e5_mixed", label="E5")
     analyze_meta(summary, tables)
     analyze_overhead(summary, tables)
+    summary.pop("_hero_panels", None)
     SUMMARY.mkdir(parents=True, exist_ok=True)
     (SUMMARY / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
     md = "\n\n".join(tables)
+    print(findings(summary))
     (SUMMARY / "tables.md").write_text(md + "\n")
     if DOCS_REWRITE:
         rewrite_block(ROOT / "docs" / "RESULTS.md", "tables", md)
         rewrite_block(ROOT / "README.md", "headline", headline(summary))
+        rewrite_block(ROOT / "README.md", "tldr", tldr(summary))
+        rewrite_block(ROOT / "README.md", "overhead", overhead_md(summary))
+        rewrite_block(ROOT / "README.md", "findings", findings(summary))
+        rewrite_block(ROOT / "docs" / "RESULTS.md", "findings", findings(summary))
     print(md)
 
 

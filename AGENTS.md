@@ -16,7 +16,8 @@ questions, and exact commands.
   - `make oracle` (stdlib only)
   - `make test` (needs torch)
 - **Results are immutable.** Never edit or delete files in `results/runs/`. A changed protocol needs a new suite name and an entry in the deviations log of [`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md).
-- **No hand-typed numbers.** Every number in `README.md` and `docs/RESULTS.md` must come from `experiments/analyze.py`. Edit the narrative, not the auto-generated blocks.
+- **No hand-typed numbers.** Every confirmatory or post-hoc number in `README.md` and `docs/RESULTS.md` must come from `experiments/analyze.py`; edit the narrative, not the auto-generated blocks. Development-pilot numbers quoted in prose are copied from the pilot tables in `docs/EXECUTION_LEDGER.md`, and theory numbers come from `results/summary/theory.json` or exact computation.
+- **Lint.** `make lint` (ruff) must pass. `tests/test_arithmetic_reference.py` and `reference/` are byte-identical copies of the planning package's oracle and are never reformatted.
 - **Fair baselines.**
   - Baselines get the same budget, data, and seeds as the candidate.
   - Hyperparameters are chosen by the preregistered validation rule, never on test or extrapolation data.

@@ -1,7 +1,6 @@
 """PyTorch bias modules versus the exact arithmetic core."""
 import math
 import unittest
-from fractions import Fraction
 from importlib.util import find_spec
 
 from arithscope import arith

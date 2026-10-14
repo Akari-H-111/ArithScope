@@ -1,5 +1,4 @@
 """Attention/model semantics: gamma=0 equivalence, backends, masks, gradients, training."""
-import copy
 import unittest
 from importlib.util import find_spec
 

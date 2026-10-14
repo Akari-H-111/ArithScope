@@ -69,8 +69,10 @@ def main() -> None:
                                                          / max(row[np.arange(args.length) >= spec.train_length].sum(), 1e-12))}
     out = ROOT / "results" / "summary" / "attention_profile.json"
     out.write_text(json.dumps({"period": args.period, "seed": args.seed, "length": args.length,
-                               "profiles": {v: {k: p[k] for k in ("comb_mass", "comb_mass_beyond_train")}
-                                            for v, p in profiles.items()}}, indent=1))
+                               "profiles": {v: {"comb_mass": p["comb_mass"],
+                                                "comb_mass_beyond_train": p["comb_mass_beyond_train"],
+                                                "weights": [float(f"{w:.4g}") for w in p["weights"]]}
+                                            for v, p in profiles.items()}}))
     for mode in ("light", "dark"):
         with themed(mode) as th:
             fig, axes = plt.subplots(2, 1, figsize=(9.6, 4.6), sharex=True)
@@ -85,7 +87,9 @@ def main() -> None:
                 frac = profiles[variant]["comb_mass_beyond_train"]
                 ax.set_title(f"{LABELS[variant]}: {100 * frac:.0f}% of attention beyond the training window lands on "
                              f"multiples of {args.period}", loc="left", fontsize=9.5)
-            axes[0].annotate("training window", (32, 1e-6), ha="center", color=th["ink2"], fontsize=8.5)
+            for ax in axes:
+                ax.text(32, 0.97, "training\nwindow", transform=ax.get_xaxis_transform(), ha="center", va="top",
+                        color=th["ink2"], fontsize=8)
             axes[1].set_xlabel(f"offset i − j from the last query (sequence length {args.length}, trained at 64)")
             fig.suptitle(f"Layer-0 attention of one query, period {args.period} (mean over 4 heads, log scale)",
                          x=0.01, ha="left", fontweight="bold", fontsize=11, color=th["ink"])

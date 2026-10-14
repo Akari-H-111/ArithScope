@@ -26,6 +26,7 @@ means exhaustive exact verification on a stated finite range, not a proof.
 | A trainable PyTorch module exists; `gamma = 0` reproduces the base model's outputs **and gradients** bitwise | tested | `tests/test_attention.py::GammaZeroEquivalenceTests` |
 | Explicit, SDPA, and folded backends compute the same function (with padding, per-sequence positions, query blocking) | tested to 1e−10 (float64) | `tests/test_attention.py` |
 | Causal and padding masks are respected; fully masked rows output 0, never NaN | tested | `tests/test_attention.py` |
+| The FlexAttention backend (`backend="flex"`) computes the same forward function | tested on CPU, forward only: 1e−12 in float64 (eager), 1e−5 in float32 (compiled kernels, opt-in test) | `tests/test_attention.py::BackendAndMaskTests::test_*flex_backend_matches_explicit` |
 
 ## Experiments (synthetic tasks, CPU, tiny models)
 
@@ -41,6 +42,7 @@ means exhaustive exact verification on a stated finite range, not a proof.
 | Claim | Status |
 |---|---|
 | Speedups; sub-quadratic or linear attention | **not claimed.** The folded path removes bias memory, not quadratic compute |
+| FlexAttention on GPU, and the flex backward pass | **not tested.** FlexAttention has no CPU backward, and no GPU was available |
 | Benefits on natural language or in pretrained LLMs | **not tested** |
 | State of the art on any benchmark | **not claimed**; synthetic tasks only |
 | PSD-ness or calibration of attention weights after softmax | **not claimed** |
