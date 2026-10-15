@@ -218,3 +218,95 @@ A retrain of one E1 run (`e1_p12`, `rope+arith`, seed 1) on the E6 machine gave 
 No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
 
 1. **Reporting code after the results** (after `409c42b`, which holds the 40 run files and the verdicts). `experiments/analyze.py` gained `analyze_e6`, which formats the frozen verdicts and paired intervals from `results/summary/e6.json`, adds per-arm intervals and an NLL-by-position figure computed from the same run files with `e6_verdicts.py`'s metric functions, and fills the `e6_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e6_verdicts.py` is unchanged since `039a56d`.
+
+## 10. Third preregistration: E7, the NLL floor of ArithScope alone (2026-10-15)
+
+This section was written after the E6 results (`409c42b`, `664f681`) and **before** any E7 run. It
+is committed and pushed before the runner starts; the results commit must come after it. Sections
+1–9 are unchanged. Later changes to this section go to Section 10.7 and are never made silently.
+
+### 10.1 Motivation
+
+E6's secondary prediction S4 failed: RoPE + ArithScope with its second layer limited to the last 64
+keys ended *below* ArithScope alone in far NLL (interval excluding 0 at P = 12, not at P = 13; lower
+in 5/5 seeds at both periods). So ArithScope alone's flat NLL floor is not the best these models
+reach. **Hypothesis:** the floor partly comes from ArithScope's own broad second layer, which also
+attends far away and averages vote shares instead of counting votes ([`MATH.md`](MATH.md), P3 and
+the remark after it).
+
+Prior evidence, stated so that it is not mistaken for a test: in the post-hoc diagnosis
+(`results/posthoc/nll_diagnostics.json`; E1 checkpoints, data seed 20261015), limiting ArithScope
+alone's second layer to its last 1,024 keys lowered its NLL on positions 4,096–8,191 in all 10
+models, by 0.0001 to 0.008 nats (floors of 0.026–0.128). That was a test-time intervention chosen after seeing data,
+with a window 16× wider than E7's. It motivates the direction of the prediction; it is not E7
+evidence.
+
+### 10.2 Arms
+
+All arms use E1's task (periodic denoising, P = 12 and P = 13, separate models), architecture, bank
+`M = {1, …, 16}`, optimizer, 2,000 steps at length 64 with batch 32, and E1's preregistered periodic
+hyperparameters (lr 3e-3, positional ×10). The window is E6's: the second layer attends only to its
+last 64 keys (`j > i − 64`, by token index), in training and at test. **Nothing is tuned for E7.**
+
+| Arm | Variant | Second-layer window | Role |
+|---|---|---|---|
+| `reference` | `arith` | none | ArithScope alone, E6's `reference` |
+| `arith_window` | `arith` | last 64 keys | **new:** ArithScope alone without its broad second layer |
+| `window` | `rope+arith` | last 64 keys | E6's `window` arm, the model that went below `reference` |
+
+- The window equals the training length, so it never binds in training: `arith_window` and `reference` train bitwise identically, and the window acts only beyond the training length. This is checked for every seed (sanity check, Section 10.4). E7 therefore asks what the trained ArithScope-only model does when its second layer is kept within the offsets it was trained on.
+- E6's `baseline` (unwindowed RoPE + ArithScope) and `long_train` arms are not repeated: neither bears on the hypothesis, and L1 and L2 are already decided.
+- Runs use a new experiment name (`e7_p12`, `e7_p13`), hence new training batches. Initial weights depend on the seed only, so each seed starts from the same weights as in E1 and E6; E7 is a fresh draw of training data and test data, not of initializations. Within a period and seed, all arms share the initial weights and the training-batch generator.
+- The first layer stays broad in every arm. If ArithScope alone's floor also comes from its first (comb) layer, which averages shares too, a second-layer window cannot remove that part. E7 does not window the first layer.
+
+### 10.3 Fixed setup
+
+- **Suite:** `e7_floor` in [`experiments/suites.py`](../experiments/suites.py); 2 periods × 3 arms × seeds 1–5 = 30 runs.
+- **Test data:** a fresh data seed, `20261017` (E1–E5 used `20261014`, the post-hoc diagnosis `20261015`, E6 `20261016`). Evaluation lengths are E1's (64 … 8,192), with 65,536 predictions per length up to 2,048 and 32,768 above (4 sequences at N = 8,192), as in E6. No shift evaluations.
+- **Hardware:** the E6 machine (Apple M2, macOS, conda-forge PyTorch 2.14.1 osx-arm64, float32), one thread per run, four runs in parallel ([`EXECUTION_LEDGER.md`](EXECUTION_LEDGER.md), Stage 8). All 30 runs run on it. E7 numbers are compared with each other, not bit for bit with E6 (different training batches and test data).
+- **Library:** unchanged since E6. No pilot: every arm's training is a configuration E6 already ran (the `arith_window` arm trains exactly as `reference`), and the window code is covered by `KeyWindowTests` and E6's sanity check.
+
+### 10.4 Claim and decision rules
+
+Metrics are E6's (Section 9.4), from the N = 8,192 test records by position, computed by the same
+functions: **far NLL** and **far accuracy** are the means over positions 4,096–8,191; **growth** is
+NLL on positions 7,168–8,191 minus NLL on positions 1,024–2,047. Each comparison is a paired
+difference per seed within a period, with a 95% t interval over the 5 seeds, the per-seed values,
+and a sign count.
+
+| | Claim | Supported if (at **both** P = 12 and P = 13) | Falsified otherwise |
+|---|---|---|---|
+| **W1** | *ArithScope's floor is partly its broad second layer.* `arith_window` has lower far NLL than `reference`, at no cost in accuracy. | the interval for far NLL (`arith_window − reference`) lies below 0, **and** the lower bound for far accuracy (`arith_window − reference`) is above −1 pp | far-NLL interval reaches 0 at either period, or the accuracy guard fails |
+
+A falsified W1 is reported as such: it would mean that, in these models, removing distant keys from
+ArithScope's second layer does not lower its floor, and the hypothesis of Section 10.1 fails.
+
+**Secondary predictions** (stated in advance; no decision depends on them):
+
+- **S6 (part, not all).** `arith_window`'s far NLL stays above `window`'s (lower bound of `arith_window − window` above 0 at both periods). Reason: the first layer stays broad and also averages shares, and the post-hoc 1,024-key limit removed only a small part of the floor.
+- **S7 (E6's surprise replicates).** `window`'s far NLL is below `reference`'s on fresh training batches and test data (upper bound of `window − reference` below 0 at both periods). In E6 this held at P = 12 and not at P = 13, so this is uncertain.
+
+**Descriptive (no prediction).** The share of the `reference` − `window` far-NLL gap that the window
+closes on ArithScope alone, from the period means; per-arm growth.
+
+**Sanity check (not a claim).** `arith_window` and `reference` have identical loss curves, validation curves, and positional parameters for every seed. If they do not, the runs are stopped, the cause is logged in Section 10.7, and no verdict is reported until it is fixed.
+
+**Statistics.** No multiplicity correction for the verdict, as in Sections 4 and 9. Holm-adjusted one-sided p-values for W1's two far-NLL comparisons are reported next to it as a sensitivity analysis. A run with a non-finite loss is a failure: it is reported and never replaced. `experiments/e7_verdicts.py` encodes these rules, reusing `experiments/e6_verdicts.py`'s metric and interval functions unchanged, and is committed with this section.
+
+### 10.5 Scope of any conclusion
+
+E7 can show whether limiting the second layer of these 2-layer ArithScope-only models to their
+training length lowers their NLL at up to 128× that length, on this synthetic task. A supported W1
+locates part of the floor in the broad second layer of these models; it does not prove the mechanism
+of the P3 remark, which stays a proof sketch, and it says nothing about language models or
+calibration in general.
+
+### 10.6 Commands
+
+```bash
+make e7 PY=~/mamba/envs/arithscope/bin/python WORKERS=4   # 30 runs, then experiments/e7_verdicts.py
+```
+
+### 10.7 Deviations log (E7)
+
+None yet.

@@ -4,7 +4,7 @@ PY ?= python3
 WORKERS ?= 4
 SUITES = e1_periodic e2_alias e3_tagged e5_mixed
 
-.PHONY: help oracle test lint theory pilots experiments e6 analyze lab bench all
+.PHONY: help oracle test lint theory pilots experiments e6 e7 analyze lab bench all
 
 help:  ## list targets
 	@grep -E '^[a-z0-9_]+:.*## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
@@ -31,6 +31,10 @@ experiments:  ## confirmatory suites in one worker pool (resumable; finished run
 e6:  ## E6 long-length calibration suite (docs/PREREGISTRATION.md, Section 9; resumable), then its verdicts
 	$(PY) experiments/run_suite.py e6_calibration --workers $(WORKERS)
 	$(PY) experiments/e6_verdicts.py
+
+e7:  ## E7 ArithScope-only NLL floor suite (docs/PREREGISTRATION.md, Section 10; resumable), then its verdicts
+	$(PY) experiments/run_suite.py e7_floor --workers $(WORKERS)
+	$(PY) experiments/e7_verdicts.py
 
 analyze:  ## regenerate every results table/figure from run JSON files
 	$(PY) experiments/analyze.py

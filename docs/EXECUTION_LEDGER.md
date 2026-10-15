@@ -262,3 +262,13 @@ Command: `make e6 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e
 | S3, `window` growth within ±0.02 nats | **as predicted** |
 | S4, `window` far NLL above `reference` | **not as predicted** |
 | S5, `long_train` growth positive | **as predicted** |
+
+## Stage 10: E7 preparation (2026-10-15)
+
+E7 ([`PREREGISTRATION.md`](PREREGISTRATION.md), Section 10) runs on the Stage 8 machine and environment. The library is unchanged since E6; E7 adds the suite `e7_floor` (`experiments/suites.py`), the frozen verdict script `experiments/e7_verdicts.py`, and `make e7`. No pilot (Section 10.3).
+
+| Step | Command | Result |
+|---|---|---|
+| Suite definition | `python experiments/run_suite.py e7_floor --dry-run` | 30 runs, 10 per arm; no file name shared with `e6_calibration` |
+| Verdict script plumbing | scratch script: E6's run files relabelled as E7 arms in a temporary directory (`baseline` posing as `arith_window`), then `e7_verdicts.main()` | runs end to end and writes every field; output discarded (not E7 evidence) |
+
