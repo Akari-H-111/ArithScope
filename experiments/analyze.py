@@ -1209,8 +1209,8 @@ def calibration_md(summary: dict) -> str:
         f"ArithScope alone changes by at most {plain:.3f} nats without any limit, although its second layer also attends "
         f"to distant keys.{above} ArithScope alone has "
         f"a floor of its own: {ar_last['nll']:.3f} nats where the Bayes NLL is 0,{floor}. That fits a softmax average, "
-        "which reports the share of votes on the comb rather than their number ([`MATH.md`](docs/MATH.md), P3 and the "
-        "proof sketch after it). This was found after an external audit and is not preregistered; details in "
+        "which reports the share of votes on the comb rather than their number ([`MATH.md`](docs/MATH.md), P3, T8, "
+        "and T8a). This was found after an external audit and is not preregistered; details in "
         "[`docs/RESULTS.md`](docs/RESULTS.md).",
     ])
 

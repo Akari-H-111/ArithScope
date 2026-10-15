@@ -178,7 +178,84 @@ where $`\Pi`$ subtracts the mean of a vector.
 
 In periodic denoising the Bayes NLL tends to 0 as votes accumulate, so no such model can follow it: every variant, with or without RoPE, has a positive NLL floor. *Check:* `experiments/posthoc_readout.py` finds the actual minimum over LayerNorm outputs for each diagnosed checkpoint (NUMERICAL; [`RESULTS.md`](RESULTS.md)).
 
-*Remark (why the NLL is flat without RoPE; PROOF SKETCH).* Suppose every attention logit depends on the offset $`n`$ only through finitely many arithmetic classes. For ArithScope these are the values $`\gcd(n,m)`$, $`m\in M`$, each with a fixed density among the offsets. Assume also no RoPE and no absolute positions. With i.i.d. noise, the fraction of keys in each (content, class) group converges as $`t`$ grows. Each attention output is a softmax-weighted average over these groups, so it converges along each residue class of $`t`$; layer by layer, so does the predictive distribution. Attention then reports vote *shares*, which converge, not vote *counts*, which grow. The NLL tends to a constant above the P3 floor, while the Bayes NLL tends to 0. With RoPE, logits depend on the offset itself, and this argument does not apply.
+### Finite-class convergence and the Bayes rate (added 2026-10-15)
+
+T8, T8a, and B1 were proposed in an external review (the repository owner's ChatGPT workspace, 2026-10-15). They were re-derived here: T8's proof is written out in full, and B1's constant is tightened by a factor of 2. They replace the earlier proof sketch that followed P3.
+
+**Setting.**
+- The model is a `TinyDecoder` of finite depth with fixed weights.
+- It has **no RoPE, no absolute positions, and no key windows**, and every additive bias depends on the offset only through $`(i-j)\bmod L`$ for a fixed $`L`$. For an ArithScope bank, $`L=\mathrm{lcm}(M)`$, since $`K_m`$ is $`m`$-periodic.
+- LayerNorm has $`\epsilon>0`$, and attention is causal by token index.
+- The data are periodic denoising with period $`P`$: given the motif $`\mu`$, the tokens $`X_0,X_1,\dots`$ are independent, and the law of $`X_j`$ depends only on $`j\bmod P`$.
+- Let $`\Lambda=\mathrm{lcm}(L,P)`$. The **type** of position $`j`$ is $`\tau_j=(j\bmod\Lambda,\,X_j)`$, an element of a finite set $`\mathcal T`$.
+- Let $`h^\ell_t`$ be the residual stream after block $`\ell`$ at position $`t`$ ($`h^0_t`$ is the embedding of $`X_t`$).
+
+**T8 (finite-class convergence; ASYMPTOTIC).** Fix $`\mu`$. For every layer $`\ell`$ there is a function $`h_\ell:\mathcal T\to\mathbb R^d`$ such that, almost surely, $`h^\ell_t-h_\ell(\tau_t)\to0`$ as $`t\to\infty`$. Hence the logits, the predictive distribution, and the NLL at position $`t`$ approach functions of $`\tau_t`$. The mean NLL over positions $`[T_0,T)`$ converges almost surely, as $`T\to\infty`$ with $`T_0/T`$ fixed in $`[0,1)`$, to a constant $`\bar\ell(\mu)=\sum_\tau\pi_\mu(\tau)\,g_\mu(\tau)`$. Here $`\pi_\mu(\tau)`$ is the density of type $`\tau`$, and $`g_\mu(\tau)`$ is the limiting NLL of a position of that type.
+
+*Proof.*
+1. **Bounded states.** LayerNorm outputs are bounded ($`\|\gamma\odot z+\beta\|\le\sqrt d\,\|\gamma\|_\infty+\|\beta\|`$), so every query, key, value, attention logit (the biases take finitely many values), attention output, and MLP output is bounded uniformly in $`t`$. Hence all $`h^\ell_t`$ lie in a fixed compact set $`C`$. LayerNorm with $`\epsilon>0`$, the linear maps, GELU, and the softmax ratio below are continuous, hence uniformly continuous on compact sets.
+2. **Induction.** The claim holds for $`\ell=0`$, since $`h^0_t`$ depends on $`X_t`$ only. Assume it for $`\ell-1`$. Fix one head of block $`\ell`$, and write $`u=\mathrm{LN}_1`$. Its logit for query $`t`$ and key $`j\le t`$ is
+   ```math
+   s_{tj}=\langle W_q u(h^{\ell-1}_t),W_k u(h^{\ell-1}_j)\rangle/\sqrt d+b\big((t-j)\bmod L\big),
+   ```
+   which is bounded by some $`S`$. The bias term depends on $`(t\bmod\Lambda,\,j\bmod\Lambda)`$ only. Let $`s^*(\tau,\sigma)`$ and $`v^*(\sigma)`$ be the same expressions with $`h_{\ell-1}`$ in place of $`h^{\ell-1}`$.
+3. **Approximation.** Given $`\delta>0`$, the induction hypothesis and uniform continuity give a random $`J`$ such that $`|s_{tj}-s^*(\tau_t,\tau_j)|<\delta`$ and $`\|v_j-v^*(\tau_j)\|<\delta`$ for all $`t\ge j\ge J`$. The keys $`j<J`$ carry total attention weight at most $`Je^{2S}/(t+1)\to0`$.
+4. **Limit of the average.** For the other keys, multiply the numerator and denominator of the softmax average by $`1/(t+1)`$ and group the keys by type. Each sum becomes $`\sum_\sigma\frac{N_\sigma(t)}{t+1}e^{s^*(\tau_t,\sigma)}(\cdot)`$, up to factors $`e^{\pm\delta}`$ and $`O(\delta)`$. Here $`N_\sigma(t)`$ counts the keys of type $`\sigma`$ in $`[J,t]`$. On each residue class mod $`\Lambda`$ the tokens are i.i.d., so by the strong law of large numbers $`N_\sigma(t)/(t+1)\to\pi_\mu(\sigma)`$ almost surely. The limiting denominator is at least $`e^{-S}>0`$, and $`\delta`$ is arbitrary. Therefore the head's output minus
+   ```math
+   A^*(\tau_t)=\frac{\sum_\sigma\pi_\mu(\sigma)e^{s^*(\tau_t,\sigma)}v^*(\sigma)}{\sum_\sigma\pi_\mu(\sigma)e^{s^*(\tau_t,\sigma)}}
+   ```
+   tends to 0. This is uniform over the finitely many query types.
+5. **Rest of the block.** The output projection, residual additions, LayerNorm, and MLP are continuous, which completes the induction.
+6. **Mean NLL.** The readout is continuous, and the target $`\mu_{t\bmod P}`$ is a function of $`\tau_t`$. So $`\mathrm{NLL}_t-g_\mu(\tau_t)\to0`$. The Cesàro mean of $`g_\mu(\tau_t)`$ converges by the strong law on each residue class. ∎
+
+*What T8 says and does not say.*
+- **Convergence per type, not to one constant.** The limit depends on the query's residue and on its own visible token, so the NLL sequence does not converge pointwise to a single constant; only its mean does.
+- **Rates.** T8 gives no rate. A Hoeffding bound gives $`O_P(\sqrt{\log(|\mathcal T|/\delta)/t})`$ for the first layer, but deeper layers have dependent keys. Rates are OPEN.
+- **Assumptions.** RoPE violates the assumption, because its logits depend on the offset itself, not on a residue. So do absolute positions.
+
+**C8 (the floor; ASYMPTOTIC, from T8, P3, B1).** Under T8's setting, the mean NLL tends to $`\bar\ell(\mu)`$, which is at least the P3 floor and hence strictly positive. The Bayes NLL tends to 0 (B1). No such model's mean NLL follows the Bayes NLL at long lengths, whatever its weights.
+
+This is a statement about a model class. It does not identify which part of a trained model sets the value of its floor; that is EMPIRICAL (E7, E8 in [`RESULTS.md`](RESULTS.md)).
+
+*Remark (key windows; ASYMPTOTIC).* Suppose the last layer is limited to its last $`W`$ keys, as in the two-layer models of E6–E8, while the layers below it are unlimited.
+- **The limit exists.** The layers below converge as in T8. The windowed layer's output at $`t`$ then approaches a continuous function $`G(t\bmod\Lambda,\,X_{t-W+1},\dots,X_t)`$. These variables are $`W`$-dependent and periodic in law, so splitting the positions into $`W\Lambda`$ interleaved subsequences of independent terms shows that the mean NLL again converges almost surely, to a limit $`F_\mu(W)`$.
+- **No monotonicity is claimed.** For fixed weights, adding a key to a softmax average can raise or lower the NLL, so whether $`F_\mu(W)`$ is monotone in $`W`$ is OPEN. The windowed limit also lies above the P3 floor.
+
+**T8a (softmax count non-identifiability; PROVED, elementary).** Fix class scores $`s_a`$ and values $`v_a`$, $`a=1,\dots,k`$. For counts $`c\in\mathbb R^k_{\ge0}`$ with $`\sum_ac_ae^{s_a}>0`$, let
+```math
+F(c)=\frac{\sum_a c_a e^{s_a}v_a}{\sum_a c_a e^{s_a}} .
+```
+Then $`F(\lambda c)=F(c)`$ for every $`\lambda>0`$, and $`DF(c)\,c=0`$.
+
+*Proof.* The numerator and the denominator are both linear in $`c`$, so the factor $`\lambda`$ cancels. Differentiating $`F(\lambda c)`$ in $`\lambda`$ at $`\lambda=1`$ (Euler's identity for degree 0) gives the second statement. ∎
+
+In T8's limit, every attention output has this form, with $`c`$ the type densities. So the output depends on class *proportions*, and the total count is a direction the aggregation cannot see. For example, the counts $`(8,2,0)`$ and $`(80,20,0)`$ give the same output, although the second carries ten times the evidence.
+
+T8a concerns this aggregation map. It does not show that no Transformer can count: other paths, other heads, or an explicit length signal could carry the count. It does say what a remedy must add, namely a signal of evidence mass beside the normalized average.
+
+**B1 (Bayes posterior and exponential NLL bound for periodic denoising; PROVED, elementary).**
+- **Noise model.** Each visible token equals the motif symbol with probability $`1-\varepsilon`$ and is otherwise drawn uniformly from the $`V`$ symbols, so $`p=1-\varepsilon+\varepsilon/V`$ (correct symbol) and $`q=\varepsilon/V`$ (any given wrong symbol). Let $`\rho=p/q`$; with $`V=16`$ and $`\varepsilon=1/2`$, $`p=17/32`$, $`q=1/32`$, and $`\rho=17`$.
+- **Posterior.** Under a uniform prior on the motif symbol, with $`n`$ comb observations and counts $`c_a`$ of each symbol,
+  ```math
+  \Pr(\mu_r=a\mid c)=\frac{\rho^{c_a}}{\sum_b\rho^{c_b}},\qquad\log\frac{\Pr(\mu_r=a\mid c)}{\Pr(\mu_r=b\mid c)}=(c_a-c_b)\log\rho .
+  ```
+  The log-odds grow with the count difference, not with the proportions.
+- **Bound.** If the true symbol is $`c`$, then
+  ```math
+  \mathbb E\big[\mathrm{NLL}_{\mathrm{Bayes}}\big]\;\le\;(V-1)\,\kappa^{\,n},\qquad\kappa=1-(\sqrt p-\sqrt q)^2=2\sqrt{pq}+(V-2)q<1 .
+  ```
+
+*Proof.*
+1. **Posterior.** The likelihood of the observations given $`\mu_r=a`$ is $`p^{c_a}q^{n-c_a}`$; normalize.
+2. **NLL.** With $`D_b=N_b-N_c`$, the Bayes NLL is $`\log\big(1+\sum_{b\ne c}\rho^{D_b}\big)`$.
+3. **Two inequalities.** $`\log(1+x)\le\sqrt x`$ for $`x\ge0`$ (the difference vanishes at 0 and has derivative $`(1-\sqrt x)^2/(2\sqrt x(1+x))\ge0`$), and $`\sqrt{\sum y_b}\le\sum\sqrt{y_b}`$. Hence $`\mathrm{NLL}\le\sum_{b\ne c}\rho^{D_b/2}`$.
+4. **Expectation.** Each observation contributes the factor $`\rho^{-1/2}`$ with probability $`p`$, $`\rho^{1/2}`$ with probability $`q`$, and $`1`$ otherwise. So $`\mathbb E\rho^{D_b/2}=(\sqrt{pq}+\sqrt{pq}+(V-2)q)^n=\kappa^n`$, using $`p+(V-1)q=1`$. ∎
+
+*Use.*
+- **Values.** For $`V=16`$ and $`\varepsilon=1/2`$, $`\kappa=(14+2\sqrt{17})/32\approx0.6952`$. A query at position $`t`$ has $`n=\lfloor t/P\rfloor+1`$ comb observations, its own token included. At $`t=1{,}024`$ and $`P=13`$, the bound is below $`10^{-11}`$, which is why the Bayes NLL is 0 to machine precision there ([`RESULTS.md`](RESULTS.md)).
+- **What the bound caps.** It also caps the evidence a window of $`W`$ keys gives up: about $`\lfloor W/P\rfloor`$ comb votes remain. It concerns the posterior's NLL, not plurality accuracy.
+
+*Check:* `tests/test_theory_notes.py` computes the expected Bayes NLL exactly, by exact enumeration over count vectors, and compares it with the bound (B1). It also checks T8a's identities on random inputs. `tests/test_convergence.py` runs random ArithScope-only models with a bank of lcm 12 on 4,096-token sequences. It checks that the spread of same-type logits shrinks as $`t`$ grows (T8, NUMERICAL illustration). With the full bank $`\{1,\dots,16\}`$, $`\Lambda`$ is a multiple of 720,720, so a test of feasible length never sees a type twice.
 
 ## 5. Implementation identities
 
@@ -205,7 +282,7 @@ The bias therefore runs inside a fused attention kernel. It adds $`\sum_{m\in M}
 ## 6. Not claimed / open
 
 - **Not claimed:** sub-quadratic attention, speedups, natural-language gains, PSD attention matrices, or any statement about pretrained LLMs.
-- **OPEN:** finite-$`N`$ rates for T5 as a function of RoPE base and head dimension; optimal bank choice under a feature budget; data-dependent (query-conditioned) order routing; behaviour beyond the synthetic tasks in [`PREREGISTRATION.md`](PREREGISTRATION.md).
+- **OPEN:** finite-$`N`$ rates for T5 as a function of RoPE base and head dimension; finite-$`t`$ rates for T8 beyond the first layer; monotonicity of the windowed limit $`F_\mu(W)`$ in $`W`$; optimal bank choice under a feature budget; data-dependent (query-conditioned) order routing; behaviour beyond the synthetic tasks in [`PREREGISTRATION.md`](PREREGISTRATION.md).
 
 ## References
 
