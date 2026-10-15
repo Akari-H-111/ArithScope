@@ -309,4 +309,6 @@ make e7 PY=~/mamba/envs/arithscope/bin/python WORKERS=4   # 30 runs, then experi
 
 ### 10.7 Deviations log (E7)
 
-None yet.
+No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
+
+1. **Reporting code after the results** (after `cf30e8f`, which holds the 30 run files and the verdicts). `experiments/analyze.py` gained `analyze_e7`, which formats the frozen verdicts and paired intervals from `results/summary/e7.json`, adds per-arm intervals and an NLL-by-position figure computed from the same run files with `e6_verdicts.py`'s metric functions, and fills the `e7_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e7_verdicts.py` is unchanged since `c2d793f`.
