@@ -192,6 +192,20 @@ The ArithScope term reads only `(i − j) mod m` in int64, so it is bitwise inva
 Accuracy is not the whole story. At N = 8,192 and period 13, RoPE + ArithScope and ArithScope alone both match the oracle's accuracy, yet their mean NLL on unseen positions is 0.220 and 0.067 nats (committed run files, 5 seeds). A post-hoc diagnosis on fresh sequences traces the part of the gap that grows with length to distant keys in the second attention layer. Beyond 1,024 tokens, RoPE + ArithScope's NLL rises with the query position, from 0.140 at positions 1,024–2,048 to 0.258 at 4,096–8,192, at 100% accuracy; limiting the second layer to the last 1,024 keys holds it at 0.134 with accuracy 100%, while limiting the first layer changes nothing. Across both periods, the NLL rises by more than 0.01 nats in 19 of the 20 models with RoPE (RoPE + ArithScope and RoPE + full Fourier bank), and the limit leaves a change of at most 0.011 nats in every one of them. Over the same positions, ArithScope alone changes by at most 0.006 nats without any limit, although its second layer also attends to distant keys. RoPE + ArithScope stays above it even with the limit. ArithScope alone has a floor of its own: 0.075 nats where the Bayes NLL is 0, while its readout alone could go as low as 0.006. That fits a softmax average, which reports the share of votes on the comb rather than their number ([`MATH.md`](docs/MATH.md), P3, T8, and T8a). This was found after an external audit and is not preregistered; details in [`docs/RESULTS.md`](docs/RESULTS.md).
 <!-- AUTO:calibration:END -->
 
+### Calibration at long lengths: four preregistered follow-ups (E6–E9)
+
+The calibration finding above was post hoc. Four further experiments turned it into preregistered tests. Each design and decision rule was committed and pushed before its first run, and its results came in a separate commit ([`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md), Sections 9–12; numbers in [`docs/RESULTS.md`](docs/RESULTS.md)).
+
+- **E6: two remedies work.** Limiting RoPE + ArithScope's second layer to its last 64 keys, its training length, removes the NLL rise at both periods with accuracy unchanged. Training on longer sequences at the same tokens per step also removes most of it. The windowed model even ends below ArithScope alone, which the preregistration did not predict.
+- **E7: a claim falsified as written.** The same window on ArithScope alone lowered its NLL in every seed, but with five seeds the interval at period 12 reached zero, so the claim is recorded as falsified.
+- **E8: the retest, with a planned seed count.** A power rule fixed before any run set the number of fresh seeds. With them, the window lowers ArithScope alone's NLL in every seed at both periods, and the claim is supported.
+- **E9: a dose-response.** Each seed is trained once, and the same weights are evaluated with windows from the training length up to the whole sequence. The NLL rises with the window in every seed, mostly over the first few doublings.
+
+The theory behind the floor is in [`docs/MATH.md`](docs/MATH.md):
+- **T8:** without RoPE, attention converges to a fixed mix of vote shares, so the mean NLL settles at a positive floor while the Bayes NLL goes to zero.
+- **T8a:** a softmax average cannot see the total vote count.
+- **B1:** the Bayes NLL falls exponentially with the number of votes.
+
 <!-- AUTO:overhead:BEGIN -->
 ### Cost
 
@@ -213,6 +227,7 @@ Negative results are kept, with their run files. The first three come from devel
 - **The first alias fixture leaked information.** In dense denoising, the model's own noisy token breaks the tie between aliased candidates, so the model beat the "alias ceiling" (72% vs about 53%). The fixture was redesigned with uninformative query tokens before any confirmatory run.
 - **A correct comb is not enough to generalize.** With period 24 and training length 64, a resolving bank learned exactly the right mixture but did not extrapolate (52% against a 95% Bayes oracle): a query saw at most three comb positions in training, so the content readout met a distribution shift at long lengths. Period 12 shows six comb positions per window and was adopted instead.
 - **Near-oracle accuracy hides a calibration cost.** RoPE + ArithScope matches the oracle's accuracy at 8,192 tokens, but its NLL grows with length while ArithScope alone does not. A post-hoc intervention traces the growth to distant keys in the second attention layer, whose scores depend on the offset itself only when RoPE is present (see Calibration above). The preregistered claims were about accuracy only.
+- **A preregistered claim failed at five seeds (E7).** The window lowered ArithScope alone's NLL in every seed, but the interval at period 12 reached zero, so W1 stays recorded as falsified. The retest with a seed count planned in advance (E8) is a separate claim; it does not overturn W1.
 - **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) come within about a point of ArithScope up to 2,048 tokens. They lose accuracy only at the longest lengths, after their comb has drifted, as the drift remark under Theorem T5 predicts (claim S1, and the post-hoc drift analysis in [`docs/RESULTS.md`](docs/RESULTS.md)).
 
 ## Scope and limitations
