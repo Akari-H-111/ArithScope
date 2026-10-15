@@ -14,6 +14,7 @@ open questions, in priority order.
 | Preregistered confirmatory experiments | complete: 182 runs, 0 failures; C1–C4 supported, S1 and S2 observed | `docs/PREREGISTRATION.md`, `results/runs/`, `docs/RESULTS.md` |
 | E6, calibration at long lengths (second preregistration) | complete: 40 runs, 0 failures, on an Apple M2; L1 and L2 supported, S4 not as predicted | `docs/PREREGISTRATION.md` §9, `results/runs/e6_calibration/`, `results/summary/e6.json` |
 | E7, the NLL floor of ArithScope alone (third preregistration) | complete: 30 runs, 0 failures, on the Apple M2; W1 falsified by its rule (P = 12 interval reaches 0), S6 and S7 not as predicted; the direction held in every seed | `docs/PREREGISTRATION.md` §10, `results/runs/e7_floor/`, `results/summary/e7.json` |
+| E8, a powered retest of E7's W1 (fourth preregistration) | preregistered (seeds 6–26 from `experiments/e8_power.py`); runs pending | `docs/PREREGISTRATION.md` §11, `results/summary/e8_power.json` |
 | Post-hoc analyses (labeled) | shift test at the training length; cosine-bank mixtures; attention profile; learned-frequency drift; gate magnitudes; NLL diagnosis; multiplicity sensitivity | `experiments/posthoc_shift.py`, `experiments/posthoc_nll.py`, `experiments/analyze.py`, `experiments/attention_figure.py` |
 | First external audit (2026-10-15) | F1–F3 fixed or corrected, with tests; F4 diagnosed post hoc; F5 answered in wording and a multiplicity analysis | `docs/AUDIT_RESPONSE.md`, `docs/audits/` |
 | Replays with the current code | every E1 checkpoint re-scored and 11 confirmatory runs retrained, bitwise identical to the stored records | `experiments/replay.py`, `results/replay/` |
@@ -35,6 +36,8 @@ make theory        # theory figures + results/summary/theory.json
 make pilots        # dev-data pilots + preregistered hyperparameter rule
 make e6            # E6 long-length calibration suite + verdicts (40 runs; preregistered in Section 9)
 make e7            # E7 ArithScope-only NLL floor suite + verdicts (30 runs; preregistered in Section 10)
+python experiments/e8_power.py   # E8 seed count from the E6/E7 spread -> results/summary/e8_power.json
+make e8            # E8 powered retest of W1 + verdicts (84 runs; preregistered in Section 11)
 make experiments   # confirmatory suites (resumable; about 3 hours wall-clock with 4 workers)
 make analyze       # regenerate all tables/figures and the AUTO blocks in docs/RESULTS.md and README.md
 make lab           # rebuild docs/lab/index.html from the committed summaries

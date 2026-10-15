@@ -293,3 +293,15 @@ Command: `make e7 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e
 | W1, second-layer window on ArithScope alone lowers its far NLL | **FALSIFIED** (the far-NLL interval reaches 0 at P = 12) |
 | S6, `arith_window` far NLL above `window` | **not as predicted** |
 | S7, `window` far NLL below `reference` | **not as predicted** |
+
+
+## Stage 12: E8 preparation (2026-10-15)
+
+E8 ([`PREREGISTRATION.md`](PREREGISTRATION.md), Section 11) runs on the Stage 8 machine and environment. The library is unchanged since E6. E8 adds the seed-count script `experiments/e8_power.py` (output `results/summary/e8_power.json`), the suite `e8_power_retest` (`experiments/suites.py`), the frozen verdict script `experiments/e8_verdicts.py`, and `make e8`. There is no pilot (Section 11.4).
+
+| Step | Command | Result |
+|---|---|---|
+| Seed count | `python experiments/e8_power.py` | n = 21 (seeds 6–26), joint power 0.901 under the Section 11.3 plan |
+| Suite definition | `python experiments/run_suite.py e8_power_retest --dry-run` | 84 runs, 42 per arm, data seed 20261018. No file name is shared with any other suite, and seeds 6–26 appear in no other suite (others use 0–5) |
+| Verdict script plumbing | scratch script: E7's `reference` and `arith_window` run files relabelled as E8 specs in a temporary directory, one replaced by a simulated failure, then `e8_verdicts.main()`; then one record deleted | runs end to end, writes every field, and leaves the failed seed out of its period. It stops when a record is missing without a failure. Output discarded (not E8 evidence) |
+
