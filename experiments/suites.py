@@ -204,8 +204,33 @@ def e7_floor() -> list[RunSpec]:
             for period in (12, 13) for overrides in E7_ARMS.values() for seed in CONFIRM_SEEDS]
 
 
+# ----------------------------------------------------------------------------------------------
+# E8 (docs/PREREGISTRATION.md, Section 11): a better-powered retest of E7's W1. E7's two
+# ArithScope-only arms, with fresh initial weights (seeds that no earlier suite used; E1, E6, and E7
+# share seeds 1-5 and hence their initial weights), a new experiment name (new training batches), and
+# fresh test data. The seed count comes from experiments/e8_power.py (results/summary/e8_power.json).
+E8_DATA_SEED = 20261018  # fresh: E1-E5 20261014, post-hoc diagnosis 20261015, E6 20261016, E7 20261017
+E8_SEEDS = tuple(range(6, 27))  # 21 seeds, the n of experiments/e8_power.py; seed 0 is for pilots, 1-5 are used
+E8_ARMS: dict[str, dict] = {k: E7_ARMS[k] for k in ("reference", "arith_window")}
+
+
+def e8_arm(spec: RunSpec) -> str:
+    """The E8 arm a run belongs to."""
+    arm = e7_arm(spec)
+    if arm not in E8_ARMS:
+        raise ValueError(f"not an E8 arm: {spec.filename}")
+    return arm
+
+
+def e8_power_retest() -> list[RunSpec]:
+    return [RunSpec(experiment=f"e8_p{period}", task={"kind": "periodic", "periods": [period]}, seed=seed,
+                    eval_lengths=E1_EVAL, eval_tokens_long=E6_EVAL_TOKENS_LONG, data_seed=E8_DATA_SEED,
+                    **overrides, **_hp("periodic", overrides["variant"]))
+            for period in (12, 13) for overrides in E8_ARMS.values() for seed in E8_SEEDS]
+
+
 SUITES = {"pilot": pilot, "pilot_controls": pilot_controls, "pilot_alias_query": pilot_alias_query,
           "pilot_alias_design": pilot_alias_design, "pilot_mqar_easy": pilot_mqar_easy,
           "e1_periodic": e1_periodic, "e2_alias": e2_alias,
           "e3_tagged": e3_tagged, "e5_mixed": e5_mixed, "pilot_e6": pilot_e6, "e6_calibration": e6_calibration,
-          "e7_floor": e7_floor}
+          "e7_floor": e7_floor, "e8_power_retest": e8_power_retest}

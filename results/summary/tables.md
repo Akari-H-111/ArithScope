@@ -402,3 +402,19 @@ Paired differences in far NLL (mean [95% CI], seeds lower / 5):
 - P = 13: ArithScope only, limited minus unlimited: -0.0512 [-0.0885, -0.0139] (5/5); far accuracy +0.00 pp [+0.00, +0.00]. ArithScope only limited minus RoPE + ArithScope limited: +0.0029 [+0.0001, +0.0057] (0/5). RoPE + ArithScope limited minus ArithScope only: -0.0541 [-0.0924, -0.0158] (5/5). Share of the gap between ArithScope only and RoPE + ArithScope limited that the limit closes on ArithScope only (from means, descriptive): 95%.
 
 Holm-adjusted one-sided p-values for W1's two far-NLL comparisons (sensitivity only): P = 12: 0.0314; P = 13: 0.0189.
+
+**E8, a powered retest of E7's W1 (preregistered, Section 11).** N = 8,192; far region = positions 4,096–8,191; growth = NLL on positions 7,168–8,191 minus NLL on positions 1,024–2,047. Mean ± 95% CI half-width over 21 seeds (seeds 6–26; 0 failed runs). Seed-to-seed SD of far NLL in the last column.
+
+| P | arm | far NLL (nats) | far accuracy (%) | growth (nats) | SD of far NLL |
+|---|---|---|---|---|---|
+| 12 | ArithScope only | 0.0636 ± 0.0146 | 100.0 ± 0.0 | 0.0040 ± 0.0011 | 0.0321 |
+| 12 | ArithScope only, 2nd layer limited to 64 keys | 0.0126 ± 0.0010 | 100.0 ± 0.0 | -0.0004 ± 0.0001 | 0.0022 |
+| 13 | ArithScope only | 0.0618 ± 0.0191 | 100.0 ± 0.0 | 0.0027 ± 0.0015 | 0.0419 |
+| 13 | ArithScope only, 2nd layer limited to 64 keys | 0.0193 ± 0.0018 | 100.0 ± 0.0 | -0.0005 ± 0.0002 | 0.0039 |
+
+Paired differences, limited minus unlimited (mean [95% CI], seeds lower / seeds):
+
+- P = 12: far NLL -0.0510 [-0.0656, -0.0363] (21/21); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.0043 [-0.0054, -0.0033] (21/21).
+- P = 13: far NLL -0.0425 [-0.0606, -0.0244] (21/21); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.0032 [-0.0047, -0.0017] (21/21).
+
+Holm-adjusted one-sided p-values for W2's two far-NLL comparisons (sensitivity only): P = 12: 5e-07; P = 13: 4.4e-05.
