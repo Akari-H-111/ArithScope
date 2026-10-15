@@ -12,6 +12,7 @@ open questions, in priority order.
 | Theory (comb gap, optimal PSD comb, CRT composition, alias partition, RoPE residue-blindness, folding) | written with proofs and evidence labels | `docs/MATH.md` |
 | PyTorch modules (ArithScope bias, four backends, baselines, model) | done; 65 tests (one opt-in); causality by token index | `arithscope/`, `tests/` |
 | Preregistered confirmatory experiments | complete: 182 runs, 0 failures; C1–C4 supported, S1 and S2 observed | `docs/PREREGISTRATION.md`, `results/runs/`, `docs/RESULTS.md` |
+| E6, calibration at long lengths (second preregistration) | complete: 40 runs, 0 failures, on an Apple M2; L1 and L2 supported, S4 not as predicted | `docs/PREREGISTRATION.md` §9, `results/runs/e6_calibration/`, `results/summary/e6.json` |
 | Post-hoc analyses (labeled) | shift test at the training length; cosine-bank mixtures; attention profile; learned-frequency drift; gate magnitudes; NLL diagnosis; multiplicity sensitivity | `experiments/posthoc_shift.py`, `experiments/posthoc_nll.py`, `experiments/analyze.py`, `experiments/attention_figure.py` |
 | First external audit (2026-10-15) | F1–F3 fixed or corrected, with tests; F4 diagnosed post hoc; F5 answered in wording and a multiplicity analysis | `docs/AUDIT_RESPONSE.md`, `docs/audits/` |
 | Replays with the current code | every E1 checkpoint re-scored and 11 confirmatory runs retrained, bitwise identical to the stored records | `experiments/replay.py`, `results/replay/` |
@@ -31,6 +32,7 @@ make test          # full suite
 make lint          # ruff static checks
 make theory        # theory figures + results/summary/theory.json
 make pilots        # dev-data pilots + preregistered hyperparameter rule
+make e6            # E6 long-length calibration suite + verdicts (40 runs; preregistered in Section 9)
 make experiments   # confirmatory suites (resumable; about 3 hours wall-clock with 4 workers)
 make analyze       # regenerate all tables/figures and the AUTO blocks in docs/RESULTS.md and README.md
 make lab           # rebuild docs/lab/index.html from the committed summaries
@@ -63,7 +65,7 @@ With the conda-forge PyTorch build, compiled kernels need `LD_PRELOAD=$CONDA_PRE
 
 1. **Natural data.** Does the channel help where periodicity is real but imperfect, e.g. fixed-width tables, code indentation, serialized grids, music, or genomic codon structure? Use a legally clear corpus, matched baselines, and report perplexity *and* length extrapolation. This is the most important next step and the one most likely to fail.
 2. **Pretrained-model drop-in.** Add zero-initialized ArithScope channels to a small pretrained RoPE model and fine-tune only `gamma` and `alpha`, a few dozen parameters per layer. Measure whether anything changes on periodic or format-heavy data.
-3. **Calibration at long lengths.** In models with RoPE, distant keys in the second layer raise the NLL beyond about 1,024 tokens while accuracy holds (post hoc, `docs/RESULTS.md`). The recent-keys limit used there is a diagnostic, not a fix. Untested remedies: train on longer sequences, limit or bias the broad layer's window during training, or give the readout a vote-count signal so that confidence can grow with evidence (`docs/MATH.md`, P3 and the proof sketch after it).
+3. **Calibration at long lengths.** In models with RoPE, distant keys in the second layer raise the NLL beyond about 1,024 tokens while accuracy holds (post hoc, `docs/RESULTS.md`). The recent-keys limit used there is a diagnostic, not a fix. Untested remedies: train on longer sequences, limit or bias the broad layer's window during training, or give the readout a vote-count signal so that confidence can grow with evidence (`docs/MATH.md`, P3 and the proof sketch after it). **Tested in E6** (`docs/PREREGISTRATION.md`, Section 9; `make e6`; results in `docs/RESULTS.md`): a second-layer window equal to the training length (L1) and training at length 256 with the same tokens per step (L2) both lower the far NLL at both periods, with accuracy unchanged. Contrary to S4, the windowed model ends *below* ArithScope alone. Open: a windowed ArithScope-only arm (is ArithScope's own floor partly its broad second layer?), separating length from batch size in L2, and the vote-count readout, which is still untested.
 4. **Query-conditioned routing.** Make `alpha_h(x_i) = softmax(W x_i)`. This is still exactly foldable, since only the query-side features change. Test it on the mixed-period suite `e5_mixed`, where fixed mixtures fall behind learned frequencies at short lengths (exploratory, 3 seeds).
 5. **Bank design.** Compare the prime-power (CRT) bank `B_16` (10 orders, horizon 720,720, rank 55) with `{1..16}` (16 orders, rank 80) under a feature budget.
 6. **Finite-N rates for Theorem T5** as a function of RoPE base and head dimension (see the numerical caveat in `docs/MATH.md`).

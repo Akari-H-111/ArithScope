@@ -312,6 +312,83 @@ class BackendAndMaskTests(unittest.TestCase):
 
 
 @unittest.skipUnless(HAS_TORCH, "torch not installed")
+class KeyWindowTests(unittest.TestCase):
+    """Optional per-layer key window: query i sees keys i - W < j <= i, by token index."""
+
+    def _attn(self, name, window, seed=1):
+        torch.manual_seed(seed)
+        layer = CausalSelfAttention(32, 4, PositionConfig.from_name(name), window=window).double()
+        for module in layer.biases.values():
+            with torch.no_grad():
+                for p in module.parameters():
+                    p.normal_()
+        return layer
+
+    def test_window_equals_attention_over_the_last_keys(self):
+        import arithscope.attention as attention_module
+
+        x = torch.randn(2, 50, 32, dtype=torch.float64)
+        pos = torch.arange(50) + 1000
+        for name in ("rope+arith", "rope+relbias", "alibi"):
+            for window in (1, 7, 50):
+                layer = self._attn(name, window)
+                full = self._attn(name, None)
+                y = layer(x, pos)
+                for i in (0, 6, 7, 31, 49):
+                    lo = max(0, i - window + 1)  # the last `window` tokens up to i
+                    ref = full(x[:, lo:i + 1], pos[lo:i + 1])[:, -1]
+                    self.assertTrue(torch.allclose(y[:, i], ref, atol=1e-12, rtol=0), (name, window, i))
+                saved = attention_module.EXPLICIT_QUERY_BLOCK
+                try:
+                    attention_module.EXPLICIT_QUERY_BLOCK = 9  # query blocking stays exact with a window
+                    self.assertTrue(torch.allclose(y, layer(x, pos), atol=1e-12, rtol=0), (name, window))
+                finally:
+                    attention_module.EXPLICIT_QUERY_BLOCK = saved
+
+    def test_window_at_least_the_length_changes_nothing(self):
+        x = torch.randn(2, 40, 32, dtype=torch.float64)
+        pos = torch.arange(40)
+        self.assertTrue(torch.equal(self._attn("rope+arith", 40)(x, pos), self._attn("rope+arith", None)(x, pos)))
+
+    def test_model_windows_and_unchanged_initialization(self):
+        torch.manual_seed(0)
+        base = TinyDecoder(ModelConfig(vocab_size=11, pos=PositionConfig.from_name("rope+arith")))
+        torch.manual_seed(0)
+        windowed = TinyDecoder(ModelConfig(vocab_size=11, pos=PositionConfig.from_name("rope+arith"),
+                                           attn_windows=(None, 16)))
+        self.assertEqual([b.attn.window for b in windowed.blocks], [None, 16])
+        sd = windowed.state_dict()
+        self.assertTrue(all(torch.equal(v, sd[k]) for k, v in base.state_dict().items()))
+        tokens = torch.randint(0, 11, (2, 16))
+        self.assertTrue(torch.equal(base(tokens), windowed(tokens)))  # length <= window: no key is cut
+        with self.assertRaises(ValueError):
+            windowed(tokens, backend="sdpa")
+        with self.assertRaises(ValueError):
+            TinyDecoder(ModelConfig(vocab_size=11, attn_windows=(16,)))
+
+    def test_earlier_run_ids_are_unchanged(self):
+        import dataclasses
+        import json
+        from pathlib import Path
+
+        from arithscope.train import RunSpec
+
+        current = {f.name for f in dataclasses.fields(RunSpec)} - {"attn_windows"}
+        checked = 0
+        for path in sorted((Path(__file__).resolve().parent.parent / "results" / "runs").glob("*/*.json")):
+            fields = json.loads(path.read_text())["spec"]
+            if set(fields) != current:  # early pilots predate some fields; their ids were never reproducible
+                continue
+            for key in ("orders", "eval_lengths", "shift_evals"):
+                fields[key] = tuple(fields[key])
+            self.assertEqual(RunSpec(**fields).filename, path.name)
+            checked += 1
+        self.assertGreaterEqual(checked, 189)  # every confirmatory run and the later pilots
+        spec = RunSpec(**{**fields, "attn_windows": (None, 64)})
+        self.assertNotEqual(spec.filename, path.name)
+
+
+@unittest.skipUnless(HAS_TORCH, "torch not installed")
 class TrainingSmokeTests(unittest.TestCase):
     def test_tiny_model_learns_a_periodic_sequence(self):
         torch.manual_seed(0)

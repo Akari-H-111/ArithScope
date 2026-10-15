@@ -216,3 +216,49 @@ The audit is archived in [`audits/2026-10-15-first-cold-audit.md`](audits/2026-1
 | Analysis and explainer | `make analyze`, `make lab` | **PASS** |
 
 **Benchmark not rerun.** For the benchmark's inputs (contiguous positions, no padding), the fixes change only how the boolean mask is built: token indices are compared instead of positions, with the same shapes and operations. Every bias takes the same code path as before, plus a range check that is linear in the number of positions. `results/overhead/overhead.json` (`3a7a021`) remains the reference.
+
+## Stage 8: E6 preparation on a local machine (2026-10-15)
+
+Environment for E6, which runs entirely on this machine ([`PREREGISTRATION.md`](PREREGISTRATION.md), Section 9):
+
+| Item | Value |
+|---|---|
+| Machine | Apple M2 (4 performance + 4 efficiency cores), 16 GB RAM, no CUDA |
+| OS | macOS 27.0.1, arm64 |
+| Python / PyTorch | 3.13.16 / 2.14.1, conda-forge osx-arm64 build (the `cpu_mkl` build of `environment.yml` exists only for Linux), created with micromamba 2.9.0 |
+| NumPy / SciPy / Matplotlib / ruff | 2.5.4 / 1.18.1 / 3.11.2 / 0.17.0 (pip) |
+| Exact lock | [`results/environment/conda-explicit-osx-arm64.lock`](../results/environment/conda-explicit-osx-arm64.lock) (conda packages; ruff is installed with pip) |
+
+| Step | Command | Result |
+|---|---|---|
+| Checks on the cloned `main` (`216f2d4`) | `make oracle`, `make test`, `make lint` | **PASS**: 65 run (1 skipped); 64 passed, 1 skipped; ruff clean |
+| Cross-platform retrain | retrain of `e1_p12__rope+arith__s1` with the stored spec (scratch script, output not kept) | **PARTIAL, as expected across platforms**: 172 s in total (109 s training); accuracy identical to the stored record at every length; training losses within 5 × 10⁻⁸ and test NLL within 1.1 × 10⁻⁵ relative error, not bitwise. E1's bitwise replays hold on x86-64 Linux only |
+| Library: optional per-layer key window | `attn_windows` in `ModelConfig` and `RunSpec`; left out of the run id at its default | **PASS**: new tests (`KeyWindowTests`) show that a window equals attention over the last keys, that blocking stays exact, that initialization is unchanged, and that the ids of all 189 current-schema run files are unchanged; a mutation check (window ignored; new field hashed) makes them fail |
+| Full checks after the change | `make test`, `make lint`, `make oracle` (system Python without torch) | **PASS**: 68 passed, 1 skipped; ruff clean; 69 run, 42 skipped |
+| Feasibility pilot | `python experiments/run_suite.py pilot_e6 --workers 4` (development data, seed 0, evaluated at length 64 only) | **PASS**: 4 of 4 runs; `window` and `baseline` bitwise identical; `results/runs/pilot_e6/` |
+
+The 58 earliest pilot files (`pilot`, `pilot_controls`) were written before `RunSpec` gained some fields, so their file names could not be recomputed from their specs even before this change; the run-id test skips them.
+
+
+## Stage 9: E6 runs (2026-10-15)
+
+Command: `make e6 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e6_calibration --workers 4`, then `python experiments/e6_verdicts.py`), started 2026-10-15 05:36:46 UTC from a clean working tree at `039a56d`. That commit was pushed to `origin/prereg/long-length-calibration` at 05:36:37 UTC, before the runner started. The verdicts were written at 06:51:43 UTC.
+
+| Suite | Runs | Failures | Wall time per run (4 in parallel) | Training time |
+|---|---|---|---|---|
+| `e6_calibration` | 40 | 0 | 310–712 s (mean 433 s) | 194–312 s for the length-64 arms; 359–585 s for `long_train` |
+
+**Status: PASS.** 40 runs, all `COMPLETED`, every training loss finite. Machine and environment as in Stage 8; nothing else ran on it.
+
+**Provenance.** Every run file records `git_commit = 039a56d`. The first run to finish records `git_dirty = false`. The other 39 record `true` only because the earlier run files were already in `results/runs/e6_calibration/` and still untracked; `git status` after the suite showed no other change.
+
+**Verdicts** (`experiments/e6_verdicts.py` → [`results/summary/e6.json`](../results/summary/e6.json); rules in [`PREREGISTRATION.md`](PREREGISTRATION.md), Section 9.4):
+
+| Item | Outcome |
+|---|---|
+| Sanity check: `window` and `baseline` train bitwise alike | **PASS** for all 10 period-seed pairs |
+| L1, window remedy | **SUPPORTED** |
+| L2, longer training | **SUPPORTED** |
+| S3, `window` growth within ±0.02 nats | **as predicted** |
+| S4, `window` far NLL above `reference` | **not as predicted** |
+| S5, `long_train` growth positive | **as predicted** |

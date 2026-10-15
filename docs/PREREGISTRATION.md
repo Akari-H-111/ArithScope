@@ -126,3 +126,95 @@ Entries made after the preregistration commit (`cdea384`, 2026-10-14 15:28:53 UT
 8. **External cold audit (2026-10-15)** ([`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md)). After all results existed, an independent review found two library defects that no experiment exercised: position-based causality for repeated or unsorted positions (F1) and span-sized memory for sparse positions (F2). Both were fixed. Every experiment used strictly increasing positions, so no run, table, or verdict changes. `experiments/replay.py` confirms it with the fixed code: re-scoring every E1 checkpoint (180 of 180 evaluations) and retraining 11 confirmatory runs (11 of 11) reproduced the stored records bit for bit.
 9. **Post-hoc NLL diagnosis** (prompted by the audit's F4). `experiments/posthoc_nll.py` evaluates E1 checkpoints on a fresh diagnostic test set (data seed 20261015, never used before) and compares NLL with the exact Bayes NLL, measures attention off the comb, and restricts attention to recent keys as an intervention. After a smoke test on one checkpoint at reduced length, and before the full run, the script was extended with accuracy under the restriction, outlier statistics, per-sequence means (the audit asked for both), and two exploratory checks: the NLL of positions whose own token is corrupted, and the correlation of NLL with the vote share on the comb. A separate script, `experiments/posthoc_readout.py`, computes from the weights alone the lowest NLL that each model's readout can produce, to tell a readout limit from a representation limit. NLL tables from the committed run files are added to `RESULTS.md`. NLL was recorded for every run but was never a decision metric, so these are labeled exploratory.
 10. **Multiplicity sensitivity** (post hoc). Bonferroni and Holm adjustments of the interval-based confirmatory claims, reported next to the preregistered unadjusted verdicts, which remain the verdicts.
+
+## 9. Second preregistration: E6, calibration at long lengths (2026-10-15)
+
+This section was written after the post-hoc NLL diagnosis (Section 8, item 9) and **before**
+any E6 run. It is committed before the runner starts; the results commit must come after it.
+Sections 1–8 are unchanged. Later changes to this section go to Section 9.8 and are never made
+silently.
+
+### 9.1 Motivation
+
+In E1, every model with RoPE whose accuracy stays at the oracle has an NLL that falls up to about
+1,024 tokens and then rises, while ArithScope alone stays flat. The post-hoc diagnosis
+([`RESULTS.md`](RESULTS.md), "Calibration") located the rise in the second layer: limiting that
+layer to the last 1,024 keys at test time removed the rise without hurting accuracy. That was a
+test-time intervention on trained models, chosen after seeing the data. E6 tests two remedies
+named in [`HANDOFF.md`](HANDOFF.md), open question 3, as preregistered training-time designs on
+fresh test data.
+
+### 9.2 Arms
+
+All arms use E1's task (periodic denoising, P = 12 and P = 13, separate models), architecture, bank
+`M = {1, …, 16}`, optimizer, 2,000 steps, and E1's preregistered periodic hyperparameters
+(lr 3e-3, positional ×10). **Nothing is tuned for E6.**
+
+| Arm | Variant | Change from E1 | Role |
+|---|---|---|---|
+| `reference` | `arith` | none | no RoPE; flat NLL in E1 |
+| `baseline` | `rope+arith` | none | the model whose NLL rises |
+| `window` | `rope+arith` | the second layer attends only to its last 64 keys (`j > i − 64`, by token index), in training and at test | remedy 1: the broad layer only ever sees offsets it saw in training |
+| `long_train` | `rope+arith` | training length 256, batch 8 | remedy 2: longer training sequences at the same 2,048 tokens per step |
+
+- The window equals the training length, so it never binds in training. `window` and `baseline` therefore train bitwise identically, and the remedy acts only beyond the training length. This is checked for every seed (sanity check, Section 9.4). It is the training-time counterpart of the diagnosis's limit, with the window set by the training length instead of by inspecting test data.
+- `long_train` keeps the number of training tokens fixed (8 × 256 = 32 × 64), not the compute: attention costs more per token at length 256. Its lr is inherited, not re-selected; the batch size change is a known confound of this arm and is reported as such.
+- Within a period and seed, all arms share the initial weights and the training-batch generator (`long_train` draws batches of a different shape from the same generator).
+- The vote-count readout remedy (HANDOFF, open question 3) needs a new architecture with no design yet and is **not tested** in E6.
+
+### 9.3 Fixed setup
+
+- **Suite:** `e6_calibration` in [`experiments/suites.py`](../experiments/suites.py); 2 periods × 4 arms × seeds 1–5 = 40 runs.
+- **Test data:** a fresh data seed, `20261016` (E1–E5 used `20261014`, the post-hoc diagnosis `20261015`). Evaluation lengths are E1's (64 … 8,192), with 65,536 predictions per length up to 2,048 and 32,768 above (4 sequences at N = 8,192; E1 had 2). No shift evaluations.
+- **Hardware:** Apple M2 (4 performance + 4 efficiency cores, 16 GB), macOS, conda-forge PyTorch 2.14.1 (osx-arm64 build), float32, one thread per run, four runs in parallel. All 40 runs run on this machine, so every comparison is within one platform. E6 numbers are not compared bit for bit with E1, which ran on x86-64 Linux (Section 9.7).
+- **Library change:** an optional per-layer key window (`attn_windows`, explicit backend only). At its default (no window) every computation is unchanged, and the ids of all earlier runs are unchanged (both tested).
+- **Feasibility pilot** (`pilot_e6`, development data seed 7, seed 0, P = 12, one run per arm): evaluated only at length 64, so no extrapolation result from it exists. Its only use is to confirm that each arm trains (finite loss) and to time the runs. Outcome in Section 9.6.
+
+### 9.4 Claims and decision rules
+
+All metrics come from the N = 8,192 test records, by position (buckets of 1,024 positions), so they
+cover the same positions in every arm whatever its training length:
+
+- **far NLL** and **far accuracy**: mean over positions 4,096–8,191;
+- **growth**: NLL on positions 7,168–8,191 minus NLL on positions 1,024–2,047.
+
+Each comparison is a paired difference per seed within a period, with a 95% t interval over the 5
+seeds, the per-seed values, and a sign count, as in Section 4.
+
+| | Claim | Supported if (at **both** P = 12 and P = 13) | Falsified otherwise |
+|---|---|---|---|
+| **L1** | *Window remedy.* `window` has lower far NLL than `baseline`, at no cost in accuracy. | the interval for far NLL (`window − baseline`) lies below 0, **and** the lower bound for far accuracy (`window − baseline`) is above −1 pp | far-NLL interval reaches 0 at either period, or the accuracy guard fails |
+| **L2** | *Longer training.* `long_train` has lower far NLL than `baseline`, at no cost in accuracy. | the same two conditions for `long_train − baseline` | as for L1 |
+
+**Secondary predictions** (stated in advance; no decision depends on them):
+
+- **S3 (flat).** `window`'s mean growth is within ±0.02 nats of 0 at both periods.
+- **S4 (not the whole gap).** `window`'s far NLL stays above `reference`'s (lower bound of `window − reference` above 0 at both periods). The diagnosis found part of the gap within the first 1,024 positions, which a window cannot remove.
+- **S5 (delay, not removal).** `long_train`'s mean growth stays positive at both periods.
+
+**Sanity check (not a claim).** `window` and `baseline` have identical loss curves, validation curves, and positional parameters for every seed. If they do not, the window code is wrong: the runs are stopped, the cause is logged in Section 9.8, and no verdict is reported until it is fixed.
+
+**Statistics.** No multiplicity correction for the verdicts, as in Section 4. Holm-adjusted one-sided p-values for the four far-NLL comparisons (two claims × two periods) are reported next to them as a sensitivity analysis. A run with a non-finite loss is a failure: it is reported and never replaced. `experiments/e6_verdicts.py` encodes these rules and is committed with this section.
+
+### 9.5 Scope of any conclusion
+
+E6 can show whether these remedies lower the NLL of these 2-layer models on this synthetic task at up to 128× the training length. It says nothing about language models, other tasks, or calibration in general. [`CLAIM_LEDGER.md`](CLAIM_LEDGER.md) still forbids general calibration claims; an E6 result would add only a scoped, synthetic entry.
+
+### 9.6 Feasibility pilot outcome
+
+Filled in before any E6 run, from `results/runs/pilot_e6/` and [`EXECUTION_LEDGER.md`](EXECUTION_LEDGER.md), Stage 8.
+
+- **Every arm trains.** Four runs, all `COMPLETED` with finite losses. At length 64, every arm's test accuracy is within 0.1 pp of the Bayes oracle on the development test set.
+- **Sanity check passes.** `window` and `baseline` have identical loss curves, validation curves, positional parameters, and test metrics, as the design requires.
+- **Cost.** With four runs in parallel, training took 242–253 s for the length-64 arms and 353 s for `long_train`. A single E1 run took 172 s alone on this machine, 63 s of it evaluation (including shift tests). E6 has 40 runs in ten rounds of four, with twice E1's evaluation above 2,048 tokens: about one to one and a half hours, with about 1.7 GB per worker. **The suite fits on this CPU; no GPU is needed.**
+- **No design change follows from the pilot.**
+
+### 9.7 Platform
+
+A retrain of one E1 run (`e1_p12`, `rope+arith`, seed 1) on the E6 machine gave the same accuracy at every evaluation length as the stored record, with training losses within 5 × 10⁻⁸ and test NLL within 1.1 × 10⁻⁵ relative error, but not bitwise identical. E1's bitwise replays (Section 8, item 8) hold on x86-64 Linux only. This is why every E6 arm, including the reference and baseline, is trained afresh on one machine instead of reusing E1 runs.
+
+### 9.8 Deviations log (E6)
+
+No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
+
+1. **Reporting code after the results** (after `409c42b`, which holds the 40 run files and the verdicts). `experiments/analyze.py` gained `analyze_e6`, which formats the frozen verdicts and paired intervals from `results/summary/e6.json`, adds per-arm intervals and an NLL-by-position figure computed from the same run files with `e6_verdicts.py`'s metric functions, and fills the `e6_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e6_verdicts.py` is unchanged since `039a56d`.

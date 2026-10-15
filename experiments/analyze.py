@@ -1288,6 +1288,130 @@ def findings(summary: dict) -> str:
     return "\n".join(out) if out else "(results pending)"
 
 
+E6_ARM_LABELS = {"reference": "ArithScope only", "baseline": "RoPE + ArithScope",
+                 "window": "RoPE + ArithScope, 2nd layer limited to 64 keys",
+                 "long_train": "RoPE + ArithScope, trained at length 256"}
+
+
+def analyze_e6(summary: dict, tables: list[str]) -> None:
+    """E6 (preregistered, PREREGISTRATION.md Section 9). Verdicts and paired intervals come from
+    results/summary/e6.json, written by the frozen experiments/e6_verdicts.py; per-arm intervals and the
+    NLL-by-position figure are computed here from the same run files with that script's metric functions."""
+    path = ROOT / "results" / "summary" / "e6.json"
+    if not path.exists() or not (RUNS / "e6_calibration").exists():
+        return
+    import experiments.e6_verdicts as e6
+
+    frozen = json.loads(path.read_text())
+    runs = e6.load()
+    if len(runs) != len(e6.PERIODS) * len(E6_ARM_LABELS) * len(e6.SEEDS):
+        return  # incomplete suite: no table until every run exists
+    m = {k: e6.metrics(r) for k, r in runs.items()}
+    out = {"verdicts": frozen["verdicts"], "holm": frozen["holm"], "periods": {}}
+    pct = lambda c: f"{100 * c['mean']:.1f} ± {100 * (c['hi'] - c['mean']):.1f}"  # noqa: E731
+    nats = lambda c: f"{c['mean']:.3f} ± {c['hi'] - c['mean']:.3f}"  # noqa: E731
+    diff = lambda c: f"{c['mean']:+.3f} [{c['lo']:+.3f}, {c['hi']:+.3f}]"  # noqa: E731
+    lines = ["**E6, long-length calibration (preregistered, Section 9).** N = 8,192; far region = positions "
+             "4,096–8,191; growth = NLL on positions 7,168–8,191 minus NLL on positions 1,024–2,047. Mean ± 95% CI "
+             "half-width over 5 seeds.", "",
+             "| P | arm | far NLL (nats) | far accuracy (%) | growth (nats) |", "|---|---|---|---|---|"]
+    curves = {}
+    for p in e6.PERIODS:
+        cell, frozen_p = {}, frozen["periods"][str(p)]
+        for arm, label in E6_ARM_LABELS.items():
+            stats = {k: e6.ci95([m[(p, arm, s)][k] for s in e6.SEEDS]) for k in ("far_nll", "far_acc", "growth")}
+            cell[arm] = stats
+            lines.append(f"| {p} | {label} | {nats(stats['far_nll'])} | {pct(stats['far_acc'])} | "
+                         f"{nats(stats['growth'])} |")
+            test = [next(t for t in runs[(p, arm, s)]["test"] if t["length"] == e6.LENGTH) for s in e6.SEEDS]
+            curves.setdefault(str(p), {})[arm] = {
+                "buckets": [(b["start"], b["end"]) for b in test[0]["by_position"]],
+                "nll": [e6.ci95([t["by_position"][i]["nll"] for t in test]) for i in range(len(test[0]["by_position"]))]}
+        out["periods"][str(p)] = {"arms": cell, **{arm: frozen_p[arm] for arm in ("window", "long_train")}}
+    lines += ["", "Paired differences against RoPE + ArithScope (mean [95% CI], seeds lower / 5):", ""]
+    for p in e6.PERIODS:
+        for arm in ("window", "long_train"):
+            c = frozen["periods"][str(p)][arm]
+            lines.append(f"- P = {p}, {E6_ARM_LABELS[arm]}: far NLL {diff(c['far_nll_vs_baseline'])} "
+                         f"({c['far_nll_vs_baseline']['lower']}/5); far accuracy "
+                         f"{100 * c['far_acc_vs_baseline']['mean']:+.2f} pp [{100 * c['far_acc_vs_baseline']['lo']:+.2f}, "
+                         f"{100 * c['far_acc_vs_baseline']['hi']:+.2f}]; growth {diff(c['growth_vs_baseline'])}; far NLL "
+                         f"minus ArithScope only {diff(c['far_nll_vs_reference'])}.")
+    lines += ["", "Holm-adjusted one-sided p-values for the four far-NLL comparisons (sensitivity only): "
+              + "; ".join(f"{k.replace('_p', ', P = ')}: {v['p_holm']:.4f}" for k, v in
+                          sorted(frozen["holm"].items())) + "."]
+    tables.append("\n".join(lines))
+    out["curves"] = curves
+    summary["E6"] = out
+    for mode in ("light", "dark"):
+        plot_e6(curves, mode)
+
+
+def plot_e6(curves: dict, mode: str) -> Path:
+    with themed(mode) as th:
+        periods = sorted(curves, key=int)
+        fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 3.9), sharey=True, squeeze=False)
+        # ArithScope keeps its color in every figure; the remedies use free slots, with marker and dash as well
+        styles = {"reference": (color(th, "arith"), (0, (4, 2)), "s"), "baseline": (color(th, "rope+arith"), "-", "o"),
+                  "window": (th["series"][6], "-", "^"), "long_train": (th["series"][7], "-", "D")}
+        for ax, p in zip(axes[0], periods):
+            any_arm = next(iter(curves[p].values()))
+            x = [(a + b) / 2 for a, b in any_arm["buckets"]]  # equal-width buckets: a linear axis
+            for arm, label in E6_ARM_LABELS.items():
+                c, ls, marker = styles[arm]
+                ys = [v["mean"] for v in curves[p][arm]["nll"]]
+                ax.fill_between(x, [v["lo"] for v in curves[p][arm]["nll"]], [v["hi"] for v in curves[p][arm]["nll"]],
+                                color=c, alpha=0.15, linewidth=0)
+                ax.plot(x, ys, color=c, linestyle=ls, marker=marker, markersize=5, markeredgecolor=th["surface"],
+                        markeredgewidth=1.0, label=label, linewidth=2.6 if arm == "baseline" else 2.0)
+            ax.set_xticks(x)
+            ax.set_xticklabels([f"{a // 1024}–{b // 1024}k" for a, b in any_arm["buckets"]], fontsize=8)
+            ax.set_ylim(bottom=0)
+            ax.set_xlabel("query position t (bucket)")
+            ax.set_title(f"Period P = {p}", loc="left", fontsize=10)
+        axes[0][0].set_ylabel("NLL (nats per position)")
+        handles, labels = axes[0][0].get_legend_handles_labels()
+        fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, -0.05), ncol=2, fontsize=8.5, frameon=False)
+        fig.suptitle("E6 (preregistered): NLL by query position at 8,192 tokens, trained at 64 unless stated "
+                     "(mean and 95% CI over 5 seeds)", x=0.01, ha="left", fontweight="bold", fontsize=11, color=th["ink"])
+        return save(fig, FIG, "e6_nll", mode)
+
+
+def e6_findings(summary: dict) -> str:
+    """E6 verdicts (PREREGISTRATION.md Section 9), as computed by experiments/e6_verdicts.py."""
+    e = summary.get("E6")
+    if not e:
+        return "(results pending)"
+    v, ps = e["verdicts"], e["periods"]
+
+    def far(arm: str) -> str:
+        return "; ".join(f"P = {p}: far NLL {c[arm]['far_nll_vs_baseline']['mean']:+.3f}, 95% CI "
+                         f"[{c[arm]['far_nll_vs_baseline']['lo']:+.3f}, {c[arm]['far_nll_vs_baseline']['hi']:+.3f}], "
+                         f"lower in {c[arm]['far_nll_vs_baseline']['lower']}/5 seeds; accuracy lower bound "
+                         f"{100 * c[arm]['far_acc_vs_baseline']['lo']:+.2f} pp" for p, c in ps.items())
+
+    def growth(arm: str) -> str:
+        return ", ".join(f"P = {p}: {c['arms'][arm]['growth']['mean']:+.4f}" for p, c in ps.items())
+
+    ref = "; ".join(f"P = {p}: {c['window']['far_nll_vs_reference']['mean']:+.3f}, 95% CI "
+                    f"[{c['window']['far_nll_vs_reference']['lo']:+.3f}, {c['window']['far_nll_vs_reference']['hi']:+.3f}]"
+                    for p, c in ps.items())
+    return "\n".join([
+        f"- **Sanity check (window and baseline train bitwise alike): "
+        f"{'passed' if v['sanity_window_training_identical'] else 'FAILED'}.**",
+        f"- **L1 (second-layer window equal to the training length): {v['L1_window'].lower()}.** Window minus "
+        f"RoPE + ArithScope: {far('window')}.",
+        f"- **L2 (training at length 256, same tokens per step): {v['L2_long_train'].lower()}.** Longer training minus "
+        f"RoPE + ArithScope: {far('long_train')}.",
+        f"- **S3 (window flat, mean growth within ±0.02 nats): {'as predicted' if v['S3_window_flat'] else 'not as predicted'}.** "
+        f"Growth {growth('window')} (RoPE + ArithScope: {growth('baseline')}).",
+        f"- **S4 (window stays above ArithScope only): {'as predicted' if v['S4_window_above_reference'] else 'not as predicted'}.** "
+        f"Window minus ArithScope only, far NLL: {ref}.",
+        f"- **S5 (longer training still grows): {'as predicted' if v['S5_long_train_still_grows'] else 'not as predicted'}.** "
+        f"Growth {growth('long_train')}.",
+    ])
+
+
 def rewrite_block(path: Path, name: str, content: str) -> None:
     if not path.exists():
         return
@@ -1315,6 +1439,7 @@ def main() -> None:
     analyze_overhead(summary, tables)
     analyze_multiplicity(summary, tables)
     analyze_replay(summary, tables)
+    analyze_e6(summary, tables)
     summary.pop("_hero_panels", None)
     SUMMARY.mkdir(parents=True, exist_ok=True)
     (SUMMARY / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
@@ -1329,6 +1454,7 @@ def main() -> None:
         rewrite_block(ROOT / "README.md", "calibration", calibration_md(summary))
         rewrite_block(ROOT / "README.md", "findings", findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "findings", findings(summary))
+        rewrite_block(ROOT / "docs" / "RESULTS.md", "e6_findings", e6_findings(summary))
     print(md)
 
 

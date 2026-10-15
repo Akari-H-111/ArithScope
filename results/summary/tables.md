@@ -362,3 +362,25 @@ Positions whose own token is corrupted make up 47% of positions 4,096–8,192. T
 
 - E1 checkpoints re-scored on the preregistered test sets at N = 1,024 and 8,192: 180 of 180 bitwise identical to the committed records.
 - confirmatory runs retrained from scratch: 11 of 11 bitwise identical to the committed records.
+
+**E6, long-length calibration (preregistered, Section 9).** N = 8,192; far region = positions 4,096–8,191; growth = NLL on positions 7,168–8,191 minus NLL on positions 1,024–2,047. Mean ± 95% CI half-width over 5 seeds.
+
+| P | arm | far NLL (nats) | far accuracy (%) | growth (nats) |
+|---|---|---|---|---|
+| 12 | ArithScope only | 0.050 ± 0.023 | 100.0 ± 0.0 | 0.000 ± 0.003 |
+| 12 | RoPE + ArithScope | 0.231 ± 0.113 | 100.0 ± 0.0 | 0.107 ± 0.058 |
+| 12 | RoPE + ArithScope, 2nd layer limited to 64 keys | 0.009 ± 0.002 | 100.0 ± 0.0 | -0.001 ± 0.000 |
+| 12 | RoPE + ArithScope, trained at length 256 | 0.022 ± 0.010 | 100.0 ± 0.0 | 0.010 ± 0.009 |
+| 13 | ArithScope only | 0.059 ± 0.065 | 100.0 ± 0.0 | 0.003 ± 0.008 |
+| 13 | RoPE + ArithScope | 0.354 ± 0.139 | 100.0 ± 0.0 | 0.168 ± 0.040 |
+| 13 | RoPE + ArithScope, 2nd layer limited to 64 keys | 0.012 ± 0.001 | 100.0 ± 0.0 | -0.001 ± 0.000 |
+| 13 | RoPE + ArithScope, trained at length 256 | 0.020 ± 0.009 | 100.0 ± 0.0 | 0.010 ± 0.008 |
+
+Paired differences against RoPE + ArithScope (mean [95% CI], seeds lower / 5):
+
+- P = 12, RoPE + ArithScope, 2nd layer limited to 64 keys: far NLL -0.222 [-0.335, -0.109] (5/5); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.108 [-0.166, -0.050]; far NLL minus ArithScope only -0.041 [-0.065, -0.017].
+- P = 12, RoPE + ArithScope, trained at length 256: far NLL -0.209 [-0.326, -0.093] (5/5); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.097 [-0.160, -0.034]; far NLL minus ArithScope only -0.028 [-0.049, -0.007].
+- P = 13, RoPE + ArithScope, 2nd layer limited to 64 keys: far NLL -0.342 [-0.480, -0.204] (5/5); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.169 [-0.208, -0.129]; far NLL minus ArithScope only -0.047 [-0.112, +0.018].
+- P = 13, RoPE + ArithScope, trained at length 256: far NLL -0.334 [-0.471, -0.198] (5/5); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.158 [-0.202, -0.113]; far NLL minus ArithScope only -0.039 [-0.104, +0.025].
+
+Holm-adjusted one-sided p-values for the four far-NLL comparisons (sensitivity only): long_train, P = 12: 0.0055; long_train, P = 13: 0.0046; window, P = 12: 0.0055; window, P = 13: 0.0046.

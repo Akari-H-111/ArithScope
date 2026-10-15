@@ -17,6 +17,7 @@ class ModelConfig:
     num_heads: int = 4
     d_ff: int = 256
     pos: PositionConfig = field(default_factory=PositionConfig)
+    attn_windows: tuple[int | None, ...] = ()  # per-layer key window (empty: none in any layer)
 
     def to_dict(self) -> dict:
         out = asdict(self)
@@ -25,10 +26,10 @@ class ModelConfig:
 
 
 class Block(nn.Module):
-    def __init__(self, cfg: ModelConfig) -> None:
+    def __init__(self, cfg: ModelConfig, window: int | None = None) -> None:
         super().__init__()
         self.ln1 = nn.LayerNorm(cfg.d_model)
-        self.attn = CausalSelfAttention(cfg.d_model, cfg.num_heads, cfg.pos)
+        self.attn = CausalSelfAttention(cfg.d_model, cfg.num_heads, cfg.pos, window)
         self.ln2 = nn.LayerNorm(cfg.d_model)
         self.mlp = nn.Sequential(nn.Linear(cfg.d_model, cfg.d_ff), nn.GELU(), nn.Linear(cfg.d_ff, cfg.d_model))
 
@@ -47,8 +48,11 @@ class TinyDecoder(nn.Module):
     def __init__(self, cfg: ModelConfig) -> None:
         super().__init__()
         self.cfg = cfg
+        if cfg.attn_windows and len(cfg.attn_windows) != cfg.num_layers:
+            raise ValueError("attn_windows needs one entry (an int or None) per layer")
+        windows = cfg.attn_windows or (None,) * cfg.num_layers
         self.embed = nn.Embedding(cfg.vocab_size, cfg.d_model)
-        self.blocks = nn.ModuleList(Block(cfg) for _ in range(cfg.num_layers))
+        self.blocks = nn.ModuleList(Block(cfg, w) for w in windows)
         self.ln_f = nn.LayerNorm(cfg.d_model)
         self.head = nn.Linear(cfg.d_model, cfg.vocab_size, bias=False)
         self.apply(self._init_weights)
