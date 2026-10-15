@@ -167,6 +167,19 @@ Equivalently, an ArithScope head is invariant under $`n\mapsto un`$ for every un
 
 **T6 (length-invariant comb mass; PROVED, elementary).** If the positional scores $`s`$ are $`P`$-periodic, then for every window $`N=kP`$ the comb mass equals $`e^{s(0)}/\sum_{r<P}e^{s(r)}`$, independent of $`k`$. This covers any ArithScope bank, and any fixed-period cosine bank, whose orders divide $`P`$. Exact periods turn positional extrapolation into an identity. They do not make content processing length-invariant; that part is EMPIRICAL.
 
+**P3 (bounded confidence; PROVED, elementary; added 2026-10-15).** Let a model end in a LayerNorm (gain $`\gamma`$, bias $`\beta`$, width $`d`$) followed by a linear readout with rows $`w_j`$ and no bias, as `TinyDecoder` does. Then for every input and every target $`c`$,
+
+```math
+\mathrm{NLL}_c\;\ge\;\log\Big(1+\sum_{j\ne c}e^{-G_{cj}}\Big)\;>\;0,\qquad G_{cj}=\sqrt d\,\big\|\Pi\big((w_c-w_j)\odot\gamma\big)\big\|+(w_c-w_j)\cdot\beta,
+```
+
+where $`\Pi`$ subtracts the mean of a vector.
+*Proof.* LayerNorm returns $`\gamma\odot z+\beta`$ with $`\sum_i z_i=0`$ and $`\|z\|<\sqrt d`$. Because $`z`$ is orthogonal to the all-ones vector, the logit gap $`(w_c-w_j)\cdot(\gamma\odot z+\beta)`$ equals $`\Pi((w_c-w_j)\odot\gamma)\cdot z+(w_c-w_j)\cdot\beta\le G_{cj}`$ (Cauchy–Schwarz). Finally, $`\mathrm{NLL}_c=\log\big(1+\sum_{j\ne c}e^{-(\ell_c-\ell_j)}\big)`$. ∎
+
+In periodic denoising the Bayes NLL tends to 0 as votes accumulate, so no such model can follow it: every variant, with or without RoPE, has a positive NLL floor. *Check:* `experiments/posthoc_readout.py` finds the actual minimum over LayerNorm outputs for each diagnosed checkpoint (NUMERICAL; [`RESULTS.md`](RESULTS.md)).
+
+*Remark (why the NLL is flat without RoPE; PROOF SKETCH).* Suppose every attention logit depends on the offset $`n`$ only through finitely many arithmetic classes. For ArithScope these are the values $`\gcd(n,m)`$, $`m\in M`$, each with a fixed density among the offsets. Assume also no RoPE and no absolute positions. With i.i.d. noise, the fraction of keys in each (content, class) group converges as $`t`$ grows. Each attention output is a softmax-weighted average over these groups, so it converges along each residue class of $`t`$; layer by layer, so does the predictive distribution. Attention then reports vote *shares*, which converge, not vote *counts*, which grow. The NLL tends to a constant above the P3 floor, while the Bayes NLL tends to 0. With RoPE, logits depend on the offset itself, and this argument does not apply.
+
 ## 5. Implementation identities
 
 **T7 (exact low-rank folding; PROVED).** Define real features as follows:

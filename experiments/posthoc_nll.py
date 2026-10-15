@@ -8,8 +8,15 @@ data seed 20261015, which no earlier evaluation used. Per position bucket it rec
 
 * model NLL and accuracy next to the exact Bayes NLL (posterior over the motif symbol given the
   votes seen so far, a closed form for this task);
-* the same NLL with attention restricted to the last ``WINDOW`` keys, in every layer and in one layer
-  at a time: a causal test of whether, and through which layer, distant keys cause the excess loss;
+* the same NLL and accuracy with attention restricted to the last ``WINDOW`` keys, in every layer and
+  in one layer at a time: an intervention that tests whether, and through which layer, distant keys
+  cause the excess loss;
+* the part of the mean NLL that comes from wrong predictions, and the part that comes from positions
+  whose own visible token is corrupted, with and without the restriction;
+* outliers (per-position NLL quantiles, the share of NLL in the top 1% of positions) and the mean NLL
+  of each test sequence, so that test-set variation can be separated from seed variation;
+* the rank correlation of the model's per-position NLL with the true symbol's vote share on the comb
+  (what an attention average sees) and with the Bayes NLL (which depends on vote counts);
 * the attention mass that each layer puts off the comb (offsets not divisible by P), in total and
   beyond ``WINDOW``.
 
@@ -34,18 +41,38 @@ VARIANTS = ("arith", "rope+arith", "rope+fourier_full")
 ROWS = tuple(range(1024 + 63, LENGTH, 512))  # query positions for the attention-mass probe
 
 
+def comb_counts(tokens, period: int, vocab: int):
+    """Votes for each symbol on the query's comb so far, ``[B, N, V]``: tokens at s <= t with s = t (mod P)."""
+    import torch
+
+    b, n = tokens.shape
+    groups = (torch.arange(n) % period)[None, :].expand(b, n)
+    onehot = torch.zeros(b, n, period, vocab, dtype=torch.float64)
+    onehot[torch.arange(b)[:, None], torch.arange(n)[None, :], groups, tokens] = 1.0
+    return onehot.cumsum(1)[torch.arange(b)[:, None], torch.arange(n)[None, :], groups]
+
+
 def bayes_nll(tokens, targets, period: int, vocab: int, noise: float):
     """Exact Bayes NLL per position: posterior p(mu = c) proportional to L**count_c over the comb seen so far."""
     import torch
 
-    b, n = tokens.shape
     log_ratio = math.log((1 - noise + noise / vocab) / (noise / vocab))
-    groups = torch.arange(n) % period
-    onehot = torch.zeros(b, n, period, vocab, dtype=torch.float64)
-    onehot[torch.arange(b)[:, None], torch.arange(n)[None, :], groups[None, :].expand(b, n), tokens] = 1.0
-    counts = onehot.cumsum(1)[torch.arange(b)[:, None], torch.arange(n)[None, :], groups[None, :].expand(b, n)]
+    counts = comb_counts(tokens, period, vocab)
     logp = counts * log_ratio - torch.logsumexp(counts * log_ratio, dim=-1, keepdim=True)
     return -logp.gather(-1, targets.unsqueeze(-1)).squeeze(-1)
+
+
+def spearman(x, y) -> float | None:
+    """Spearman rank correlation of two tensors (ties get average ranks; vote shares tie often).
+
+    None when either input is constant, e.g. a Bayes NLL that is exactly 0 at every position.
+    """
+    from scipy.stats import spearmanr
+
+    x, y = x.flatten().numpy(), y.flatten().numpy()
+    if (x == x[0]).all() or (y == y[0]).all():
+        return None
+    return float(spearmanr(x, y).statistic)
 
 
 def attention_rows(attn, x, positions, rows):
@@ -107,15 +134,16 @@ def diagnose(path: str) -> dict:
                 hook.remove()
         return logits.double()
 
-    def loss(windows):
-        return F.cross_entropy(run(windows).transpose(1, 2), batch.targets, reduction="none")
+    def scores(logits):
+        """Per-position NLL and correctness (1.0 if the argmax is the target)."""
+        return (F.cross_entropy(logits.transpose(1, 2), batch.targets, reduction="none"),
+                (logits.argmax(-1) == batch.targets).double())
 
     depth = len(model.blocks)
     logits = run((None,) * depth)
-    nll = F.cross_entropy(logits.transpose(1, 2), batch.targets, reduction="none")
-    correct = (logits.argmax(-1) == batch.targets).double()
-    nll_window = loss((WINDOW,) * depth)
-    nll_window_layer = [loss(tuple(WINDOW if j == layer else None for j in range(depth))) for layer in range(depth)]
+    nll, correct = scores(logits)
+    nll_window, correct_window = scores(run((WINDOW,) * depth))
+    per_layer = [scores(run(tuple(WINDOW if j == layer else None for j in range(depth)))) for layer in range(depth)]
     bayes = bayes_nll(batch.tokens, batch.targets, period, task.vocab_size, task.noise)
 
     probs = logits.softmax(-1)[:, 64:]
@@ -130,31 +158,59 @@ def diagnose(path: str) -> dict:
     onehot = F.one_hot(batch.targets[:, 64:], probs.shape[-1]).double()
     brier = float(((probs - onehot) ** 2).sum(-1).mean())
     err = 1.0 - correct[:, 64:]
-    share = float((nll[:, 64:] * err).sum() / nll[:, 64:].sum())
+    err_share = float((nll[:, 64:] * err).sum() / nll[:, 64:].sum())
 
+    own_wrong = (batch.tokens != batch.targets).double()  # the query's own (visible) token is corrupted
+    counts = comb_counts(batch.tokens, period, task.vocab_size)
+    vote_share = counts.gather(-1, batch.targets.unsqueeze(-1)).squeeze(-1) / counts.sum(-1)  # of the true symbol
     buckets = []
     for a, b in BUCKETS:
+        flat = nll[:, a:b].flatten().sort().values
+        k_top = max(1, flat.numel() // 100)
         buckets.append({"start": a, "end": b, "acc": float(correct[:, a:b].mean()), "nll": float(nll[:, a:b].mean()),
+                        # outliers: per-position NLL quantiles and the share of the bucket's NLL in its top 1% of positions
+                        "nll_quantiles": {"50": float(flat.quantile(0.5)), "90": float(flat.quantile(0.9)),
+                                          "99": float(flat.quantile(0.99)), "max": float(flat[-1])},
+                        "nll_top1pct_share": float(flat[-k_top:].sum() / flat.sum()),
+                        # per-sequence means: the spread across test sequences, separate from the spread across seeds
+                        "nll_seq": nll[:, a:b].mean(1).tolist(),
+                        "nll_window_seq": nll_window[:, a:b].mean(1).tolist(),
+                        # contribution of wrong predictions to the bucket's mean NLL (the rest comes from correct ones)
+                        "nll_from_errors": float((nll * (1 - correct))[:, a:b].mean()),
+                        # contribution of positions whose own token is corrupted, and how many there are
+                        "own_token_wrong": float(own_wrong[:, a:b].mean()),
+                        "nll_from_own_token_wrong": float((nll * own_wrong)[:, a:b].mean()),
+                        "nll_window_from_own_token_wrong": float((nll_window * own_wrong)[:, a:b].mean()),
+                        # does the model's loss track the true symbol's vote share (an average) or the Bayes loss (a count)?
+                        "spearman_nll_share": spearman(nll[:, a:b], vote_share[:, a:b]),
+                        "spearman_nll_bayes": spearman(nll[:, a:b], bayes[:, a:b]),
+                        "acc_window": float(correct_window[:, a:b].mean()),
                         "nll_window": float(nll_window[:, a:b].mean()),
-                        "nll_window_layer": [float(x[:, a:b].mean()) for x in nll_window_layer],
+                        "nll_window_from_errors": float((nll_window * (1 - correct_window))[:, a:b].mean()),
+                        "acc_window_layer": [float(c[:, a:b].mean()) for _, c in per_layer],
+                        "nll_window_layer": [float(x[:, a:b].mean()) for x, _ in per_layer],
                         "bayes_nll": float(bayes[:, a:b].mean())})
 
     rows = torch.tensor(ROWS)
     offsets = rows.unsqueeze(1) - torch.arange(LENGTH).unsqueeze(0)  # [R, N]
     off_comb = ((offsets % period) != 0) & (offsets >= 0)
     far = off_comb & (offsets >= WINDOW)
-    layers, x = [], model.embed(batch.tokens)
+    atts = [[] for _ in model.blocks]
     with torch.no_grad():
-        for block in model.blocks:
-            att = attention_rows(block.attn, block.ln1(x), positions, rows)  # [B, H, R, N]
-            layers.append({"off_comb": (att * off_comb).sum(-1).mean((0, 2)).tolist(),
-                           "far_off_comb": (att * far).sum(-1).mean((0, 2)).tolist()})
-            x = block(x, positions)
+        for i in range(SEQS):  # one sequence at a time: a batched block forward needs several GB at this length
+            x = model.embed(batch.tokens[i:i + 1])
+            for layer, block in enumerate(model.blocks):
+                atts[layer].append(attention_rows(block.attn, block.ln1(x), positions, rows))  # [1, H, R, N]
+                x = block(x, positions)
+    layers = []
+    for att in (torch.cat(a) for a in atts):  # [B, H, R, N]
+        layers.append({"off_comb": (att * off_comb).sum(-1).mean((0, 2)).tolist(),
+                       "far_off_comb": (att * far).sum(-1).mean((0, 2)).tolist()})
     gates = []
     for block in model.blocks:
         gates.append([float(g) for g in next(iter(block.attn.biases.values())).gamma.detach().abs()])
     return {"period": period, "variant": spec.variant, "seed": spec.seed, "buckets": buckets,
-            "ece": ece, "brier": brier, "nll_share_from_errors": share, "attention": layers, "gates": gates,
+            "ece": ece, "brier": brier, "nll_share_from_errors": err_share, "attention": layers, "gates": gates,
             "digest": batch.digest()}
 
 
