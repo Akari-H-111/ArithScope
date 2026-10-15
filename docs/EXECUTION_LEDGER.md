@@ -337,7 +337,7 @@ Command: `make e8 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e
 | Machinery, before E8 finished | `experiments/e9_window_eval.py`, `e9_power.py`, `e9_verdicts.py`, `tests/test_e9.py`; commit `543e402`, pushed to `origin/prereg/e9-paired-window` (GitHub: 08:59:41 UTC, while E8 had 36 of 84 runs done) | **PASS**: 12 new tests; a mutation check (window never set; slope sign flipped) makes them fail |
 | Cost probe | 1 window evaluation at N = 8,192 on random weights, 1 thread, while E8 ran | 55–75 s per window |
 | Seed count | `python experiments/e9_power.py` on `results/summary/e8.json` (written 10:07:43 UTC), script unchanged since `543e402` | **PASS**: n = 15 per period, joint power 0.904 (`results/summary/e9_power.json`) |
-| Checks | `make lint`, `make test`, `make oracle` | **PASS**: ruff clean; 80 passed, 1 skipped; 69+ run (stdlib) |
+| Checks | `make lint`, `make test`, `make oracle` | **PASS**: ruff clean; 80 passed, 1 skipped; 81 run, 54 skipped (stdlib) |
 | Preregistration | Section 12, commit `5ce34b8`, pushed at 11:03:24 UTC (GitHub) | before any E9 run |
 
 ## Stage 15: E9 runs (2026-10-15)
