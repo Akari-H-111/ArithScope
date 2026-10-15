@@ -807,7 +807,7 @@ def analyze_posthoc_nll(summary: dict, tables: list[str]) -> None:
     summary["posthoc_nll_pairs"] = pairs
     tables += ["\n".join(nll) + "\n\n" + notes[0], "\n".join(win) + "\n\n" + "\n\n".join(notes[1:]), "\n".join(att)]
     for mode in ("light", "dark"):
-        plot_posthoc_nll(out, window, mode)
+        plot_posthoc_nll(out, window, data["length"], mode)
 
 
 POSTHOC_SCALARS = ("acc", "nll", "nll_from_errors", "acc_window", "nll_window", "nll_window_from_errors", "bayes_nll",
@@ -827,41 +827,50 @@ def _own_share(b: dict) -> float | None:
     return (b["nll_from_own_token_wrong"] - b["nll_window_from_own_token_wrong"]) / drop
 
 
-def plot_posthoc_nll(out: dict, window: int, mode: str) -> Path:
+def plot_posthoc_nll(out: dict, window: int, length: int, mode: str) -> Path:
     with themed(mode) as th:
         periods = sorted(out, key=int)
         fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 3.9), sharey=True, squeeze=False)
+        top = 0.0
+        # ArithScope with and without RoPE share a color across all figures; marker and dash tell them apart
+        styles = {"rope+fourier_full": ("-", "D", "RoPE + full Fourier bank"),
+                  "arith": ((0, (4, 2)), "s", "ArithScope only"), "rope+arith": ("-", "o", "RoPE + ArithScope")}
         for ax, p in zip(axes[0], periods):
             vs = out[p]
             any_v = next(iter(vs.values()))
             x = [math.sqrt(b["start"] * b["end"]) for b in any_v["buckets"]]
             ax.plot(x, [b["bayes_nll"] for b in any_v["buckets"]], color=th["muted"], linewidth=1.2, label="Bayes oracle")
-            styles = {"rope+fourier_full": ("-", "RoPE + full Fourier bank"), "arith": ((0, (4, 2)), "ArithScope only"),
-                      "rope+arith": ("-", "RoPE + ArithScope")}
             for v in ("rope+fourier_full", "arith", "rope+arith"):
                 if v not in vs:
                     continue
-                ls, label = styles[v]
+                ls, marker, label = styles[v]
                 hero = v == "rope+arith"
-                ax.plot(x, [b["nll"] for b in vs[v]["buckets"]], color=color(th, v), linestyle=ls, label=label,
-                        marker="o", markersize=5 if hero else 4.5, markeredgecolor=th["surface"], markeredgewidth=1.0,
+                ys = [b["nll"] for b in vs[v]["buckets"]]
+                top = max(top, *ys)
+                ax.plot(x, ys, color=color(th, v), linestyle=ls, label=label, marker=marker,
+                        markersize=5.5 if hero else 5, markeredgecolor=th["surface"], markeredgewidth=1.0,
                         linewidth=2.6 if hero else 2.0, zorder=5 if hero else 3)
             if "rope+arith" in vs:
                 ax.plot(x, [b["nll_window"] for b in vs["rope+arith"]["buckets"]], color=color(th, "rope+arith"),
-                        linestyle=(0, (1, 1.5)), marker="o", markersize=4.5, markerfacecolor=th["surface"],
+                        linestyle=(0, (1, 1.5)), marker="o", markersize=5, markerfacecolor=th["surface"],
                         markeredgewidth=1.4, linewidth=2.0, zorder=4,
                         label=f"RoPE + ArithScope, keys limited to the last {window:,}")
-            ax.axvline(1024, color=th["axis"], linewidth=1.0)
+            ax.axvline(window, color=th["axis"], linewidth=1.0)
             ax.set_xscale("log", base=2)
             ax.set_xticks(x)
             ax.set_xticklabels([f"{b['start']:,}–{b['end']:,}" for b in any_v["buckets"]], fontsize=8)
+            ax.minorticks_off()
             ax.set_xlabel("query position t (bucket)")
-            ax.set_ylim(bottom=0)
             ax.set_title(f"Period P = {p}", loc="left", fontsize=10)
+        for ax in axes[0]:  # after every panel is drawn, so that no curve is clipped
+            ax.set_ylim(0, 1.12 * top)
+            ax.text(window * 1.06, 1.08 * top, f"limit binds beyond t = {window:,}", fontsize=7.5, color=th["ink2"],
+                    va="top")
         axes[0][0].set_ylabel("NLL (nats per position)")
         handles, labels = axes[0][0].get_legend_handles_labels()
         fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, -0.01), ncol=3, fontsize=8.5, frameon=False)
-        fig.suptitle("Post-hoc: NLL by query position at 8,192 tokens, with and without a recent-keys limit (trained at 64)",
+        fig.suptitle(f"Post-hoc: NLL by query position at {length:,} tokens, with and without a recent-keys limit "
+                     "(trained at 64)",
                      x=0.01, ha="left", fontweight="bold", fontsize=11, color=th["ink"])
         return save(fig, FIG, "e1_nll", mode)
 
