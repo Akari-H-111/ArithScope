@@ -4,10 +4,10 @@ PY ?= python3
 WORKERS ?= 4
 SUITES = e1_periodic e2_alias e3_tagged e5_mixed
 
-.PHONY: help oracle test lint theory pilots experiments analyze lab bench all
+.PHONY: help oracle test lint theory pilots experiments e6 analyze lab bench all
 
 help:  ## list targets
-	@grep -E '^[a-z_]+:.*## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
+	@grep -E '^[a-z0-9_]+:.*## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
 
 oracle:  ## stdlib-only exact checks (no torch needed; torch tests are skipped)
 	$(PY) -m unittest discover -s tests -v
@@ -27,6 +27,10 @@ pilots:  ## development pilots (dev data seed; used only for the preregistered h
 
 experiments:  ## confirmatory suites in one worker pool (resumable; finished runs are skipped)
 	$(PY) experiments/run_suite.py $(SUITES) --workers $(WORKERS)
+
+e6:  ## E6 long-length calibration suite (docs/PREREGISTRATION.md, Section 9; resumable), then its verdicts
+	$(PY) experiments/run_suite.py e6_calibration --workers $(WORKERS)
+	$(PY) experiments/e6_verdicts.py
 
 analyze:  ## regenerate every results table/figure from run JSON files
 	$(PY) experiments/analyze.py

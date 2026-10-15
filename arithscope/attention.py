@@ -7,6 +7,10 @@ Logit semantics (all backends):
     allowed[b,i,j]  = (j <= i) and key_valid[b,j]       (token order, not position values)
     attn            = softmax over allowed keys; rows with no allowed key output 0
 
+An optional key ``window`` W (explicit backend only) further restricts query i to keys
+j > i - W, by token index like causality. ``window=None`` (the default) leaves every
+computation unchanged.
+
 Causality is by token index. Positions enter only the biases and RoPE, so they may
 repeat, restart (packed sequences), or carry offsets without letting a token see a
 later one.
@@ -115,10 +119,13 @@ def _allowed_and_row_ok(n: int, key_padding_mask: torch.Tensor | None, device):
 
 
 class CausalSelfAttention(nn.Module):
-    def __init__(self, d_model: int, num_heads: int, pos: PositionConfig) -> None:
+    def __init__(self, d_model: int, num_heads: int, pos: PositionConfig, window: int | None = None) -> None:
         super().__init__()
         if d_model % num_heads:
             raise ValueError("d_model must be divisible by num_heads")
+        if window is not None and window < 1:
+            raise ValueError("window must be a positive number of keys")
+        self.window = window
         self.num_heads = num_heads
         self.head_dim = d_model // num_heads
         self.pos_cfg = pos
@@ -151,6 +158,8 @@ class CausalSelfAttention(nn.Module):
         q, k, v = self._qkv(x, positions)
         scale = 1.0 / math.sqrt(self.head_dim)
         attn = None
+        if self.window is not None and backend != "explicit":
+            raise ValueError("a key window requires backend='explicit'")
         if backend == "flex":
             if return_attention:
                 raise ValueError("return_attention requires backend='explicit'")
@@ -196,6 +205,10 @@ class CausalSelfAttention(nn.Module):
                 logits = logits + bias
             allowed = allowed_mask(q_pos.shape[-1], n, key_padding_mask, q_offset=start,
                                    device=q.device).unsqueeze(1)  # [B|1, 1, Bq, N]
+            if self.window is not None:  # keys j > i - window, by token index
+                lag = torch.arange(start, start + q_pos.shape[-1], device=q.device).unsqueeze(1) \
+                    - torch.arange(n, device=q.device).unsqueeze(0)
+                allowed = allowed & (lag < self.window)
             row_ok = allowed.any(-1, keepdim=True)
             logits = logits.masked_fill(~allowed, float("-inf"))
             logits = torch.where(row_ok, logits, torch.zeros((), dtype=logits.dtype))

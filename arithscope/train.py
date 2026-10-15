@@ -55,15 +55,25 @@ class RunSpec:
     shift_evals: tuple[int, ...] = ()  # constant shifts added to all positions (relative structure unchanged)
     val_every: int = 250
     data_seed: int = 20261014       # test/validation data seed, shared by all variants and seeds
+    attn_windows: tuple[int | None, ...] = ()  # per-layer key window (ModelConfig); added after E1-E5
 
     @property
     def run_id(self) -> str:
-        payload = json.dumps(asdict(self), sort_keys=True).encode()
+        fields = asdict(self)
+        for name, default in _LATER_FIELDS.items():  # keeps the ids (and file names) of earlier runs
+            if fields[name] == default:
+                del fields[name]
+        payload = json.dumps(fields, sort_keys=True).encode()
         return hashlib.sha256(payload).hexdigest()[:12]
 
     @property
     def filename(self) -> str:
         return f"{self.experiment}__{self.variant}__s{self.seed}__{self.run_id}.json"
+
+
+# Fields added after runs existed. They are left out of the run id at their default value,
+# so every earlier spec keeps its id and file name.
+_LATER_FIELDS = {"attn_windows": ()}
 
 
 def _seed(*parts) -> int:
@@ -87,7 +97,11 @@ def environment_info() -> dict:
         with open("/proc/cpuinfo") as fh:
             cpu = next((ln.split(":", 1)[1].strip() for ln in fh if ln.startswith("model name")), None)
     except OSError:
-        pass
+        try:  # macOS has no /proc/cpuinfo
+            cpu = subprocess.run(["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True, text=True,
+                                 check=False).stdout.strip() or None
+        except OSError:
+            pass
     return {"python": sys.version.split()[0], "torch": torch.__version__, "platform": platform.platform(),
             "cpu": cpu, "torch_threads": torch.get_num_threads(), "device": "cpu", "dtype": "float32",
             "git_commit": commit, "git_dirty": dirty}
@@ -97,7 +111,7 @@ def build_model(spec: RunSpec, vocab: int) -> TinyDecoder:
     pos = PositionConfig.from_name(spec.variant, orders=tuple(spec.orders),
                                    relbias_max_distance=spec.train_length)
     cfg = ModelConfig(vocab_size=vocab, d_model=spec.d_model, num_layers=spec.num_layers,
-                      num_heads=spec.num_heads, d_ff=spec.d_ff, pos=pos)
+                      num_heads=spec.num_heads, d_ff=spec.d_ff, pos=pos, attn_windows=tuple(spec.attn_windows))
     return TinyDecoder(cfg)
 
 
@@ -300,7 +314,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--threads", type=int, default=1)
     args = parser.parse_args(argv)
     fields = json.loads(Path(args.spec).read_text())
-    for key in ("orders", "eval_lengths", "shift_evals"):
+    for key in ("orders", "eval_lengths", "shift_evals", "attn_windows"):
         if key in fields:
             fields[key] = tuple(fields[key])
     record = run(RunSpec(**fields), args.out, args.threads, verbose=True)

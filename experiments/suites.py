@@ -133,7 +133,49 @@ def e5_mixed() -> list[RunSpec]:
             for v in MAIN_VARIANTS for seed in SECONDARY_SEEDS]
 
 
+# ----------------------------------------------------------------------------------------------
+# E6 (docs/PREREGISTRATION.md, Section 9): two remedies for the NLL rise of RoPE models at long
+# lengths (HANDOFF open question 3). Every arm uses E1's architecture and its preregistered periodic
+# hyperparameters; nothing is tuned. Within a period and seed, all arms share the experiment name,
+# hence the initial weights and the training-batch generator.
+E6_DATA_SEED = 20261016  # fresh test data: E1-E5 used 20261014, the post-hoc NLL diagnosis 20261015
+E6_WINDOW = 64           # second-layer key window = the training length (offsets seen in training)
+E6_EVAL_TOKENS_LONG = 32768  # 4 test sequences at N = 8192 (E1: 2)
+E6_ARMS: dict[str, dict] = {
+    "reference": {"variant": "arith"},                                  # no RoPE: flat NLL in E1
+    "baseline": {"variant": "rope+arith"},                              # E1's rope+arith
+    "window": {"variant": "rope+arith", "attn_windows": (None, E6_WINDOW)},
+    "long_train": {"variant": "rope+arith", "train_length": 256, "batch_size": 8},  # same tokens per step
+}
+
+
+def e6_arm(spec: RunSpec) -> str:
+    """The E6 arm a run belongs to."""
+    for arm, overrides in E6_ARMS.items():
+        if all(getattr(spec, k) == v for k, v in overrides.items()) and \
+                all(getattr(spec, k) == getattr(RunSpec, k) for k in ("attn_windows", "train_length", "batch_size")
+                    if k not in overrides):
+            return arm
+    raise ValueError(f"not an E6 arm: {spec.filename}")
+
+
+def _e6(experiment: str, seeds, data_seed: int, eval_lengths, eval_tokens_long: int, periods=(12, 13)) -> list[RunSpec]:
+    return [RunSpec(experiment=f"{experiment}_p{period}", task={"kind": "periodic", "periods": [period]}, seed=seed,
+                    eval_lengths=eval_lengths, eval_tokens_long=eval_tokens_long, data_seed=data_seed,
+                    **overrides, **_hp("periodic", overrides["variant"]))
+            for period in periods for overrides in E6_ARMS.values() for seed in seeds]
+
+
+def pilot_e6() -> list[RunSpec]:
+    """Feasibility of the E6 arms on development data: training only, evaluated at length 64 (no extrapolation)."""
+    return _e6("pilot_e6", (0,), DEV_DATA_SEED, (64,), E6_EVAL_TOKENS_LONG, periods=(12,))
+
+
+def e6_calibration() -> list[RunSpec]:
+    return _e6("e6", CONFIRM_SEEDS, E6_DATA_SEED, E1_EVAL, E6_EVAL_TOKENS_LONG)
+
+
 SUITES = {"pilot": pilot, "pilot_controls": pilot_controls, "pilot_alias_query": pilot_alias_query,
           "pilot_alias_design": pilot_alias_design, "pilot_mqar_easy": pilot_mqar_easy,
           "e1_periodic": e1_periodic, "e2_alias": e2_alias,
-          "e3_tagged": e3_tagged, "e5_mixed": e5_mixed}
+          "e3_tagged": e3_tagged, "e5_mixed": e5_mixed, "pilot_e6": pilot_e6, "e6_calibration": e6_calibration}
