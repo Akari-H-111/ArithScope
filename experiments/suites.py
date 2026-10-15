@@ -229,8 +229,32 @@ def e8_power_retest() -> list[RunSpec]:
             for period in (12, 13) for overrides in E8_ARMS.values() for seed in E8_SEEDS]
 
 
+# ----------------------------------------------------------------------------------------------
+# E9 (docs/PREREGISTRATION.md, Section 12): a paired window dose-response. A key window equal to the
+# training length never binds in training, so windowed and unwindowed models have the same weights
+# (checked in E6-E8). E9 therefore trains ArithScope alone once per seed, without a window, and
+# experiments/e9_window_eval.py evaluates each checkpoint with its last layer limited to each window in
+# E9_WINDOWS. Seeds no earlier suite used; a new experiment name; fresh test data.
+E9_DATA_SEED = 20261019  # fresh: E1-E5 20261014, diagnosis 20261015, E6 20261016, E7 20261017, E8 20261018
+E9_WINDOWS = (64, 256, 1024, 8192)  # last-layer key windows; 8192 = the whole sequence at N = 8192
+E9_LENGTH = 8192
+E9_FIRST_SEED = 27  # E8 used 6-26
+# PLACEHOLDER until experiments/e9_power.py has run on E8's results; experiments/e9_verdicts.py refuses
+# to run unless len(E9_SEEDS) equals the n in results/summary/e9_power.json.
+E9_N_SEEDS = 16
+E9_SEEDS = tuple(range(E9_FIRST_SEED, E9_FIRST_SEED + E9_N_SEEDS))
+
+
+def e9_paired_window() -> list[RunSpec]:
+    """Training runs only (evaluated at the training length); the window evaluations are separate records."""
+    return [RunSpec(experiment=f"e9_p{period}", task={"kind": "periodic", "periods": [period]}, variant="arith",
+                    seed=seed, eval_lengths=(64,), eval_tokens_long=E6_EVAL_TOKENS_LONG, data_seed=E9_DATA_SEED,
+                    **_hp("periodic", "arith"))
+            for period in (12, 13) for seed in E9_SEEDS]
+
+
 SUITES = {"pilot": pilot, "pilot_controls": pilot_controls, "pilot_alias_query": pilot_alias_query,
           "pilot_alias_design": pilot_alias_design, "pilot_mqar_easy": pilot_mqar_easy,
           "e1_periodic": e1_periodic, "e2_alias": e2_alias,
           "e3_tagged": e3_tagged, "e5_mixed": e5_mixed, "pilot_e6": pilot_e6, "e6_calibration": e6_calibration,
-          "e7_floor": e7_floor, "e8_power_retest": e8_power_retest}
+          "e7_floor": e7_floor, "e8_power_retest": e8_power_retest, "e9_paired_window": e9_paired_window}
