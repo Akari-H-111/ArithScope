@@ -56,6 +56,8 @@ Verdicts are computed by `experiments/analyze.py` from the preregistered decisio
 | E6 secondary predictions: the windowed model's NLL stops rising (S3); longer training leaves a small rise (S5); the windowed model stays above ArithScope alone (S4) | S3 and S5 **as predicted**; S4 **not as predicted**: the windowed model ends below ArithScope alone (interval excludes 0 at P = 12, not at P = 13) |
 | W1 (E7): limiting ArithScope alone's second layer to the last 64 keys (its training length) lowers its NLL on positions 4,096–8,191 at N = 8,192, with accuracy unchanged, at P = 12 and P = 13 | **falsified** by the preregistered rule (third preregistration, `PREREGISTRATION.md` Section 10): the interval excludes 0 at P = 13 but not at P = 12. Observed, not claimed: lower in 5/5 seeds at both periods, closing most of the gap to the limited RoPE + ArithScope model. A test-time limit on unchanged weights |
 | E7 secondary predictions: the limited ArithScope model stays above the limited RoPE + ArithScope model (S6); E6's limited RoPE + ArithScope model ends below ArithScope alone again (S7) | both **not as predicted**: each interval includes 0 at P = 12; S7's direction holds in 5/5 seeds at both periods |
+| W2 (E8, W1 retested with 21 fresh seeds planned by a power rule): limiting ArithScope alone's second layer to the last 64 keys lowers its NLL on positions 4,096–8,191 at N = 8,192, with accuracy unchanged, at P = 12 and P = 13 | **supported** (EMPIRICAL; fourth preregistration, `PREREGISTRATION.md` Section 11; 21/21 seeds per period, new initial weights, training batches, and test data). W1 (E7) stays falsified as recorded. A test-time limit on unchanged weights; two-layer models, one synthetic task |
+| E8 secondary predictions: the seed-to-seed spread of far NLL is at least 3× larger without the limit (S8); the limited model's NLL stops rising (S9) | both **as predicted** |
 
 ## Not claimed
 
@@ -66,6 +68,6 @@ Verdicts are computed by `experiments/analyze.py` from the preregistered decisio
 | Benefits on natural language or in pretrained LLMs | **not tested** |
 | State of the art on any benchmark | **not claimed**; synthetic tasks only |
 | PSD-ness or calibration of attention weights after softmax | **not claimed** |
-| That ArithScope's NLL floor comes from its broad second layer, or from vote-share averaging | **not claimed.** W1 (E7) was falsified by its rule; the P3 remark is a proof sketch |
+| That ArithScope's NLL floor comes *entirely* from its broad second layer, or that vote-share averaging is the mechanism | **not claimed.** W2 (E8) locates part of the floor of these two-layer models in the second layer's distant keys; the P3 remark is a proof sketch, and the first layer was not tested |
 | Calibration in general, or any remedy beyond E6's two-layer synthetic setting (e.g. a hard window in models whose upper layers need distant context) | **not claimed.** E6 measures NLL on one synthetic task; accuracy was at the ceiling in every arm |
 | Novelty of Ramanujan sums, Fourier position features, or relative biases as such | **not claimed.** These are classical or prior work. The contribution is the specific attention channel, its theory, and the measured comparison. A literature screen (2026-10-14) found no prior Ramanujan-sum attention bias; this is not an exhaustive novelty search |

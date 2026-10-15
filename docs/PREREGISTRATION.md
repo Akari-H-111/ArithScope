@@ -410,3 +410,5 @@ make e8 PY=~/mamba/envs/arithscope/bin/python WORKERS=4   # 84 runs, then experi
 ### 11.8 Deviations log (E8)
 
 No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
+
+1. **Reporting code after the results** (after `4c74cfa`, which holds the 84 run files and the verdicts). `experiments/analyze.py` gained `analyze_e8`, which formats the frozen verdicts and paired intervals from `results/summary/e8.json`, adds per-arm intervals and an NLL-by-position figure computed from the same run files with `e6_verdicts.py`'s metric functions, and fills the `e8_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e8_verdicts.py` and `experiments/e8_power.py` are unchanged since `20b8ffa`.
