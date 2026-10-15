@@ -1639,6 +1639,124 @@ def e8_findings(summary: dict) -> str:
     ])
 
 
+def analyze_e9(summary: dict, tables: list[str]) -> None:
+    """E9 (preregistered, PREREGISTRATION.md Section 12), a paired window dose-response. Verdicts, slopes, and
+    step intervals come from results/summary/e9.json, written by the frozen experiments/e9_verdicts.py; the
+    per-seed curves for the figure are read from the same window records with E6's metric functions."""
+    path = ROOT / "results" / "summary" / "e9.json"
+    if not path.exists() or not (RUNS / "e9_paired_window_eval").exists():
+        return
+    import experiments.e6_verdicts as e6
+    import experiments.e9_verdicts as e9
+
+    frozen = json.loads(path.read_text())
+    plan = json.loads((ROOT / "results" / "summary" / "e9_power.json").read_text())
+    records, failed, _ = e9.load()
+    m = {k: e6.metrics(r) for k, r in records.items()}
+    windows = frozen["windows"]
+    out = {"verdicts": frozen["verdicts"], "holm": frozen["holm"], "failed": failed, "windows": windows,
+           "planned_seeds": frozen["planned_seeds"], "plan": {k: plan[k] for k in ("n_seeds", "joint_power_at_n")},
+           "sanity": frozen["sanity"], "periods": {}}
+    nats = lambda c: f"{c['mean']:.4f} ± {c['hi'] - c['mean']:.4f}"  # noqa: E731
+    diff = lambda c: f"{c['mean']:+.4f} [{c['lo']:+.4f}, {c['hi']:+.4f}]"  # noqa: E731
+    counts = sorted({len(frozen["periods"][str(p)]["seeds"]) for p in e6.PERIODS})
+    lines = ["**E9, a paired window dose-response (preregistered, Section 12).** ArithScope only, trained once per "
+             "seed; the same weights evaluated at N = 8,192 with the last layer limited to its last W keys. Far NLL = "
+             f"mean NLL on positions 4,096–8,191. Mean ± 95% CI half-width over {' or '.join(map(str, counts))} seeds "
+             f"(seeds {frozen['planned_seeds'][0]}–{frozen['planned_seeds'][-1]}; {len(failed)} failed).", "",
+             "| P | " + " | ".join(f"W = {w:,}" for w in windows) + " | slope per doubling of W |",
+             "|---|" + "---|" * (len(windows) + 1)]
+    curves = {}
+    for p in e6.PERIODS:
+        c = frozen["periods"][str(p)]
+        lines.append(f"| {p} | " + " | ".join(nats(c["far_nll_by_window"][str(w)]) for w in windows)
+                     + f" | {diff(c['slope'])} |")
+        curves[str(p)] = {"windows": windows, "mean": [c["far_nll_by_window"][str(w)] for w in windows],
+                          "seeds": [[m[(p, s, w)]["far_nll"] for w in windows] for s in c["seeds"]]}
+        out["periods"][str(p)] = c
+    lines += ["", "Steps between adjacent windows, far NLL (mean [95% CI]); W = 64 minus the whole sequence; far "
+              "accuracy, W = 64 minus the whole sequence:", ""]
+    for p in e6.PERIODS:
+        c = frozen["periods"][str(p)]
+        steps = "; ".join(f"{st['from']:,}→{st['to']:,} {diff(st)}" for st in c["steps"])
+        lines.append(f"- P = {p}: {steps}. W = 64 minus whole: {diff(c['nll_w64_minus_full'])}. Accuracy: "
+                     f"{100 * c['acc_w64_minus_full']['mean']:+.2f} pp [{100 * c['acc_w64_minus_full']['lo']:+.2f}, "
+                     f"{100 * c['acc_w64_minus_full']['hi']:+.2f}].")
+    lines += ["", "Holm-adjusted one-sided p-values for the two slope tests (sensitivity only): "
+              + "; ".join(f"P = {k.rsplit('_p', 1)[1]}: {v['p_holm']:.2g}" for k, v in sorted(frozen["holm"].items())) + "."]
+    tables.append("\n".join(lines))
+    out["curves"] = curves
+    summary["E9"] = out
+    for mode in ("light", "dark"):
+        plot_e9(curves, mode)
+
+
+def plot_e9(curves: dict, mode: str) -> Path:
+    with themed(mode) as th:
+        periods = sorted(curves, key=int)
+        fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 3.9), sharey=True, squeeze=False)
+        c = color(th, "arith")
+        for ax, p in zip(axes[0], periods):
+            cv = curves[p]
+            x = [math.log2(w) for w in cv["windows"]]
+            for ys in cv["seeds"]:  # one thin line per seed: the four windows share its weights
+                ax.plot(x, ys, color=th["muted"], linewidth=0.8, alpha=0.45)
+            ax.fill_between(x, [v["lo"] for v in cv["mean"]], [v["hi"] for v in cv["mean"]], color=c, alpha=0.18,
+                            linewidth=0)
+            ax.plot(x, [v["mean"] for v in cv["mean"]], color=c, marker="s", markersize=5.5,
+                    markeredgecolor=th["surface"], markeredgewidth=1.0, linewidth=2.6, label="mean and 95% CI")
+            ax.set_xticks(x)
+            ax.set_xticklabels([f"{w:,}" for w in cv["windows"]])
+            ax.minorticks_off()
+            ax.set_xlabel("last-layer window W (keys; log scale)")
+            ax.set_title(f"Period P = {p}", loc="left", fontsize=10)
+        top = max(y for cv in curves.values() for ys in cv["seeds"] for y in ys)
+        axes[0][0].set_ylim(0, 1.05 * top)  # shared axis: after every panel, so that no seed is clipped
+        axes[0][0].set_ylabel("far NLL, positions 4,096–8,191 (nats)")
+        axes[0][0].plot([], [], color=th["muted"], linewidth=0.8, label="one seed")
+        handles, labels = axes[0][0].get_legend_handles_labels()
+        fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, -0.05), ncol=2, fontsize=8.5, frameon=False)
+        n = len(curves[periods[0]]["seeds"])
+        fig.suptitle(f"E9 (preregistered): far NLL of ArithScope only against its last layer's window, N = 8,192 "
+                     f"({n} seeds per period)", x=0.01, ha="left", fontweight="bold", fontsize=11, color=th["ink"])
+        return save(fig, FIG, "e9_dose", mode)
+
+
+def e9_findings(summary: dict) -> str:
+    """E9 verdicts (PREREGISTRATION.md Section 12), as computed by experiments/e9_verdicts.py."""
+    e = summary.get("E9")
+    if not e:
+        return "(results pending)"
+    v, ps = e["verdicts"], e["periods"]
+    r1_word, r1_why = (v["R1_window_dose_response"].split(" ", 1) + [""])[:2]
+    slopes = "; ".join(f"P = {p}: {c['slope']['mean']:+.4f} nats per doubling, 95% CI [{c['slope']['lo']:+.4f}, "
+                       f"{c['slope']['hi']:+.4f}], positive in {sum(x > 0 for x in c['slope']['values'])}/"
+                       f"{c['slope']['n']} seeds; accuracy lower bound {100 * c['acc_w64_minus_full']['lo']:+.2f} pp"
+                       for p, c in ps.items())
+    worst = "; ".join(f"P = {p}: smallest step bound {min(st['lower_s10'] for st in c['steps']):+.4f}"
+                      for p, c in ps.items())
+    ends = "; ".join(f"P = {p}: {c['nll_w64_minus_full']['mean']:+.4f}, 95% CI [{c['nll_w64_minus_full']['lo']:+.4f}, "
+                     f"{c['nll_w64_minus_full']['hi']:+.4f}]" for p, c in ps.items())
+    means = "; ".join(f"P = {p}: " + ", ".join(f"{c['far_nll_by_window'][str(w)]['mean']:.4f}" for w in e["windows"])
+                      for p, c in ps.items())
+    sane = all(x for k, x in e["sanity"].items() if k != "code_commits")
+    failed = f"{len(e['failed'])} failed, reported and not replaced" if e["failed"] else "no failures"
+    return "\n".join([
+        f"- **Design.** {e['plan']['n_seeds']} fresh seeds ({e['planned_seeds'][0]}–{e['planned_seeds'][-1]}) per "
+        f"period from the preregistered power rule (planned joint power {e['plan']['joint_power_at_n']:.2f}), each "
+        f"trained once and evaluated with windows {', '.join(f'{w:,}' for w in e['windows'])}; {failed}.",
+        f"- **Sanity checks (one checkpoint per seed across windows, one test set per period, one code commit): "
+        f"{'passed' if sane else 'FAILED'}.**",
+        f"- **R1 (far NLL rises with log2 of the last layer's window): {r1_word.lower()}**"
+        f"{f' {r1_why}' if r1_why else ''}. Slope: {slopes}.",
+        f"- **S10 (near-monotone, every step's lower bound above −0.005 nats): "
+        f"{'as predicted' if v['S10_near_monotone'] else 'not as predicted'}.** {worst}.",
+        f"- **S11 (W = 64 below the whole sequence; E8 replicates): "
+        f"{'as predicted' if v['S11_w64_below_full'] else 'not as predicted'}.** {ends}.",
+        f"- **Descriptive.** Mean far NLL at W = {', '.join(f'{w:,}' for w in e['windows'])}: {means}.",
+    ])
+
+
 def rewrite_block(path: Path, name: str, content: str) -> None:
     if not path.exists():
         return
@@ -1669,6 +1787,7 @@ def main() -> None:
     analyze_e6(summary, tables)
     analyze_e7(summary, tables)
     analyze_e8(summary, tables)
+    analyze_e9(summary, tables)
     summary.pop("_hero_panels", None)
     SUMMARY.mkdir(parents=True, exist_ok=True)
     (SUMMARY / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
@@ -1686,6 +1805,7 @@ def main() -> None:
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e6_findings", e6_findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e7_findings", e7_findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e8_findings", e8_findings(summary))
+        rewrite_block(ROOT / "docs" / "RESULTS.md", "e9_findings", e9_findings(summary))
     print(md)
 
 

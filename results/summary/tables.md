@@ -418,3 +418,17 @@ Paired differences, limited minus unlimited (mean [95% CI], seeds lower / seeds)
 - P = 13: far NLL -0.0425 [-0.0606, -0.0244] (21/21); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.0032 [-0.0047, -0.0017] (21/21).
 
 Holm-adjusted one-sided p-values for W2's two far-NLL comparisons (sensitivity only): P = 12: 5e-07; P = 13: 4.4e-05.
+
+**E9, a paired window dose-response (preregistered, Section 12).** ArithScope only, trained once per seed; the same weights evaluated at N = 8,192 with the last layer limited to its last W keys. Far NLL = mean NLL on positions 4,096–8,191. Mean ± 95% CI half-width over 15 seeds (seeds 27–41; 0 failed).
+
+| P | W = 64 | W = 256 | W = 1,024 | W = 8,192 | slope per doubling of W |
+|---|---|---|---|---|---|
+| 12 | 0.0140 ± 0.0016 | 0.0453 ± 0.0098 | 0.0613 ± 0.0157 | 0.0654 ± 0.0170 | +0.0071 [+0.0048, +0.0094] |
+| 13 | 0.0223 ± 0.0029 | 0.0528 ± 0.0141 | 0.0676 ± 0.0220 | 0.0702 ± 0.0235 | +0.0066 [+0.0033, +0.0099] |
+
+Steps between adjacent windows, far NLL (mean [95% CI]); W = 64 minus the whole sequence; far accuracy, W = 64 minus the whole sequence:
+
+- P = 12: 64→256 +0.0314 [+0.0223, +0.0404]; 256→1,024 +0.0159 [+0.0097, +0.0222]; 1,024→8,192 +0.0041 [+0.0027, +0.0055]. W = 64 minus whole: -0.0514 [-0.0678, -0.0350]. Accuracy: +0.00 pp [+0.00, +0.00].
+- P = 13: 64→256 +0.0305 [+0.0165, +0.0445]; 256→1,024 +0.0148 [+0.0065, +0.0232]; 1,024→8,192 +0.0026 [+0.0009, +0.0043]. W = 64 minus whole: -0.0479 [-0.0716, -0.0242]. Accuracy: +0.00 pp [+0.00, +0.00].
+
+Holm-adjusted one-sided p-values for the two slope tests (sensitivity only): P = 12: 1.2e-05; P = 13: 0.00039.
