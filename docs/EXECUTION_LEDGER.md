@@ -262,3 +262,34 @@ Command: `make e6 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e
 | S3, `window` growth within ±0.02 nats | **as predicted** |
 | S4, `window` far NLL above `reference` | **not as predicted** |
 | S5, `long_train` growth positive | **as predicted** |
+
+## Stage 10: E7 preparation (2026-10-15)
+
+E7 ([`PREREGISTRATION.md`](PREREGISTRATION.md), Section 10) runs on the Stage 8 machine and environment. The library is unchanged since E6; E7 adds the suite `e7_floor` (`experiments/suites.py`), the frozen verdict script `experiments/e7_verdicts.py`, and `make e7`. No pilot (Section 10.3).
+
+| Step | Command | Result |
+|---|---|---|
+| Suite definition | `python experiments/run_suite.py e7_floor --dry-run` | 30 runs, 10 per arm; no file name shared with `e6_calibration` |
+| Verdict script plumbing | scratch script: E6's run files relabelled as E7 arms in a temporary directory (`baseline` posing as `arith_window`), then `e7_verdicts.main()` | runs end to end and writes every field; output discarded (not E7 evidence) |
+
+
+## Stage 11: E7 runs (2026-10-15)
+
+Command: `make e7 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e7_floor --workers 4`, then `python experiments/e7_verdicts.py`), started 2026-10-15 07:11:29 UTC from a clean working tree at `c2d793f`. That commit was pushed to `origin/prereg/e7-far-nll-floor` at 07:11:20 UTC, before the runner started. The verdicts were written at 07:55:12 UTC.
+
+| Suite | Runs | Failures | Wall time per run (4 in parallel) | Training time |
+|---|---|---|---|---|
+| `e7_floor` | 30 | 0 | 208–387 s (mean 335 s) | 134–238 s |
+
+**Status: PASS.** 30 runs, all `COMPLETED`, every training loss finite. Machine and environment as in Stage 8. The Google Drive client used about one CPU core throughout; this changes wall times only (each run is single-threaded and deterministic).
+
+**Provenance.** Every run file records `git_commit = c2d793f`. The first run to finish records `git_dirty = false`. The other 29 record `true` only because the earlier run files were already in `results/runs/e7_floor/` and still untracked; `git status` after the suite showed no other change than those files and `results/summary/e7.json`.
+
+**Verdicts** (`experiments/e7_verdicts.py` → [`results/summary/e7.json`](../results/summary/e7.json); rules in [`PREREGISTRATION.md`](PREREGISTRATION.md), Section 10.4):
+
+| Item | Outcome |
+|---|---|
+| Sanity check: `arith_window` and `reference` train bitwise alike | **PASS** for all 10 period-seed pairs |
+| W1, second-layer window on ArithScope alone lowers its far NLL | **FALSIFIED** (the far-NLL interval reaches 0 at P = 12) |
+| S6, `arith_window` far NLL above `window` | **not as predicted** |
+| S7, `window` far NLL below `reference` | **not as predicted** |

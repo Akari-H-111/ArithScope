@@ -384,3 +384,21 @@ Paired differences against RoPE + ArithScope (mean [95% CI], seeds lower / 5):
 - P = 13, RoPE + ArithScope, trained at length 256: far NLL -0.334 [-0.471, -0.198] (5/5); far accuracy +0.00 pp [+0.00, +0.00]; growth -0.158 [-0.202, -0.113]; far NLL minus ArithScope only -0.039 [-0.104, +0.025].
 
 Holm-adjusted one-sided p-values for the four far-NLL comparisons (sensitivity only): long_train, P = 12: 0.0055; long_train, P = 13: 0.0046; window, P = 12: 0.0055; window, P = 13: 0.0046.
+
+**E7, the NLL floor of ArithScope alone (preregistered, Section 10).** N = 8,192; far region = positions 4,096–8,191; growth = NLL on positions 7,168–8,191 minus NLL on positions 1,024–2,047. Mean ± 95% CI half-width over 5 seeds.
+
+| P | arm | far NLL (nats) | far accuracy (%) | growth (nats) |
+|---|---|---|---|---|
+| 12 | ArithScope only | 0.0713 ± 0.0666 | 100.0 ± 0.0 | 0.0013 ± 0.0051 |
+| 12 | ArithScope only, 2nd layer limited to 64 keys | 0.0135 ± 0.0042 | 100.0 ± 0.0 | -0.0010 ± 0.0006 |
+| 12 | RoPE + ArithScope, 2nd layer limited to 64 keys | 0.0089 ± 0.0026 | 100.0 ± 0.0 | -0.0008 ± 0.0001 |
+| 13 | ArithScope only | 0.0657 ± 0.0383 | 100.0 ± 0.0 | 0.0035 ± 0.0031 |
+| 13 | ArithScope only, 2nd layer limited to 64 keys | 0.0144 ± 0.0024 | 100.0 ± 0.0 | -0.0004 ± 0.0003 |
+| 13 | RoPE + ArithScope, 2nd layer limited to 64 keys | 0.0115 ± 0.0009 | 100.0 ± 0.0 | -0.0005 ± 0.0002 |
+
+Paired differences in far NLL (mean [95% CI], seeds lower / 5):
+
+- P = 12: ArithScope only, limited minus unlimited: -0.0578 [-0.1205, +0.0049] (5/5); far accuracy +0.00 pp [+0.00, +0.00]. ArithScope only limited minus RoPE + ArithScope limited: +0.0046 [-0.0009, +0.0100] (1/5). RoPE + ArithScope limited minus ArithScope only: -0.0624 [-0.1300, +0.0053] (5/5). Share of the gap between ArithScope only and RoPE + ArithScope limited that the limit closes on ArithScope only (from means, descriptive): 93%.
+- P = 13: ArithScope only, limited minus unlimited: -0.0512 [-0.0885, -0.0139] (5/5); far accuracy +0.00 pp [+0.00, +0.00]. ArithScope only limited minus RoPE + ArithScope limited: +0.0029 [+0.0001, +0.0057] (0/5). RoPE + ArithScope limited minus ArithScope only: -0.0541 [-0.0924, -0.0158] (5/5). Share of the gap between ArithScope only and RoPE + ArithScope limited that the limit closes on ArithScope only (from means, descriptive): 95%.
+
+Holm-adjusted one-sided p-values for W1's two far-NLL comparisons (sensitivity only): P = 12: 0.0314; P = 13: 0.0189.

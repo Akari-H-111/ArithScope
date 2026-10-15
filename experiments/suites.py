@@ -175,7 +175,37 @@ def e6_calibration() -> list[RunSpec]:
     return _e6("e6", CONFIRM_SEEDS, E6_DATA_SEED, E1_EVAL, E6_EVAL_TOKENS_LONG)
 
 
+# ----------------------------------------------------------------------------------------------
+# E7 (docs/PREREGISTRATION.md, Section 10): is ArithScope's own NLL floor partly its broad second
+# layer? E6's window arm ended below ArithScope alone (its S4 failed). E7 windows ArithScope alone.
+# Same architecture, hyperparameters, seeds, and window as E6; a new experiment name (new training
+# batches, same initial weights per seed) and fresh test data.
+E7_DATA_SEED = 20261017  # fresh: E1-E5 used 20261014, the post-hoc diagnosis 20261015, E6 20261016
+E7_ARMS: dict[str, dict] = {
+    "reference": {"variant": "arith"},                                      # E6's reference
+    "arith_window": {"variant": "arith", "attn_windows": (None, E6_WINDOW)},  # the new arm
+    "window": {"variant": "rope+arith", "attn_windows": (None, E6_WINDOW)},   # E6's window arm
+}
+
+
+def e7_arm(spec: RunSpec) -> str:
+    """The E7 arm a run belongs to."""
+    for arm, overrides in E7_ARMS.items():
+        if spec.variant == overrides["variant"] and tuple(spec.attn_windows) == overrides.get("attn_windows", ()) \
+                and spec.train_length == RunSpec.train_length and spec.batch_size == RunSpec.batch_size:
+            return arm
+    raise ValueError(f"not an E7 arm: {spec.filename}")
+
+
+def e7_floor() -> list[RunSpec]:
+    return [RunSpec(experiment=f"e7_p{period}", task={"kind": "periodic", "periods": [period]}, seed=seed,
+                    eval_lengths=E1_EVAL, eval_tokens_long=E6_EVAL_TOKENS_LONG, data_seed=E7_DATA_SEED,
+                    **overrides, **_hp("periodic", overrides["variant"]))
+            for period in (12, 13) for overrides in E7_ARMS.values() for seed in CONFIRM_SEEDS]
+
+
 SUITES = {"pilot": pilot, "pilot_controls": pilot_controls, "pilot_alias_query": pilot_alias_query,
           "pilot_alias_design": pilot_alias_design, "pilot_mqar_easy": pilot_mqar_easy,
           "e1_periodic": e1_periodic, "e2_alias": e2_alias,
-          "e3_tagged": e3_tagged, "e5_mixed": e5_mixed, "pilot_e6": pilot_e6, "e6_calibration": e6_calibration}
+          "e3_tagged": e3_tagged, "e5_mixed": e5_mixed, "pilot_e6": pilot_e6, "e6_calibration": e6_calibration,
+          "e7_floor": e7_floor}
