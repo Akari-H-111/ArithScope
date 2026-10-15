@@ -215,4 +215,6 @@ A retrain of one E1 run (`e1_p12`, `rope+arith`, seed 1) on the E6 machine gave 
 
 ### 9.8 Deviations log (E6)
 
-None yet.
+No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
+
+1. **Reporting code after the results** (after `409c42b`, which holds the 40 run files and the verdicts). `experiments/analyze.py` gained `analyze_e6`, which formats the frozen verdicts and paired intervals from `results/summary/e6.json`, adds per-arm intervals and an NLL-by-position figure computed from the same run files with `e6_verdicts.py`'s metric functions, and fills the `e6_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e6_verdicts.py` is unchanged since `039a56d`.

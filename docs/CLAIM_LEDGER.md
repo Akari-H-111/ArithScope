@@ -51,6 +51,9 @@ Verdicts are computed by `experiments/analyze.py` from the preregistered decisio
 | In those models the change of NLL with query position beyond 1,024 tokens runs through distant keys in the second attention layer: limiting that layer to the last 1,024 keys removes it with accuracy unchanged, in all 20 models with RoPE that were diagnosed; limiting the first (comb) layer does not | **observed** (post-hoc intervention; two-layer models, one task, four fresh sequences) | [`RESULTS.md`](RESULTS.md); `results/posthoc/nll_diagnostics.json` |
 | ArithScope alone keeps a flat NLL above the Bayes NLL at long lengths, and the floor is not a readout limit | **observed** (post hoc); explained by MATH P3 (proved) and the proof sketch after it | [`RESULTS.md`](RESULTS.md); `results/posthoc/readout_floor.json` |
 | The confirmatory verdicts hold after Bonferroni and Holm adjustment for the interval-based claims | **observed** (post-hoc sensitivity analysis) |
+| L1 (E6): limiting RoPE + ArithScope's second layer to the last 64 keys (its training length) lowers the NLL on positions 4,096–8,191 at N = 8,192, with accuracy unchanged, at P = 12 and P = 13 | **supported** (EMPIRICAL; second preregistration, `PREREGISTRATION.md` Section 9; 5/5 seeds per period). The window never binds in training, so the weights are those of the unwindowed model |
+| L2 (E6): training RoPE + ArithScope at length 256 with the same tokens per step lowers the same NLL, with accuracy unchanged, at both periods | **supported** (EMPIRICAL; 5/5 seeds per period). Confounded with batch size and attention compute |
+| E6 secondary predictions: the windowed model's NLL stops rising (S3); longer training leaves a small rise (S5); the windowed model stays above ArithScope alone (S4) | S3 and S5 **as predicted**; S4 **not as predicted**: the windowed model ends below ArithScope alone (interval excludes 0 at P = 12, not at P = 13) |
 
 ## Not claimed
 
@@ -61,4 +64,5 @@ Verdicts are computed by `experiments/analyze.py` from the preregistered decisio
 | Benefits on natural language or in pretrained LLMs | **not tested** |
 | State of the art on any benchmark | **not claimed**; synthetic tasks only |
 | PSD-ness or calibration of attention weights after softmax | **not claimed** |
+| Calibration in general, or any remedy beyond E6's two-layer synthetic setting (e.g. a hard window in models whose upper layers need distant context) | **not claimed.** E6 measures NLL on one synthetic task; accuracy was at the ceiling in every arm |
 | Novelty of Ramanujan sums, Fourier position features, or relative biases as such | **not claimed.** These are classical or prior work. The contribution is the specific attention channel, its theory, and the measured comparison. A literature screen (2026-10-14) found no prior Ramanujan-sum attention bias; this is not an exhaustive novelty search |
