@@ -10,9 +10,9 @@ type: software
 authors:
   - family-names: "Hayami"
     given-names: "A."
-version: "0.1.0"
+version: "0.2.0"
 license: MIT
-date-released: "2026-10-14"
+date-released: "2026-10-15"
 repository-code: "https://github.com/Akari-H-111/ArithScope"
 keywords:
   - transformer
