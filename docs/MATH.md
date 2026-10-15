@@ -141,7 +141,13 @@ Equivalently, an ArithScope head is invariant under $`n\mapsto un`$ for every un
 - For integer $`b\ge2`$ every $`\theta_k`$ is algebraic, so every $`c\cdot\theta`$ is algebraic.
 - If $`c\cdot\theta=2\pi q`$ for some rational $`q\ne0`$, then $`\pi`$ would be algebraic, contradicting Lindemann (1882). So the hypothesis holds for every standard RoPE configuration.
 
-**In the long-context limit, the attention mass a RoPE head puts on any residue class mod $`P`$ tends to the uniform share $`1/P`$.** The same holds for learned real frequencies unless a frequency is *exactly* a rational multiple of $`2\pi`$, which gradient descent does not produce.
+**In the long-context limit, the attention mass a RoPE head puts on any residue class mod $`P`$ tends to the uniform share $`1/P`$.**
+
+*Learned frequencies (corrected 2026-10-15).* T5 applies to any frequency vector that satisfies its **joint** hypothesis. It is not enough that each $`\theta_k/2\pi`$ is irrational; an earlier version of this file said so, and an external audit refuted it ([`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md), F3).
+
+- *Counterexample.* Take $`\theta=(\sqrt2,\ \sqrt2+\pi)`$. Neither frequency is a rational multiple of $`2\pi`$, but $`\theta_2-\theta_1=\pi=2\pi\cdot\tfrac12`$. With $`g(n)=\cos n\theta_1+\cos n\theta_2=(1+(-1)^n)\cos n\sqrt2`$ and $`P=2`$, the even offsets carry weight $`e^{2\cos n\sqrt2}`$ (mean $`I_0(2)`$ by equidistribution) and the odd offsets weight 1, so the even-offset mass tends to $`I_0(2)/(I_0(2)+1)=0.69508\ldots`$, not $`1/2`$. *Check:* `tests/test_theory_notes.py` evaluates the sum over 200 000 offsets.
+- *How often the hypothesis fails.* The frequency vectors that violate it lie on the hyperplanes $`c\cdot\theta=2\pi q`$, $`c\in\mathbb{Z}^K\setminus\{0\}`$, $`q\in\mathbb{Q}\setminus\mathbb{Z}`$: a countable union, hence a Lebesgue-null set. Every vector of rational numbers satisfies the hypothesis, because $`\pi`$ is irrational; in particular every floating-point frequency vector does, taken exactly. Nothing is claimed about which frequencies training produces.
+- *What matters at finite length: near-resonances.* If $`c\cdot\theta=2\pi a/b+\varepsilon`$ with $`b\ge2`$ and small $`\varepsilon`$, then $`e^{inc\cdot\theta}`$ looks $`b`$-periodic for $`n\ll1/|\varepsilon|`$, and residue classes mod $`b`$ can keep unequal mass up to such offsets before the limit of T5 takes over. The drift remark below is the case $`K=1`$, $`c=1`$, $`a/b=1/P`$.
 
 *Proof.*
 

@@ -21,7 +21,7 @@ questions, and exact commands.
 - **Fair baselines.**
   - Baselines get the same budget, data, and seeds as the candidate.
   - Hyperparameters are chosen by the preregistered validation rule, never on test or extrapolation data.
-- **Keep the default semantics.** `gamma = 0` must reproduce the base model bitwise; mask semantics must not change; `tests/test_attention.py` guards both.
+- **Keep the default semantics.** `gamma = 0` must reproduce the base model bitwise; causality is by token index in every backend and positions never enter the mask ([`docs/SPEC.md`](docs/SPEC.md), §4); `tests/test_attention.py` guards both.
 - **Notation.** Arithmetic indices are *orders* (`m`); the attention query is `q`/`Q`. Never mix them.
 - **Phases.** Integer positions with integer frequencies give trivial phases. Phases must come from exact residues `(a * (t mod m)) mod m`.
 - **Forbidden without new evidence:**

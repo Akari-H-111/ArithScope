@@ -16,6 +16,7 @@ means exhaustive exact verification on a stated finite range, not a proof.
 | Selectable combs of a convex ArithScope head are exactly `lcm(S)Z`, `S ⊆ M`; CRT composition has margin `>= 1/k` | PROVED + finite check (P < 300) | MATH T4 |
 | No bias in `span{K_m}` separates offsets with equal signatures (alias partition; gcd classes for divisor-closed banks) | PROVED (classical core) + finite check | MATH P1 |
 | With fixed content and standard RoPE frequencies, the attention mass on any residue class mod P tends to `1/P` as context grows | ASYMPTOTIC (proof); NUMERICAL illustration; **no rate** | MATH T5 |
+| For learned frequencies, T5 needs its joint non-resonance hypothesis; individual irrationality of each frequency is **not** enough | counterexample (analytic + numerical); corrected 2026-10-15 after an external audit | MATH §4; `tests/test_theory_notes.py`; [`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md) F3 |
 | The ArithScope bias has an exact rank-`sum phi(m)` factorization, so it runs inside fused SDPA without an `[N, N]` tensor | PROVED + numerical check (1e−12, float64) | MATH T7; `tests/` |
 | The dense ArithScope bias is bitwise invariant under any common position shift | Implementation property, tested (shifts to `2^61`) | MATH P2; `tests/` |
 
@@ -26,6 +27,8 @@ means exhaustive exact verification on a stated finite range, not a proof.
 | A trainable PyTorch module exists; `gamma = 0` reproduces the base model's outputs **and gradients** bitwise | tested | `tests/test_attention.py::GammaZeroEquivalenceTests` |
 | Explicit, SDPA, and folded backends compute the same function (with padding, per-sequence positions, query blocking) | tested to 1e−10 (float64) | `tests/test_attention.py` |
 | Causal and padding masks are respected; fully masked rows output 0, never NaN | tested | `tests/test_attention.py` |
+| Causality is by token index in every backend: no token sees a later one for repeated, unsorted, packed, or sparse positions, and all backends agree on such layouts | tested; fixed 2026-10-15 (before, the explicit and FlexAttention backends compared positions) | `tests/test_attention.py`; [`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md) F1 |
+| Bias evaluation allocates memory bounded by the number of query/key pairs, not by the numeric span of the positions; positions must satisfy `\|position\| < 2^62` | tested; fixed 2026-10-15 | `tests/test_attention.py`; [`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md) F2 |
 | The FlexAttention backend (`backend="flex"`) computes the same forward function | tested on CPU, forward only: 1e−12 in float64 (eager), 1e−5 in float32 (compiled kernels, opt-in test) | `tests/test_attention.py::BackendAndMaskTests::test_*flex_backend_matches_explicit` |
 
 ## Experiments (synthetic tasks, CPU, tiny models)
@@ -42,6 +45,8 @@ Verdicts are computed by `experiments/analyze.py` from the preregistered decisio
 | S2: learned mixtures concentrate on divisors of P; at P = 13 on order 13 | **observed**; at P = 13 they coincide with the T3 optimum (secondary; replicates a pilot observation) |
 | RoPE + ArithScope keeps its accuracy under absolute shifts up to 10^9 at the training length | **observed** (post hoc, not preregistered) |
 | Mixed unlabeled periods (E5) | exploratory, 3 seeds: learned frequencies ahead at short lengths, RoPE + ArithScope ahead at the longest |
+| At long lengths, every RoPE-containing variant has higher NLL than ArithScope alone at the same near-oracle accuracy | **observed** (post hoc; NLL was recorded but not preregistered as a decision metric); diagnosis in [`RESULTS.md`](RESULTS.md) |
+| The confirmatory verdicts hold after Bonferroni and Holm adjustment for the interval-based claims | **observed** (post-hoc sensitivity analysis) |
 
 ## Not claimed
 

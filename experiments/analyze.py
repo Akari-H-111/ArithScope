@@ -79,9 +79,9 @@ def _key(run: dict, key: str):
     return run["spec"][key]
 
 
-def paired(runs_a: list[dict], runs_b: list[dict], length: int, region: str = "auto") -> dict:
-    a = {r["spec"]["seed"]: metric(r, length, region) for r in runs_a}
-    b = {r["spec"]["seed"]: metric(r, length, region) for r in runs_b}
+def paired(runs_a: list[dict], runs_b: list[dict], length: int, region: str = "auto", key: str = "acc") -> dict:
+    a = {r["spec"]["seed"]: metric(r, length, region, key) for r in runs_a}
+    b = {r["spec"]["seed"]: metric(r, length, region, key) for r in runs_b}
     seeds = sorted(set(a) & set(b))
     diffs = [a[s] - b[s] for s in seeds]
     out = ci95(diffs)
@@ -654,6 +654,168 @@ def analyze_gates(summary: dict, tables: list[str]) -> None:
         tables.append("\n".join(lines))
 
 
+def analyze_nll_runs(summary: dict, tables: list[str]) -> None:
+    """E1 negative log-likelihood from the run files. Recorded for every run; not a preregistered decision metric."""
+    runs = load("e1_periodic")
+    if not runs:
+        return
+    out = {}
+    for (period,), rs in sorted(group(runs, "period").items()):
+        p = period[0]
+        lens = lengths_of(rs)
+        by_var = group(rs, "variant")
+        lines = [f"**E1 NLL, P = {p}** (nats per scored position; unseen positions for N > 64; mean ± 95% CI over seeds. "
+                 "NLL is recorded for every run but was not a preregistered decision metric):", "",
+                 "| variant | " + " | ".join(f"N={L}" for L in lens) + " |", "|---|" + "---|" * len(lens)]
+        table = {}
+        for v in STANDALONE + ROPE_FAMILY[1:]:
+            if (v,) not in by_var:
+                continue
+            cells = {L: ci95([metric(r, L, key="nll") for r in by_var[(v,)]]) for L in lens}
+            table[v] = cells
+            lines.append(f"| {LABELS[v]} | " + " | ".join(f"{c['mean']:.3f} ± {c['half']:.3f}" for c in cells.values()) + " |")
+        pairs = {}
+        if ("rope+arith",) in by_var and ("arith",) in by_var:
+            pairs = {L: paired(by_var[("rope+arith",)], by_var[("arith",)], L, key="nll") for L in lens}
+            lines += ["", "Paired NLL difference, RoPE + ArithScope minus ArithScope only (positive: RoPE + ArithScope is "
+                      "worse): " + "; ".join(f"N = {L}: {p_['mean']:+.3f} [{p_['lo']:+.3f}, {p_['hi']:+.3f}] "
+                                            f"({p_['wins']}/{len(p_['diffs'])} seeds higher)"
+                                            for L, p_ in pairs.items() if L >= 1024) + "."]
+        out[str(p)] = {"table": {v: {str(L): c for L, c in cells.items()} for v, cells in table.items()},
+                       "rope_arith_minus_arith": {str(L): d for L, d in pairs.items()}}
+        tables.append("\n".join(lines))
+    summary["E1_nll"] = out
+
+
+def analyze_posthoc_nll(summary: dict, tables: list[str]) -> None:
+    """POST-HOC: NLL by position against the Bayes NLL, attention off the comb, and a far-key intervention."""
+    path = ROOT / "results" / "posthoc" / "nll_diagnostics.json"
+    if not path.exists():
+        return
+    data = json.loads(path.read_text())
+    window = data["window"]
+    by = defaultdict(list)
+    for run in data["runs"]:
+        by[(run["period"], run["variant"])].append(run)
+    out = {}
+    lines = [f"**Post-hoc (not preregistered): where the NLL comes from** ({data['sequences']} fresh sequences of "
+             f"{data['length']:,} tokens per model, data seed {data['data_seed']}; mean over seeds). "
+             f"\"Window\" restricts every attention layer to the last {window:,} keys:", "",
+             "| P | variant | position | accuracy | NLL | NLL, window | Bayes NLL | layer-0 / layer-1 attention off the "
+             f"comb beyond {window:,} keys |", "|---|---|---|---|---|---|---|---|"]
+    for (p, v), rs in sorted(by.items()):
+        buckets = []
+        for i, b in enumerate(rs[0]["buckets"]):
+            row = {k: float(np.mean([r["buckets"][i][k] for r in rs])) for k in ("acc", "nll", "nll_window", "bayes_nll")}
+            buckets.append({"start": b["start"], "end": b["end"], **row})
+        far = [float(np.mean([np.mean(r["attention"][layer]["far_off_comb"]) for r in rs]))
+               for layer in range(len(rs[0]["attention"]))]
+        out.setdefault(str(p), {})[v] = {"buckets": buckets, "far_off_comb_by_layer": far, "seeds": len(rs),
+                                        "ece": float(np.mean([r["ece"] for r in rs])),
+                                        "brier": float(np.mean([r["brier"] for r in rs])),
+                                        "nll_share_from_errors": float(np.mean([r["nll_share_from_errors"] for r in rs]))}
+        for b in buckets:
+            lines.append(f"| {p} | {LABELS[v]} | {b['start']:,}–{b['end']:,} | {100 * b['acc']:.2f}% | {b['nll']:.3f} | "
+                         f"{b['nll_window']:.3f} | {b['bayes_nll']:.3f} | "
+                         + " / ".join(f"{100 * x:.1f}%" for x in far) + " |")
+    lines += ["", "Calibration over positions t ≥ 64 (mean over seeds): " + "; ".join(
+        f"P = {p}, {LABELS[v]}: ECE {d['ece']:.3f}, Brier {d['brier']:.4f}, share of NLL from wrong predictions "
+        f"{100 * d['nll_share_from_errors']:.1f}%" for p, vs in sorted(out.items()) for v, d in vs.items()) + "."]
+    summary["posthoc_nll"] = out
+    tables.append("\n".join(lines))
+    for mode in ("light", "dark"):
+        plot_posthoc_nll(out, window, mode)
+
+
+def plot_posthoc_nll(out: dict, window: int, mode: str) -> Path:
+    with themed(mode) as th:
+        periods = sorted(out, key=int)
+        fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 3.9), sharey=True, squeeze=False)
+        for ax, p in zip(axes[0], periods):
+            vs = out[p]
+            any_v = next(iter(vs.values()))
+            x = [math.sqrt(b["start"] * b["end"]) for b in any_v["buckets"]]
+            ax.plot(x, [b["bayes_nll"] for b in any_v["buckets"]], color=th["muted"], linewidth=1.2, label="Bayes oracle")
+            styles = {"rope+fourier_full": ("-", "RoPE + full Fourier bank"), "arith": ((0, (4, 2)), "ArithScope only"),
+                      "rope+arith": ("-", "RoPE + ArithScope")}
+            for v in ("rope+fourier_full", "arith", "rope+arith"):
+                if v not in vs:
+                    continue
+                ls, label = styles[v]
+                hero = v == "rope+arith"
+                ax.plot(x, [b["nll"] for b in vs[v]["buckets"]], color=color(th, v), linestyle=ls, label=label,
+                        marker="o", markersize=5 if hero else 4.5, markeredgecolor=th["surface"], markeredgewidth=1.0,
+                        linewidth=2.6 if hero else 2.0, zorder=5 if hero else 3)
+            if "rope+arith" in vs:
+                ax.plot(x, [b["nll_window"] for b in vs["rope+arith"]["buckets"]], color=color(th, "rope+arith"),
+                        linestyle=(0, (1, 1.5)), marker="o", markersize=4.5, markerfacecolor=th["surface"],
+                        markeredgewidth=1.4, linewidth=2.0, zorder=4,
+                        label=f"RoPE + ArithScope, keys limited to the last {window:,}")
+            ax.axvline(1024, color=th["axis"], linewidth=1.0)
+            ax.set_xscale("log", base=2)
+            ax.set_xticks(x)
+            ax.set_xticklabels([f"{b['start']:,}–{b['end']:,}" for b in any_v["buckets"]], fontsize=8)
+            ax.set_xlabel("query position t (bucket)")
+            ax.set_ylim(bottom=0)
+            ax.set_title(f"Period P = {p}", loc="left", fontsize=10)
+        axes[0][0].set_ylabel("NLL (nats per position)")
+        handles, labels = axes[0][0].get_legend_handles_labels()
+        fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, -0.01), ncol=3, fontsize=8.5, frameon=False)
+        fig.suptitle("Post-hoc: accuracy stays at the oracle, but RoPE's far keys cost NLL (trained at 64, tested at 8,192)",
+                     x=0.01, ha="left", fontweight="bold", fontsize=11, color=th["ink"])
+        return save(fig, FIG, "e1_nll", mode)
+
+
+def analyze_multiplicity(summary: dict, tables: list[str]) -> None:
+    """POST-HOC sensitivity: the CI-based confirmatory comparisons with Bonferroni and Holm adjustment."""
+    comps = {"C1, P = 12": (_pd(summary, "12", "rope", 1024), 0.0), "C1, P = 13": (_pd(summary, "13", "rope", 1024), 0.0),
+             "C2, P = 13": (_pd(summary, "13", "rope+fourier_fund", 1024), 0.0),
+             "C4 (margin −1 pp)": (summary.get("e3_tagged", {}).get("c4_rope_arith_minus_rope_N64"), 0.01)}
+    if any(p is None or p.get("half") is None for p, _ in comps.values()):
+        return
+    k = len(comps)
+    rows = []
+    for name, (p, margin) in comps.items():
+        d = np.asarray(p["diffs"])
+        n = len(d)
+        se = d.std(ddof=1) / math.sqrt(n)
+        pval = float(sstats.t.sf((d.mean() + margin) / se, n - 1))  # one-sided, in the claimed direction
+        half = float(sstats.t.ppf(1 - 0.05 / (2 * k), n - 1) * se)
+        rows.append({"claim": name, "mean": float(d.mean()), "p": pval, "lo": float(d.mean() - half),
+                     "hi": float(d.mean() + half), "margin": margin})
+    order = sorted(range(k), key=lambda i: rows[i]["p"])
+    holm_ok, running = {}, True
+    for rank, i in enumerate(order):
+        running = running and rows[i]["p"] <= 0.05 / (k - rank)
+        holm_ok[i] = running
+    lines = ["**Post-hoc sensitivity to multiplicity** (the preregistration used unadjusted 95% intervals; C3 uses "
+             "fixed thresholds and is not included). One-sided paired t tests in the claimed direction:", "",
+             "| comparison | mean difference | one-sided p | Bonferroni 98.75% interval | holds after Bonferroni | "
+             "holds after Holm |", "|---|---|---|---|---|---|"]
+    for i, r in enumerate(rows):
+        bonf = r["lo"] > -r["margin"]
+        lines.append(f"| {r['claim']} | {100 * r['mean']:+.2f} pp | {r['p']:.1e} | [{100 * r['lo']:+.2f}, "
+                     f"{100 * r['hi']:+.2f}] pp | {'yes' if bonf else 'NO'} | {'yes' if holm_ok[i] else 'NO'} |")
+        r.update({"bonferroni": bonf, "holm": holm_ok[i]})
+    summary["multiplicity"] = rows
+    tables.append("\n".join(lines))
+
+
+def analyze_replay(summary: dict, tables: list[str]) -> None:
+    """Replays of committed runs with the current code (experiments/replay.py)."""
+    out, lines = {}, []
+    for mode, what in (("eval", "E1 checkpoints re-scored on the preregistered test sets at N = 1,024 and 8,192"),
+                       ("train", "confirmatory runs retrained from scratch")):
+        path = ROOT / "results" / "replay" / f"{mode}.json"
+        if path.exists():
+            d = json.loads(path.read_text())
+            out[mode] = {"identical": d["identical"], "total": d["total"]}
+            lines.append(f"- {what}: {d['identical']} of {d['total']} bitwise identical to the committed records.")
+    if out:
+        summary["replay"] = out
+        tables.append("**Replays with the current code** (`experiments/replay.py`):\n\n" + "\n".join(lines))
+
+
 def analyze_meta(summary: dict, tables: list[str]) -> None:
     runs = load("e1_periodic")
     if not runs:
@@ -950,9 +1112,13 @@ def main() -> None:
     analyze_alias(summary, tables)
     analyze_controls(summary, tables)
     analyze_e1(summary, tables, suite="e5_mixed", label="E5")
+    analyze_nll_runs(summary, tables)
+    analyze_posthoc_nll(summary, tables)
     analyze_gates(summary, tables)
     analyze_meta(summary, tables)
     analyze_overhead(summary, tables)
+    analyze_multiplicity(summary, tables)
+    analyze_replay(summary, tables)
     summary.pop("_hero_panels", None)
     SUMMARY.mkdir(parents=True, exist_ok=True)
     (SUMMARY / "summary.json").write_text(json.dumps(summary, indent=1, default=float))

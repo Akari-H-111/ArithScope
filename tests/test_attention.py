@@ -118,6 +118,85 @@ class BackendAndMaskTests(unittest.TestCase):
                 got = layer(x, pos, valid, backend="flex")
             self.assertTrue(torch.allclose(ref, got, atol=1e-12, rtol=0), name)
 
+    def _backends(self, name):
+        from arithscope import flex
+
+        names = ["explicit", "sdpa"]
+        if set(self._attn(name).biases.keys()) == {"arith"}:
+            names.append("folded")
+        if flex.available():
+            names.append("flex")
+        return names
+
+    def _run(self, layer, x, pos, valid, backend):
+        with torch.no_grad(), warnings.catch_warnings():  # FlexAttention has no CPU backward
+            warnings.simplefilter("ignore", UserWarning)
+            return layer(x, pos, valid, backend=backend)
+
+    # Regression tests for the 2026-10-15 cold audit (docs/AUDIT_RESPONSE.md, F1 and F2).
+    POSITION_LAYOUTS = {
+        "repeated": [0, 0, 1, 2, 2, 3, 4, 4, 5, 6, 7, 7],
+        "unsorted": [2, 1, 3, 0, 5, 4, 7, 6, 9, 8, 11, 10],
+        "packed": [0, 1, 2, 3, 0, 1, 2, 0, 1, 2, 3, 4],
+        "sparse": [0, 3, 10**6, 10**6 + 1, 7 * 10**12, 7 * 10**12 + 13, 10**15, 10**15 + 5, 10**15 + 6,
+                   10**15 + 7, 10**15 + 8, 10**15 + 9],
+    }
+
+    def test_backends_agree_for_any_position_layout(self):
+        x = torch.randn(2, 12, 32, dtype=torch.float64)
+        valid = torch.ones(2, 12, dtype=torch.bool)
+        valid[1, :2] = False
+        for layout, values in self.POSITION_LAYOUTS.items():
+            pos = torch.tensor(values)
+            batched = torch.stack([pos, pos.flip(0)])
+            for name in ("rope+arith", "arith", "rope", "rope+fourier_full", "rope+fourier_learned", "rope+relbias",
+                         "alibi"):
+                layer = self._attn(name)
+                for p, mask in ((pos, None), (batched, valid)):
+                    ref = self._run(layer, x, p, mask, "explicit")
+                    self.assertTrue(torch.isfinite(ref).all(), (layout, name))
+                    for backend in self._backends(name)[1:]:
+                        got = self._run(layer, x, p, mask, backend)
+                        self.assertTrue(torch.allclose(ref, got, atol=1e-10, rtol=0), (layout, name, backend))
+
+    def test_no_token_sees_a_later_token_for_any_position_layout(self):
+        x = torch.randn(1, 12, 32, dtype=torch.float64)
+        for layout, values in self.POSITION_LAYOUTS.items():
+            pos = torch.tensor(values)
+            for name in ("rope+arith", "rope", "alibi"):
+                layer = self._attn(name)
+                for t in (0, 5):
+                    x2 = x.clone()
+                    x2[:, t + 1:] = torch.randn(1, 11 - t, 32, dtype=torch.float64)
+                    for backend in self._backends(name):
+                        y, y2 = self._run(layer, x, pos, None, backend), self._run(layer, x2, pos, None, backend)
+                        self.assertTrue(torch.allclose(y[:, : t + 1], y2[:, : t + 1], atol=1e-12, rtol=0),
+                                        (layout, name, backend, t))
+
+    def test_index_causality_equals_position_causality_for_increasing_positions(self):
+        # The rule used before 2026-10-15 compared positions; every experiment used increasing positions.
+        from arithscope.attention import allowed_mask
+
+        for pos in (torch.arange(9), torch.arange(9) * 7 + 10**9):
+            by_position = (pos.unsqueeze(0) <= pos.unsqueeze(1)).unsqueeze(0)
+            self.assertTrue(torch.equal(allowed_mask(9, 9), by_position))
+
+    def test_sparse_positions_cost_pairs_not_span(self):
+        # The old contiguous offset range would need about 2e15 entries here and fail to allocate.
+        pos = torch.tensor([0, 10**15, 2 * 10**15 + 1])
+        diff = pos.unsqueeze(-1) - pos.unsqueeze(-2)
+        for name in ("arith", "fourier_full", "fourier_learned", "relbias", "alibi"):
+            layer = self._attn(name)
+            module = next(iter(layer.biases.values()))
+            dense = module(pos, pos)
+            direct = module.offset_values(diff.flatten()).view(-1, 3, 3)
+            self.assertTrue(torch.allclose(dense, direct, atol=1e-12, rtol=0), name)
+
+    def test_positions_outside_the_exact_int64_range_are_rejected(self):
+        layer = self._attn("arith")
+        with self.assertRaises(ValueError):
+            layer.biases["arith"](torch.tensor([0, 2**62]), torch.tensor([0, 2**62]))
+
     @unittest.skipUnless(os.environ.get("ARITHSCOPE_TEST_COMPILED_FLEX") == "1",
                          "opt-in: set ARITHSCOPE_TEST_COMPILED_FLEX=1 to compile FlexAttention kernels (slow)")
     def test_compiled_flex_backend_matches_explicit(self):
