@@ -1,0 +1,158 @@
+{
+ "schema_version": "arithscope-window-eval-1",
+ "status": "COMPLETED",
+ "source_run": "e9_p13__arith__s34__ce9c8ad76a3b.json",
+ "checkpoint_sha256": "9794059f8ba3bcc9acc1e4339dacaf295d64f61637e70ce326f4f18e0aa4ffba",
+ "spec": {
+  "experiment": "e9_p13",
+  "task": {
+   "kind": "periodic",
+   "periods": [
+    13
+   ]
+  },
+  "variant": "arith",
+  "seed": 34,
+  "orders": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15,
+   16
+  ],
+  "d_model": 64,
+  "num_layers": 2,
+  "num_heads": 4,
+  "d_ff": 256,
+  "train_length": 64,
+  "batch_size": 32,
+  "steps": 2000,
+  "lr": 0.003,
+  "pos_lr_mult": 10.0,
+  "weight_decay": 0.01,
+  "warmup": 100,
+  "grad_clip": 1.0,
+  "eval_lengths": [
+   64
+  ],
+  "eval_tokens": 65536,
+  "eval_tokens_long": 32768,
+  "shift_eval_length": 256,
+  "shift_evals": [],
+  "val_every": 250,
+  "data_seed": 20261019,
+  "attn_windows": []
+ },
+ "window_layer": 1,
+ "window": 8192,
+ "test": [
+  {
+   "length": 8192,
+   "num_seqs": 4,
+   "position_shift": 0,
+   "digest": "5e90517e3136730404c64c69734a0067509343f92e1b40a728917f4e398acf6d",
+   "all": {
+    "n": 32768,
+    "acc": 0.997161865234375,
+    "oracle_acc": 0.9973236322402954,
+    "nll": 0.045901697129011154
+   },
+   "extrapolated": {
+    "n": 32512,
+    "acc": 0.9994770884513855,
+    "oracle_acc": 0.9994617104530334,
+    "nll": 0.03863360732793808
+   },
+   "eval_seconds": 81.03071875000023,
+   "tokens_per_second": 404.38984752310256,
+   "by_position": [
+    {
+     "start": 0,
+     "end": 1024,
+     "n": 4096,
+     "acc": 0.977294921875,
+     "oracle_acc": 0.9785889387130737,
+     "nll": 0.11222551763057709
+    },
+    {
+     "start": 1024,
+     "end": 2048,
+     "n": 4096,
+     "acc": 1.0,
+     "oracle_acc": 1.0,
+     "nll": 0.03647583723068237
+    },
+    {
+     "start": 2048,
+     "end": 3072,
+     "n": 4096,
+     "acc": 1.0,
+     "oracle_acc": 1.0,
+     "nll": 0.03607581555843353
+    },
+    {
+     "start": 3072,
+     "end": 4096,
+     "n": 4096,
+     "acc": 1.0,
+     "oracle_acc": 1.0,
+     "nll": 0.03619421273469925
+    },
+    {
+     "start": 4096,
+     "end": 5120,
+     "n": 4096,
+     "acc": 1.0,
+     "oracle_acc": 1.0,
+     "nll": 0.036362022161483765
+    },
+    {
+     "start": 5120,
+     "end": 6144,
+     "n": 4096,
+     "acc": 1.0,
+     "oracle_acc": 1.0,
+     "nll": 0.03652205318212509
+    },
+    {
+     "start": 6144,
+     "end": 7168,
+     "n": 4096,
+     "acc": 1.0,
+     "oracle_acc": 1.0,
+     "nll": 0.036581046879291534
+    },
+    {
+     "start": 7168,
+     "end": 8192,
+     "n": 4096,
+     "acc": 1.0,
+     "oracle_acc": 1.0,
+     "nll": 0.0367770679295063
+    }
+   ]
+  }
+ ],
+ "environment": {
+  "python": "3.13.16",
+  "torch": "2.14.1",
+  "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+  "cpu": "Apple M2",
+  "torch_threads": 1,
+  "device": "cpu",
+  "dtype": "float32",
+  "git_commit": "5ce34b874584be86b39b97353f6fb76e347248cd",
+  "git_dirty": true
+ }
+}
