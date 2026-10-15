@@ -337,7 +337,7 @@ The full Fourier bank, whose span contains every Ramanujan kernel, matches Arith
 
 Learned real frequencies come within about a point of ArithScope up to 2,048 tokens (at P = 13 the small gap is consistent across seeds) and then lose accuracy between N = 1,024 and N = 8,192, more at P = 13 than at P = 12. ArithScope stays within 1 pp of the Bayes oracle at both lengths.
 
-*Post-hoc mechanism.* Reading the trained frequencies and amplitudes directly, the comb-selective heads keep a positive comb margin inside the training window, but their median margin has turned negative by offset ~1,000. This is the drift Theorem T5's corollary describes: a frequency off by ε loses phase alignment after about 1/|ε| tokens. Accuracy outlasts the bias comb, presumably because nearby comb positions, where the comb is still intact, dominate the softmax until enough distant keys accumulate; this was not tested further.
+*Post-hoc mechanism.* Reading the trained frequencies and amplitudes directly, the comb-selective heads keep a positive comb margin inside the training window, but their median margin has turned negative by offset ~1,000. This is the drift described by the remark under Theorem T5 in [`MATH.md`](MATH.md): a frequency off by ε loses phase alignment after about 1/|ε| tokens. (That remark is unaffected by the audit's correction of the learned-frequency corollary.) Accuracy outlasts the bias comb, presumably because nearby comb positions, where the comb is still intact, dominate the softmax until enough distant keys accumulate; this was not tested further.
 
 ### S2: gradient descent finds the theorem's optimum
 
@@ -363,7 +363,7 @@ Each sequence has period 7, 11, or 13, and nothing tells the model which. An Ari
 
 ### Calibration: accuracy at the oracle, NLL not (post hoc, after the external audit)
 
-The audit ([`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md), F4) noticed that RoPE + ArithScope's NLL at N = 8,192 is much higher than ArithScope's alone, at the same accuracy. The NLL tables above, generated from the committed run files, show that it holds for every RoPE-containing variant whose accuracy stays at the oracle (RoPE + ArithScope, RoPE + full Fourier bank, and the matched cosine bank at P = 12): their NLL falls up to about 1,024 tokens and then rises. ArithScope without RoPE keeps improving.
+The audit ([`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md), F4) noticed that RoPE + ArithScope's NLL at N = 8,192 is much higher than ArithScope's alone, at the same accuracy. The NLL tables above, generated from the committed run files, show that it holds for every RoPE-containing variant whose accuracy stays at the oracle (RoPE + ArithScope, RoPE + full Fourier bank, and the matched cosine bank at P = 12): their NLL falls up to about 1,024 tokens and then rises. ArithScope without RoPE does not rise: its NLL at 8,192 tokens is no higher than at 1,024.
 
 The post-hoc diagnosis (`experiments/posthoc_nll.py`; fresh test sequences, never used before) tests one explanation directly. If distant keys cause the excess, restricting attention to recent keys should remove it without hurting accuracy, because the comb inside 1,024 tokens already holds dozens of votes per residue. The diagnosis table reports the outcome for every layer at once and for each layer alone, together with the exact Bayes NLL, which is essentially zero beyond 1,024 tokens.
 

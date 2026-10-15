@@ -10,9 +10,11 @@ open questions, in priority order.
 |---|---|---|
 | Exact arithmetic core (stdlib only) | done, tested exhaustively on finite ranges | `arithscope/arith.py`, `tests/test_arith.py` |
 | Theory (comb gap, optimal PSD comb, CRT composition, alias partition, RoPE residue-blindness, folding) | written with proofs and evidence labels | `docs/MATH.md` |
-| PyTorch modules (ArithScope bias, three backends, baselines, model) | done; 54 tests | `arithscope/`, `tests/` |
+| PyTorch modules (ArithScope bias, four backends, baselines, model) | done; 65 tests (one opt-in); causality by token index | `arithscope/`, `tests/` |
 | Preregistered confirmatory experiments | complete: 182 runs, 0 failures; C1–C4 supported, S1 and S2 observed | `docs/PREREGISTRATION.md`, `results/runs/`, `docs/RESULTS.md` |
-| Post-hoc analyses (labeled) | shift test at the training length; cosine-bank mixtures; attention profile; learned-frequency drift; gate magnitudes | `experiments/posthoc_shift.py`, `experiments/analyze.py`, `experiments/attention_figure.py` |
+| Post-hoc analyses (labeled) | shift test at the training length; cosine-bank mixtures; attention profile; learned-frequency drift; gate magnitudes; NLL diagnosis; multiplicity sensitivity | `experiments/posthoc_shift.py`, `experiments/posthoc_nll.py`, `experiments/analyze.py`, `experiments/attention_figure.py` |
+| First external audit (2026-10-15) | F1–F3 fixed or corrected, with tests; F4 diagnosed post hoc; F5 answered in wording and a multiplicity analysis | `docs/AUDIT_RESPONSE.md`, `docs/audits/` |
+| Replays with the current code | every E1 checkpoint re-scored and 11 confirmatory runs retrained, bitwise identical to the stored records | `experiments/replay.py`, `results/replay/` |
 | FlexAttention backend | forward verified on CPU (eager and compiled); no CPU backward, GPU untested | `arithscope/flex.py`, `tests/test_attention.py` |
 | Overhead benchmark | CPU, one layer, inference and training steps, five backends | `experiments/bench_overhead.py`, `results/overhead/overhead.json` |
 | Interactive explainer | standalone page built from committed summaries | `experiments/lab/`, output `docs/lab/index.html` |
@@ -34,7 +36,11 @@ make analyze       # regenerate all tables/figures and the AUTO blocks in docs/R
 make lab           # rebuild docs/lab/index.html from the committed summaries
 make bench         # backend overhead (idle machine; compiled FlexAttention may need LD_PRELOAD, see below)
 python experiments/posthoc_shift.py      # post-hoc shift test (needs checkpoints/, which are not committed)
+python experiments/posthoc_nll.py        # post-hoc NLL diagnosis at N = 8,192 (needs checkpoints/; about 70 min, 4 workers)
+python experiments/posthoc_readout.py    # lowest NLL each model's readout can produce (needs checkpoints/; minutes)
 python experiments/attention_figure.py   # attention profile figure (needs checkpoints/)
+python experiments/replay.py eval        # re-score E1 checkpoints, compare bitwise with results/runs/
+python experiments/replay.py train       # retrain 11 confirmatory runs, compare bitwise with results/runs/
 ARITHSCOPE_TEST_COMPILED_FLEX=1 python -m pytest tests/test_attention.py -k flex   # opt-in compiled-kernel test
 ```
 
@@ -49,6 +55,9 @@ With the conda-forge PyTorch build, compiled kernels need `LD_PRELOAD=$CONDA_PRE
 3. **Positional parameters use a separate learning-rate multiplier.** Adam moves a scalar by about `lr` per step, so `|gamma| <= ~lr * steps` in short runs. The multiplier was selected by the preregistered validation rule, never by extrapolation results.
 4. **Exact arithmetic, never floating phases.** Tables are indexed by `n mod m` in int64; folded features use `(a (t mod m)) mod m`.
 5. **Hypothesis naming.** Confirmatory claims are C1–C4, so they don't collide with the planning package's H1–H4.
+6. **Causality is by token index** (`j <= i`) in every backend; positions enter only the biases and RoPE, so they may repeat, restart, or be unsorted (audit F1, `docs/SPEC.md` §4).
+7. **Bias memory is bounded by the number of query/key pairs**, never by the numeric span of the positions, and positions must satisfy `|position| < 2^62` (audit F2).
+8. **Report NLL next to accuracy.** Oracle-level accuracy did not imply oracle-level NLL here (audit F4).
 
 ## 4. Open questions, in priority order
 
@@ -67,3 +76,5 @@ With the conda-forge PyTorch build, compiled kernels need `LD_PRELOAD=$CONDA_PRE
 - Theorem T5 is asymptotic. Well-optimized RoPE heads with large logits keep a comb for thousands of tokens (MATH.md, numerical note). Do not overstate it.
 - The folded backend is not sub-quadratic. It removes the `[N, N]` bias memory, not the quadratic compute.
 - The pytorch.org wheel index was blocked in the original container; conda-forge `pytorch=*=cpu_mkl*` worked.
+- Run long diagnoses alone. `posthoc_nll.py` needs about 1.6 GB per worker; run next to the two replays, it was killed by the out-of-memory killer once.
+- `results/runs/` is immutable, and each run file records the commit that produced it. After changing the library, rerun `experiments/replay.py`; if the replays are no longer bitwise identical, record why in `docs/EXECUTION_LEDGER.md` before claiming that stored results reproduce with the current code.

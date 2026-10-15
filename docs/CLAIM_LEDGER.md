@@ -17,6 +17,8 @@ means exhaustive exact verification on a stated finite range, not a proof.
 | No bias in `span{K_m}` separates offsets with equal signatures (alias partition; gcd classes for divisor-closed banks) | PROVED (classical core) + finite check | MATH P1 |
 | With fixed content and standard RoPE frequencies, the attention mass on any residue class mod P tends to `1/P` as context grows | ASYMPTOTIC (proof); NUMERICAL illustration; **no rate** | MATH T5 |
 | For learned frequencies, T5 needs its joint non-resonance hypothesis; individual irrationality of each frequency is **not** enough | counterexample (analytic + numerical); corrected 2026-10-15 after an external audit | MATH §4; `tests/test_theory_notes.py`; [`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md) F3 |
+| A model ending in LayerNorm and a linear readout has an NLL floor `log(1 + sum_j exp(-G_cj)) > 0`, so it cannot follow the Bayes NLL of periodic denoising to 0, with or without RoPE | PROVED (elementary) + randomized check; per-checkpoint readout minimum NUMERICAL | MATH P3; `tests/test_theory_notes.py`; `experiments/posthoc_readout.py` |
+| If attention logits depend on the offset only through finitely many arithmetic classes (ArithScope without RoPE), attention outputs converge as votes accumulate: they report vote shares, not counts, and the NLL tends to a constant | ASYMPTOTIC (proof sketch, not given in full) | MATH §4, remark after P3 |
 | The ArithScope bias has an exact rank-`sum phi(m)` factorization, so it runs inside fused SDPA without an `[N, N]` tensor | PROVED + numerical check (1e−12, float64) | MATH T7; `tests/` |
 | The dense ArithScope bias is bitwise invariant under any common position shift | Implementation property, tested (shifts to `2^61`) | MATH P2; `tests/` |
 
@@ -45,7 +47,7 @@ Verdicts are computed by `experiments/analyze.py` from the preregistered decisio
 | S2: learned mixtures concentrate on divisors of P; at P = 13 on order 13 | **observed**; at P = 13 they coincide with the T3 optimum (secondary; replicates a pilot observation) |
 | RoPE + ArithScope keeps its accuracy under absolute shifts up to 10^9 at the training length | **observed** (post hoc, not preregistered) |
 | Mixed unlabeled periods (E5) | exploratory, 3 seeds: learned frequencies ahead at short lengths, RoPE + ArithScope ahead at the longest |
-| At long lengths, every RoPE-containing variant has higher NLL than ArithScope alone at the same near-oracle accuracy | **observed** (post hoc; NLL was recorded but not preregistered as a decision metric); diagnosis in [`RESULTS.md`](RESULTS.md) |
+| At long lengths, the RoPE-containing variants that keep oracle accuracy (RoPE + ArithScope and RoPE + full Fourier bank at both periods, the matched cosine bank at P = 12) have NLL that rises with length, above ArithScope alone, whose NLL does not rise | **observed** (post hoc; NLL was recorded but not preregistered as a decision metric); diagnosis in [`RESULTS.md`](RESULTS.md) |
 | The confirmatory verdicts hold after Bonferroni and Holm adjustment for the interval-based claims | **observed** (post-hoc sensitivity analysis) |
 
 ## Not claimed

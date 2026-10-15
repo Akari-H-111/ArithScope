@@ -202,8 +202,8 @@ Negative results are kept, with their run files. The first three come from devel
 - **MQAR was dropped before the confirmatory runs.** No variant learned multi-query associative recall within the budget (6–27% against a 100% oracle; 19% in an easier setting). A floor effect cannot test "no harm", so claim C4 rests on the tagged-denoising control alone.
 - **The first alias fixture leaked information.** In dense denoising, the model's own noisy token breaks the tie between aliased candidates, so the model beat the "alias ceiling" (72% vs about 53%). The fixture was redesigned with uninformative query tokens before any confirmatory run.
 - **A correct comb is not enough to generalize.** With period 24 and training length 64, a resolving bank learned exactly the right mixture but did not extrapolate (52% against a 95% Bayes oracle): a query saw at most three comb positions in training, so the content readout met a distribution shift at long lengths. Period 12 shows six comb positions per window and was adopted instead.
-- **Near-oracle accuracy hides a calibration cost.** RoPE + ArithScope matches the oracle's accuracy at 8,192 tokens, but its NLL grows with length while ArithScope alone does not; RoPE's distant keys are the cause (see Calibration above). The preregistered claims were about accuracy only.
-- **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) come within about a point of ArithScope up to 2,048 tokens. They lose accuracy only at the longest lengths, after their comb has drifted, as the corollary of Theorem T5 predicts (claim S1, and the post-hoc drift analysis in [`docs/RESULTS.md`](docs/RESULTS.md)).
+- **Near-oracle accuracy hides a calibration cost.** RoPE + ArithScope matches the oracle's accuracy at 8,192 tokens, but its NLL grows with length while ArithScope alone does not (see Calibration above). The preregistered claims were about accuracy only.
+- **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) come within about a point of ArithScope up to 2,048 tokens. They lose accuracy only at the longest lengths, after their comb has drifted, as the drift remark under Theorem T5 predicts (claim S1, and the post-hoc drift analysis in [`docs/RESULTS.md`](docs/RESULTS.md)).
 
 ## Scope and limitations
 
@@ -220,7 +220,7 @@ Negative results are kept, with their run files. The first three come from devel
 # Python >= 3.10; torch >= 2.4 (CPU is enough), numpy, scipy, matplotlib, pytest
 # exact environment: environment.yml, results/environment/conda-explicit.lock
 make oracle        # exact arithmetic checks, standard library only
-make test          # 57 tests (one opt-in): oracle match, masks, gradients, gamma = 0 equivalence, backends, Bayes oracles
+make test          # 65 tests (one opt-in): oracle match, masks, position layouts, gradients, gamma = 0, backends, Bayes oracles
 make lint          # ruff
 make theory        # theory figures and results/summary/theory.json
 make experiments   # the four preregistered suites, 182 runs (resumable; about 3 hours with 4 CPU workers)
