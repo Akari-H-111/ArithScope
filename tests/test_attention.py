@@ -173,6 +173,24 @@ class BackendAndMaskTests(unittest.TestCase):
                         self.assertTrue(torch.allclose(y[:, : t + 1], y2[:, : t + 1], atol=1e-12, rtol=0),
                                         (layout, name, backend, t))
 
+    def test_query_blocking_is_exact_for_any_position_layout(self):
+        # Blocked evaluation must pass each block's global query index, not restart at 0.
+        import arithscope.attention as attention_module
+
+        x = torch.randn(1, 12, 32, dtype=torch.float64)
+        for layout, values in self.POSITION_LAYOUTS.items():
+            pos = torch.tensor(values)
+            for name in ("rope+arith", "alibi"):
+                layer = self._attn(name)
+                ref = layer(x, pos)
+                saved = attention_module.EXPLICIT_QUERY_BLOCK
+                try:
+                    attention_module.EXPLICIT_QUERY_BLOCK = 5  # blocks 0-4, 5-9, 10-11
+                    blocked = layer(x, pos)
+                finally:
+                    attention_module.EXPLICIT_QUERY_BLOCK = saved
+                self.assertTrue(torch.allclose(ref, blocked, atol=1e-12, rtol=0), (layout, name))
+
     def test_index_causality_equals_position_causality_for_increasing_positions(self):
         # The rule used before 2026-10-15 compared positions; every experiment used increasing positions.
         from arithscope.attention import allowed_mask
@@ -193,9 +211,20 @@ class BackendAndMaskTests(unittest.TestCase):
             self.assertTrue(torch.allclose(dense, direct, atol=1e-12, rtol=0), name)
 
     def test_positions_outside_the_exact_int64_range_are_rejected(self):
+        from arithscope import flex
+
         layer = self._attn("arith")
-        with self.assertRaises(ValueError):
-            layer.biases["arith"](torch.tensor([0, 2**62]), torch.tensor([0, 2**62]))
+        bias = layer.biases["arith"]
+        for bad in ([0, 2**62], [-(2**62), 0], [-(2**63), 0]):  # abs(-2**63) overflows in int64
+            with self.assertRaises(ValueError, msg=bad):
+                bias(torch.tensor(bad), torch.tensor(bad))
+        edge = torch.tensor([-(2**62) + 1, 2**62 - 1])  # the largest allowed offset still fits in int64
+        self.assertTrue(torch.isfinite(bias(edge, edge)).all())
+        if flex.available():
+            x = torch.randn(1, 2, 32, dtype=torch.float64)
+            with self.assertRaises(ValueError), torch.no_grad(), warnings.catch_warnings():
+                warnings.simplefilter("ignore", UserWarning)
+                layer(x, torch.tensor([-(2**63), 0]), backend="flex")
 
     @unittest.skipUnless(os.environ.get("ARITHSCOPE_TEST_COMPILED_FLEX") == "1",
                          "opt-in: set ARITHSCOPE_TEST_COMPILED_FLEX=1 to compile FlexAttention kernels (slow)")

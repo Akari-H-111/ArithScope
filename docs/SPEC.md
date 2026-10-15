@@ -26,7 +26,7 @@ Inputs that must be positive integers reject `bool`, `float`, `0`, and negatives
 - **Type.** Positions are integer tensors (`int32` or `int64`). Floating positions raise `TypeError` [`test_rejects_float_positions_and_bad_orders`].
 - **Shapes.** `[N]` (shared by the batch) or `[B, N]` (per sequence, e.g. left padding or a KV-cache offset).
 - **Offsets.** `i - j` is computed in int64. Every offset-only bias is a function of the exact integer offset.
-- **Range.** Every position must satisfy `|position| < 2^62`, so that every offset fits in int64; larger values raise `ValueError` [`test_positions_outside_the_exact_int64_range_are_rejected`]. Within that range only differences matter for every mechanism except RoPE's floating-point angle computation (see §5).
+- **Range.** Every position must satisfy `|position| < 2^62`, so that every offset fits in int64; other values raise `ValueError` in the dense and FlexAttention paths [`test_positions_outside_the_exact_int64_range_are_rejected`]. The check compares the minimum and maximum with the bounds, because `abs(-2^63)` overflows in int64. Within that range only differences matter for every mechanism except RoPE's floating-point angle computation (see §5).
 - **Layouts.** Positions may repeat, restart (packed sequences), be unsorted, or be sparse. They enter only the biases and RoPE, never the causal mask (§4).
 
 ## 3. Bias modules (`arithscope.bias`)

@@ -29,6 +29,8 @@ import functools
 
 import torch
 
+from .bias import _check_positions
+
 _COMPILE = False
 
 
@@ -96,6 +98,8 @@ def attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, biases, positio
     valid = (torch.ones(b, n, dtype=torch.bool, device=q.device) if key_padding_mask is None
              else key_padding_mask.bool())
     biases = list(biases)
+    if biases:
+        _check_positions(pos, pos)  # offsets below are formed in int64, as in the dense path
     if not biases:
         def score_mod(score, bi, h, qi, ki):
             return score

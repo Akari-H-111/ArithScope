@@ -35,7 +35,8 @@ def _check_positions(q_pos: torch.Tensor, k_pos: torch.Tensor) -> None:
             raise TypeError(f"{name} must be an integer tensor, got {pos.dtype}")
         if pos.dim() < 1:
             raise ValueError(f"{name} must have a sequence dimension")
-        if pos.numel() and int(pos.long().abs().max()) >= POSITION_LIMIT:
+        # min/max, not abs(): abs(-2**63) overflows to a negative number in int64
+        if pos.numel() and (int(pos.min()) <= -POSITION_LIMIT or int(pos.max()) >= POSITION_LIMIT):
             raise ValueError(f"{name} must satisfy |position| < 2**62 so that offsets fit in int64")
 
 
