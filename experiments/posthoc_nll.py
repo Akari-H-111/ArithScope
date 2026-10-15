@@ -26,10 +26,11 @@ Writes results/posthoc/nll_diagnostics.json. Positions are 0..N-1, as in every e
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import sys
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -220,8 +221,20 @@ def main() -> None:
     args = parser.parse_args()
     ckpts = sorted(str(p) for p in (ROOT / "checkpoints" / "e1_periodic").glob("*.pt")
                    if p.name.split("__")[1] in VARIANTS)
+    # One file per checkpoint as soon as it is done, so an interrupted run resumes. Parts are keyed by this
+    # script's hash, so a changed diagnosis never reuses old parts. checkpoints/ is not committed.
+    code = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()[:16]
+    parts = ROOT / "checkpoints" / "posthoc_nll_parts" / code
+    parts.mkdir(parents=True, exist_ok=True)
+    todo = [c for c in ckpts if not (parts / f"{Path(c).stem}.json").exists()]
+    print(f"{len(ckpts) - len(todo)} of {len(ckpts)} checkpoints already done ({parts})", flush=True)
     with ProcessPoolExecutor(max_workers=args.workers) as pool:
-        results = list(pool.map(diagnose, ckpts))
+        futures = {pool.submit(diagnose, c): c for c in todo}
+        for future in as_completed(futures):
+            name = Path(futures[future]).stem
+            (parts / f"{name}.json").write_text(json.dumps(future.result()))
+            print(f"done {name}", flush=True)
+    results = [json.loads((parts / f"{Path(c).stem}.json").read_text()) for c in ckpts]
     from arithscope.train import environment_info
 
     out = ROOT / "results" / "posthoc" / "nll_diagnostics.json"
