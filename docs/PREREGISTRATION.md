@@ -412,3 +412,102 @@ make e8 PY=~/mamba/envs/arithscope/bin/python WORKERS=4   # 84 runs, then experi
 No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
 
 1. **Reporting code after the results** (after `4c74cfa`, which holds the 84 run files and the verdicts). `experiments/analyze.py` gained `analyze_e8`, which formats the frozen verdicts and paired intervals from `results/summary/e8.json`, adds per-arm intervals and an NLL-by-position figure computed from the same run files with `e6_verdicts.py`'s metric functions, and fills the `e8_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e8_verdicts.py` and `experiments/e8_power.py` are unchanged since `20b8ffa`.
+
+## 12. Fifth preregistration: E9, a paired window dose-response (2026-10-15)
+
+This section was written after the E8 results (`4c74cfa`) and **before** any E9 run. It is committed
+and pushed before the runner starts; the results commit must come after it. Sections 1–11 are
+unchanged. Later changes to this section go to Section 12.8 and are never made silently.
+
+### 12.1 Motivation
+
+E8 supported W2: limiting ArithScope alone's second layer to its last 64 keys lowered its far NLL in
+21 of 21 seeds at both periods (`results/summary/e8.json`). E6–E8 compared only two points, a window
+of 64 keys and no window. E9 asks whether the far NLL changes with the window size as a dose-response,
+over windows of 64, 256, 1,024, and 8,192 keys.
+
+E9 also removes a cost of E8. A window equal to the training length never binds in training, so E6–E8
+trained the windowed and unwindowed arms bitwise identically, twice. E9 trains each seed once and
+evaluates the same weights with each window.
+
+The design adapts a draft from an external review (the repository owner's ChatGPT workspace,
+2026-10-15). Changes from the draft: the repository's two-sided 95% intervals replace its one-sided
+ones, and the seed count comes from the rule in Section 12.3.
+
+### 12.2 Design
+
+- **Training.** ArithScope alone (`arith`) is trained without a window, with E7's setup: E1's task (periodic denoising, P = 12 and P = 13, separate models), architecture, bank `M = {1, …, 16}`, optimizer, 2,000 steps at length 64 with batch 32, and lr 3e-3 with positional ×10. The training run is evaluated at length 64 only. **Nothing is tuned for E9.**
+- **Window evaluations.** `experiments/e9_window_eval.py` loads each checkpoint and evaluates the unchanged weights at N = 8,192 with the last (second) layer limited to its last W keys, for W ∈ {64, 256, 1,024, 8,192}. The first layer is never limited. W = 8,192 at N = 8,192 is the ordinary unwindowed evaluation (tested bit for bit).
+- **Test set.** The test set is the one `train.run` would draw at this length: 4 sequences, data seed `20261019`. It is fresh: E1–E5 used `20261014`, the post-hoc diagnosis `20261015`, E6 `20261016`, E7 `20261017`, and E8 `20261018`. Every window and seed of a period sees the same test set.
+- **Records.** Each window evaluation is its own record in `results/runs/e9_paired_window_eval/`, holding the checkpoint's SHA-256.
+
+### 12.3 Seed count
+
+**When the rule was fixed.** `experiments/e9_power.py` was committed and pushed (`543e402`; GitHub records the branch creation at 2026-10-15 08:59:41 UTC) while E8 had 36 of its 84 runs done. `results/summary/e8.json` was written at 10:07:43 UTC.
+
+**The rule.**
+- **Input.** E8's per-seed differences D = far NLL(window 64) − far NLL(no window).
+- **Spread.** The standard deviation of D, raised to its one-sided 80% upper confidence limit.
+- **Power.** The smallest n, at least 5, whose joint power for "95% slope interval above 0 at both periods" is at least 0.90.
+- **Model.** The plan assumes the per-seed slope is proportional to −D. That assumption does not model noise from the intermediate windows.
+
+**Outcome** (`results/summary/e9_power.json`): d = 1.353 (P = 12) and 0.911 (P = 13), so **n = 15 seeds** per period (joint power 0.904). E9 uses **seeds 27–41**; E8 used 6–26. Sensitivity (no decision depends on it): n = 12 with the point estimate of the spread, and 53 with half the effect.
+
+### 12.4 Fixed setup
+
+- **Suite:** `e9_paired_window` in [`experiments/suites.py`](../experiments/suites.py): 2 periods × 15 seeds = 30 training runs, then 30 × 4 = 120 window evaluations. Experiment names are new (`e9_p12`, `e9_p13`).
+- **Hardware:** the E6–E8 machine (Apple M2, macOS, conda-forge PyTorch 2.14.1 osx-arm64, float32), one thread per process, four in parallel. A window evaluation took 55–75 s on random weights while E8 ran; the whole suite is about 1–1.5 hours.
+- **Library:** unchanged since E6.
+
+### 12.5 Claim and decision rules
+
+**Metrics.** Far NLL and far accuracy are E6's (Section 9.4): the means over positions 4,096–8,191 of the N = 8,192 test. They are computed by `experiments/e6_verdicts.py`, unchanged.
+
+**Per-seed quantities**, all within a period:
+- **slope:** the least-squares slope of far NLL on log2(W) over the four windows;
+- **accuracy difference:** far accuracy at W = 64 minus far accuracy at W = 8,192;
+- **steps:** far NLL differences between adjacent windows.
+
+Each has a 95% t interval over seeds.
+
+| | Claim | Supported if (at **both** P = 12 and P = 13) | Falsified otherwise |
+|---|---|---|---|
+| **R1** | *Window dose-response.* ArithScope alone's far NLL rises with the log of its last layer's window, at no cost in accuracy. | the 95% interval of the mean slope lies above 0, **and** the 95% lower bound of the accuracy difference is above −1 pp | the slope interval reaches 0 at either period, or the accuracy guard fails |
+
+R1 claims a positive trend, not monotonicity. For fixed weights, adding keys to a softmax average can move the NLL either way, and monotonicity of the limit is OPEN ([`MATH.md`](MATH.md), remark after C8).
+
+**Secondary predictions** (stated in advance; no decision depends on them):
+
+- **S10 (near-monotone).** For each period and each of the three steps (64→256, 256→1,024, 1,024→8,192), the one-sided lower confidence bound at level 1 − 0.05/6 for the step is above −0.005 nats.
+- **S11 (E8 replicates).** Far NLL at W = 64 minus W = 8,192 has a 95% interval below 0 at both periods. This is E8's W2 quantity on fresh seeds and data, not a new claim.
+
+**Sanity checks.** If any of these fails, no verdict is reported until the cause is found and logged in Section 12.8:
+- each seed's four records come from one checkpoint (same SHA-256);
+- each period's records share one test set (same digest);
+- all window records were made at one code commit;
+- every training run completed.
+
+**Statistics.**
+- No multiplicity correction for the verdict; the two periods are an intersection, as in Sections 9–11. Holm-adjusted one-sided p-values for the two slope tests are reported as a sensitivity analysis.
+- A failed training run or window evaluation is reported and never replaced, and its seed is left out of that period's analysis.
+- E9 is analyzed alone and not pooled with E7 or E8.
+- `experiments/e9_verdicts.py` encodes these rules and checks that the suite's seed count equals `e9_power.json`'s.
+
+### 12.6 Scope of any conclusion
+
+As for E7 and E8 (Sections 10.5, 11.6):
+- **Models and task.** E9 concerns these 2-layer ArithScope-only models on this synthetic task, at 128× the training length.
+- **Population.** The four test sequences are shared across seeds, so the result is about seeds on this test set, not about a population of sequences.
+- **Mechanism.** A supported R1 does not prove a mechanism.
+- **Outside scope.** It says nothing about language models or calibration in general.
+
+### 12.7 Commands
+
+```bash
+python experiments/e9_power.py                            # seed count -> results/summary/e9_power.json
+make e9 PY=~/mamba/envs/arithscope/bin/python WORKERS=4   # 30 runs, 120 window evaluations, then e9_verdicts.py
+```
+
+### 12.8 Deviations log (E9)
+
+No entry changes a claim, decision rule, window, seed, hyperparameter, or test set.

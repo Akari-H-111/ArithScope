@@ -1,0 +1,35 @@
+{
+ "status": "PREREGISTERED (docs/PREREGISTRATION.md, Section 12)",
+ "target_joint_power": 0.9,
+ "ucl": 0.8,
+ "alpha_one_sided": 0.025,
+ "n_min": 5,
+ "n_cap": 40,
+ "periods": {
+  "12": {
+   "n_e8": 21,
+   "mean_d": -0.05095745832659304,
+   "sd_d": 0.03215990246736296,
+   "spread_ucl": 0.037668142576315455,
+   "d": 1.3527998685720568
+  },
+  "13": {
+   "n_e8": 21,
+   "mean_d": -0.04247488356417134,
+   "sd_d": 0.03981216439379629,
+   "spread_ucl": 0.04663105823094856,
+   "d": 0.9108711055581662
+  }
+ },
+ "n_seeds": 15,
+ "power_at_n": {
+  "12": 0.9981006312796978,
+  "13": 0.9061357614290502
+ },
+ "joint_power_at_n": 0.9044146755074447,
+ "sensitivity": {
+  "point_sd": 12,
+  "target_0.80": 12,
+  "effect_halved": 53
+ }
+}
