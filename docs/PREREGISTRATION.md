@@ -511,3 +511,5 @@ make e9 PY=~/mamba/envs/arithscope/bin/python WORKERS=4   # 30 runs, 120 window 
 ### 12.8 Deviations log (E9)
 
 No entry changes a claim, decision rule, window, seed, hyperparameter, or test set.
+
+1. **Reporting code after the results** (after `d6b365f`, which holds the 30 training runs, the 120 window records, and the verdicts). `experiments/analyze.py` gained `analyze_e9`, `plot_e9`, and `e9_findings`. They format the frozen verdicts and intervals from `results/summary/e9.json`, draw `results/figures/e9_dose_*.png` from the same window records with E6's metric functions, and fill the `e9_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e9_verdicts.py` is unchanged since `5ce34b8`.
