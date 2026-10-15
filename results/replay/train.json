@@ -1,0 +1,139 @@
+{
+ "mode": "train",
+ "identical": 11,
+ "total": 11,
+ "environment": {
+  "python": "3.13.16",
+  "torch": "2.14.1",
+  "platform": "Linux-6.18.44-fc-v114-x86_64-with-glibc2.39",
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.80GHz",
+  "torch_threads": 4,
+  "device": "cpu",
+  "dtype": "float32",
+  "git_commit": "9eaead4328dbd288209e549f51b28e9829b443d1",
+  "git_dirty": false
+ },
+ "results": [
+  {
+   "run": "e1_p13__nope__s1__c881452dfbf5.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__alibi__s1__c502c70ab18d.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__rope__s1__afbb103b3853.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__arith__s1__945a2cac5662.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__rope+arith__s1__a2929b58cf89.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__rope+fourier_fund__s1__f82146d0ac69.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__rope+fourier_full__s1__79a3832f4e84.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__rope+fourier_learned__s1__2ebafc0d0ee6.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e1_p13__rope+relbias__s1__53f97c601aac.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e2_alias__arith__s1__001223c4d996.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  },
+  {
+   "run": "e3_tagged__rope+arith__s1__dcd43c05516f.json",
+   "identical": true,
+   "checks": {
+    "loss_curve": true,
+    "val_curve": true,
+    "test": true,
+    "shift_test": true,
+    "positional": true
+   }
+  }
+ ]
+}
