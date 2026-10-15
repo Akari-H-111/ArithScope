@@ -239,9 +239,9 @@ E9_DATA_SEED = 20261019  # fresh: E1-E5 20261014, diagnosis 20261015, E6 2026101
 E9_WINDOWS = (64, 256, 1024, 8192)  # last-layer key windows; 8192 = the whole sequence at N = 8192
 E9_LENGTH = 8192
 E9_FIRST_SEED = 27  # E8 used 6-26
-# PLACEHOLDER until experiments/e9_power.py has run on E8's results; experiments/e9_verdicts.py refuses
-# to run unless len(E9_SEEDS) equals the n in results/summary/e9_power.json.
-E9_N_SEEDS = 16
+# The n of experiments/e9_power.py run on E8's results (results/summary/e9_power.json);
+# experiments/e9_verdicts.py refuses to run unless len(E9_SEEDS) equals it.
+E9_N_SEEDS = 15
 E9_SEEDS = tuple(range(E9_FIRST_SEED, E9_FIRST_SEED + E9_N_SEEDS))
 
 
