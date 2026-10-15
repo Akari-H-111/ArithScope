@@ -26,11 +26,14 @@ Inputs that must be positive integers reject `bool`, `float`, `0`, and negatives
 - **Type.** Positions are integer tensors (`int32` or `int64`). Floating positions raise `TypeError` [`test_rejects_float_positions_and_bad_orders`].
 - **Shapes.** `[N]` (shared by the batch) or `[B, N]` (per sequence, e.g. left padding or a KV-cache offset).
 - **Offsets.** `i - j` is computed in int64. Every offset-only bias is a function of the exact integer offset.
-- **Absolute values.** Positions may be arbitrarily large within int64 (tested to `2^61`). Only differences matter for every mechanism except RoPE's floating-point angle computation (see §5).
+- **Range.** Every position must satisfy `|position| < 2^62`, so that every offset fits in int64; other values raise `ValueError` in the dense and FlexAttention paths [`test_positions_outside_the_exact_int64_range_are_rejected`]. The check compares the minimum and maximum with the bounds, because `abs(-2^63)` overflows in int64. Within that range only differences matter for every mechanism except RoPE's floating-point angle computation (see §5).
+- **Layouts.** Positions may repeat, restart (packed sequences), be unsorted, or be sparse. They enter only the biases and RoPE, never the causal mask (§4).
 
 ## 3. Bias modules (`arithscope.bias`)
 
 Every bias is an `OffsetBias`. The call `bias(q_pos [..., Nq], k_pos [..., Nk])` returns `[..., H, Nq, Nk]`, where `out[..., h, i, j] = b_h(q_pos[i] - k_pos[j])`. Leading dimensions broadcast. `Nq != Nk` is supported, e.g. queries after a KV cache [`test_dense_shapes_offsets_and_symmetry`].
+
+**Memory.** Evaluation never allocates more than the number of query/key pairs, whatever the numeric span of the positions. If the offset range `[lo, hi]` is no larger than the number of pairs (always true for contiguous positions), `offset_values` is evaluated on that range; otherwise only on the offsets that occur (`torch.unique`) [`test_sparse_positions_cost_pairs_not_span`]. `score_fn()` returns the same bias as a pointwise function of head index and offset, for FlexAttention.
 
 ### 3.1 `RamanujanBias(num_heads, orders=(1..16), gamma_init=0.0, learn_mixture=True)`
 
@@ -63,15 +66,17 @@ forward(x [B, N, D], positions [N] | [B, N], key_padding_mask [B, N] (True = val
 
 **Logits.** `<q, k>/sqrt(d_head)`, with q and k rotated by RoPE when enabled, plus the sum of all configured biases.
 
-**Mask.** Key `j` is allowed for query `i` iff `pos_j <= pos_i` and key `j` is valid. The mask is applied after the bias and before the softmax. A query row with no allowed key outputs exactly 0 and never NaN [`test_key_padding_and_fully_masked_rows`].
+**Mask.** Key `j` is allowed for query `i` iff `j <= i` in token order and key `j` is valid. Positions do not enter the mask. The mask is applied after the bias and before the softmax. A query row with no allowed key outputs exactly 0 and never NaN [`test_key_padding_and_fully_masked_rows`]. No token sees a later token for any position layout [`test_no_token_sees_a_later_token_for_any_position_layout`].
+
+*History.* Until 2026-10-15 the explicit and FlexAttention backends compared positions (`pos_j <= pos_i`) while the fused fast paths used token order. The two rules coincide for strictly increasing positions, which every experiment used [`test_index_causality_equals_position_causality_for_increasing_positions`]; for repeated or unsorted positions the old rule let a token see later tokens. The 2026-10-15 cold audit found this ([`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md), F1).
 
 **Causality.** Outputs at positions `<= t` do not depend on inputs at positions `> t` [`test_causality`].
 
-**Backends compute the same function.** They agree to 1e−10 in float64, with and without padding and with per-sequence positions [`test_backends_agree*`].
+**Backends compute the same function.** They agree to 1e−10 in float64, with and without padding, with per-sequence positions, and for repeated, unsorted, packed, and sparse positions [`test_backends_agree*`].
 - `explicit` is the reference. It is the only backend that can return attention weights. Softmax runs in float32 for half-precision inputs, otherwise in the input dtype.
 - `sdpa` passes the summed bias as `attn_mask`.
 - `folded` requires the bias set to be exactly `{"arith"}` (RoPE allowed). It concatenates `sqrt(d_head) * query_features` to q and `key_features` to k, zero-pads q, k, and v to one head dimension (the next multiple of 8), calls SDPA with `scale = 1/sqrt(d_head)`, and drops the padded output columns. Zero columns change no dot product, so the padding is exact [`test_folded_backend_pads_head_dims_exactly`]. Without padding and with shared 1-D positions it uses `is_causal=True` and builds no `[N, N]` tensor of any kind. Equal head dimensions matter in practice: with q/k wider than v, CPU SDPA falls back to a path that materializes the attention matrix (measured in `experiments/bench_overhead.py`).
-- `flex` uses FlexAttention (`torch.nn.attention.flex_attention`; module `arithscope.flex`). The summed bias is evaluated once on the offsets `−s … s`, where `s` is the largest position span of any sequence in the batch, and a `score_mod` reads it by offset; a `mask_mod` applies the mask rule above. It needs a PyTorch build that provides FlexAttention. Eager mode is the default; `arithscope.flex.compile_kernels()` switches to `torch.compile(flex_attention)`. On CPU only the forward pass is available (call it under `torch.no_grad()`). Its output matches `explicit` to 1e−12 in float64 in eager mode, with padding and per-sequence positions [`test_flex_backend_matches_explicit`], and to 1e−5 in float32 with compiled kernels [`test_compiled_flex_backend_matches_explicit`, opt-in via `ARITHSCOPE_TEST_COMPILED_FLEX=1`]. Gradients and GPU kernels are not tested in this repository.
+- `flex` uses FlexAttention (`torch.nn.attention.flex_attention`; module `arithscope.flex`). When `2s + 1 <= max(16 N, 65536)`, where `s` is the largest position span of any sequence in the batch, the summed bias is evaluated once on the offsets `−s … s` and a `score_mod` reads it by offset; otherwise `score_mod` evaluates each bias pointwise (`score_fn`), so memory never depends on the span. A `mask_mod` applies the mask rule above. It needs a PyTorch build that provides FlexAttention. Eager mode is the default; `arithscope.flex.compile_kernels()` switches to `torch.compile(flex_attention)`. On CPU only the forward pass is available (call it under `torch.no_grad()`). Its output matches `explicit` to 1e−12 in float64 in eager mode, with padding and per-sequence positions [`test_flex_backend_matches_explicit`], and to 1e−5 in float32 with compiled kernels [`test_compiled_flex_backend_matches_explicit`, opt-in via `ARITHSCOPE_TEST_COMPILED_FLEX=1`]. Gradients and GPU kernels are not tested in this repository.
 
 **Zero-init equivalence.** If every additive channel is at its zero init, a `rope+X` model with the same shared weights produces bitwise-identical outputs and gradients to `rope` [`GammaZeroEquivalenceTests`]. The same holds for `arith` vs `nope` and `alibi+arith` vs `alibi`.
 

@@ -192,3 +192,27 @@ Reasons for each addition are in [`PREREGISTRATION.md`](PREREGISTRATION.md), Sec
 ## Stage 6: authorship rewrite (after all results)
 
 At the repository owner's request, every commit after the initial one was re-attributed to the owner (A. Hayami) with `git filter-branch --env-filter`. Contents, commit dates, and messages are unchanged; for every commit, the rewritten tree is identical to the original tree (checked with `git rev-parse <commit>^{tree}`). Commit hashes changed. All hashes in the documentation now refer to the rewritten history, while run files and `results/overhead/*.json` keep the hashes recorded at run time. [`results/environment/commit_map.tsv`](../results/environment/commit_map.tsv) maps each original hash to its rewritten one, so every provenance check above can be repeated on the new hashes.
+
+## Stage 7: response to the first external audit (2026-10-15)
+
+The audit is archived in [`audits/2026-10-15-first-cold-audit.md`](audits/2026-10-15-first-cold-audit.md); findings and decisions are in [`AUDIT_RESPONSE.md`](AUDIT_RESPONSE.md). On top of `0ce3dce`, the library changed in two places: masks are causal by token index in every backend (F1), and bias evaluation is bounded by the number of query/key pairs, with a position range check (F2).
+
+| Step | Command | Result |
+|---|---|---|
+| New tests against the audited library | `tests/test_attention.py` of this stage, run in a worktree of `0ce3dce` | **FAIL, as intended**, for the four regression tests: backends disagree on repeated positions; a token's output changes with a later token; positions at 2<sup>62</sup> overflow instead of raising `ValueError`; sparse positions try to allocate 32 PB. A fifth new test fails there only because it imports the new `allowed_mask` helper |
+| Mutation check | the blocked-evaluation test with the query offset forced to 0 | **FAIL, as intended** |
+| Static checks | `make lint` | **PASS** |
+| Full test suite | `make test` | **PASS**: 64 passed, 1 skipped (the opt-in compiled-kernel test) |
+| Standard-library run | `make oracle` (system Python without torch) | **PASS**: 65 run, 38 skipped; the oracle files are unchanged (SHA-256 `21932d7b…`, `50d46c70…`) |
+| Compiled FlexAttention test | `ARITHSCOPE_TEST_COMPILED_FLEX=1 LD_PRELOAD=$CONDA_PREFIX/lib/libsleef.so python -m pytest tests/test_attention.py -k flex` | **PASS**: 2 passed (eager and compiled kernels) |
+| Replay, evaluation | `python experiments/replay.py eval --workers 4`, from 00:54 UTC | **PASS**: 180 of 180 evaluations (90 checkpoints at N = 1,024 and 8,192) bitwise identical to the run files, `results/replay/eval.json` |
+| Replay, training | `python experiments/replay.py train --workers 4`, from 00:54 UTC | **PASS**: 11 of 11 runs retrained from scratch bitwise identical (loss and validation curves, test and shift metrics, positional parameters), `results/replay/train.json` |
+| NLL diagnosis, first attempt | `python experiments/posthoc_nll.py --workers 4`, run next to both replays | **FAIL**: the out-of-memory killer stopped a worker at 3.9 GB resident; no output. The attention probe ran all four 8,192-token sequences as one batch |
+| Fix and extension | probe one sequence at a time; add accuracy under the restriction, outlier statistics, per-sequence means, the corrupted-token split, and the vote-share correlation (smoke-tested at reduced length on one checkpoint first) | about 1.6 GB per worker |
+| Restarts | three later runs of the same command were stopped by hand, none of them after any result was read: two to add the statistics above, and one at 23 minutes because the session's 90-minute limit on background jobs could expire before the end, and the script wrote nothing until the end | the script now writes one file per checkpoint as it finishes (keyed by the script's hash, under `checkpoints/`) and resumes from them |
+| NLL diagnosis | same command, alone and detached from the session, 02:09–03:10 UTC | **PASS**: 30 checkpoints, `results/posthoc/nll_diagnostics.json` |
+| Readout limit | `python experiments/posthoc_readout.py` (weights only; 4 random starts × 300 projected-gradient steps per target, after a check that 8–40 starts and 400–2,000 steps give the same values to four digits) | **PASS**: 30 checkpoints, `results/posthoc/readout_floor.json` |
+| Range check tightened (after the replays, during the diagnosis) | review found that `abs()` of `-2^63` overflows in int64, so that position passed the check, and that FlexAttention did not run the check; it now compares the minimum and maximum with the bounds, in both paths | **PASS**: the extended test fails on the previous commit at `-2^63` and passes now. In-range positions run the same code as before, so the replays and the diagnosis, which ran the previous code, are unaffected |
+| Analysis and explainer | `make analyze`, `make lab` | **PASS** |
+
+**Benchmark not rerun.** For the benchmark's inputs (contiguous positions, no padding), the fixes change only how the boolean mask is built: token indices are compared instead of positions, with the same shapes and operations. Every bias takes the same code path as before, plus a range check that is linear in the number of positions. `results/overhead/overhead.json` (`3a7a021`) remains the reference.

@@ -20,7 +20,7 @@ Here `γ_h` starts at 0, `α_h` is a learned softmax over the orders `M = {1, �
 </p>
 
 <!-- AUTO:tldr:BEGIN -->
-- **Length extrapolation.** Trained on 64 tokens, RoPE + ArithScope stays within 0.1 pp of the Bayes-optimal predictor on unseen positions at every tested length up to 8,192 tokens (128× the training length), at both periods. At 8,192 tokens RoPE alone scores 38.4% (period 13) and 42.3% (period 12), against 99.9% for the Bayes oracle.
+- **Length extrapolation.** Trained on 64 tokens, RoPE + ArithScope stays within 0.1 pp of the Bayes-optimal predictor on unseen positions at every tested length up to 8,192 tokens (128× the training length), at both periods. At 8,192 tokens RoPE alone scores 38.4% (period 13) and 42.3% (period 12), against 99.9% for the Bayes oracle. These are accuracies. The NLL at 8,192 tokens (period 13) is 0.220 nats for RoPE + ArithScope and 0.067 for ArithScope alone; see [Calibration](#calibration-post-hoc).
 - **The basis matters where theory says it should.** A cosine bank with the same periods and parameter count scores 59.3% at period 13 (N = 1,024) against 99.5% for ArithScope. At period 12, where the two channels' optimal comb margins nearly coincide (0.987 vs 1.091), it scores 99.4% against 99.5%.
 - **Gradient descent finds the provably optimal comb.** Offered 16 orders, layer-0 heads trained at period 13 put 100.0% of their mixture weight on order 13, the unique optimum of Theorem T3 (total-variation distance 0.000, 20 heads).
 - **Identifiability theory predicts which banks fail.** In the alias fixture (period 12), banks with lcm 6 stay below their alias ceiling (0.7–1.6 pp below), whatever their size; every bank with 12 | lcm ends within 1.1 pp of the Bayes oracle, including one- and two-order banks.
@@ -179,6 +179,19 @@ The ArithScope term reads only `(i − j) mod m` in int64, so it is bitwise inva
   </picture>
 </p>
 
+<!-- AUTO:calibration:BEGIN -->
+### Calibration (post hoc)
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="results/figures/e1_nll_dark.png">
+    <img alt="NLL by query position at length 8192 for ArithScope only, RoPE + ArithScope, and RoPE + full Fourier bank, with the Bayes NLL and RoPE + ArithScope with attention limited to recent keys" src="results/figures/e1_nll_light.png" width="920">
+  </picture>
+</p>
+
+Accuracy is not the whole story. At N = 8,192 and period 13, RoPE + ArithScope and ArithScope alone both match the oracle's accuracy, yet their mean NLL on unseen positions is 0.220 and 0.067 nats (committed run files, 5 seeds). A post-hoc diagnosis on fresh sequences traces the part of the gap that grows with length to distant keys in the second attention layer. Beyond 1,024 tokens, RoPE + ArithScope's NLL rises with the query position, from 0.140 at positions 1,024–2,048 to 0.258 at 4,096–8,192, at 100% accuracy; limiting the second layer to the last 1,024 keys holds it at 0.134 with accuracy 100%, while limiting the first layer changes nothing. Across both periods, the NLL rises by more than 0.01 nats in 19 of the 20 models with RoPE (RoPE + ArithScope and RoPE + full Fourier bank), and the limit leaves a change of at most 0.011 nats in every one of them. Over the same positions, ArithScope alone changes by at most 0.006 nats without any limit, although its second layer also attends to distant keys. RoPE + ArithScope stays above it even with the limit. ArithScope alone has a floor of its own: 0.075 nats where the Bayes NLL is 0, while its readout alone could go as low as 0.006. That fits a softmax average, which reports the share of votes on the comb rather than their number ([`MATH.md`](docs/MATH.md), P3 and the proof sketch after it). This was found after an external audit and is not preregistered; details in [`docs/RESULTS.md`](docs/RESULTS.md).
+<!-- AUTO:calibration:END -->
+
 <!-- AUTO:overhead:BEGIN -->
 ### Cost
 
@@ -194,16 +207,18 @@ One attention layer, inference forward pass, batch 1, CPU with 4 threads (`exper
 
 ## What did not work
 
-Negative results are kept, with their run files. The first three come from development pilots; their numbers are copied from the pilot tables in [`docs/EXECUTION_LEDGER.md`](docs/EXECUTION_LEDGER.md).
+Negative results are kept, with their run files. The first three come from development pilots; their numbers are copied from the pilot tables in [`docs/EXECUTION_LEDGER.md`](docs/EXECUTION_LEDGER.md). An external cold audit of the released code found two library defects and an error in the theory notes; all are fixed and documented in [`docs/AUDIT_RESPONSE.md`](docs/AUDIT_RESPONSE.md).
 
 - **MQAR was dropped before the confirmatory runs.** No variant learned multi-query associative recall within the budget (6–27% against a 100% oracle; 19% in an easier setting). A floor effect cannot test "no harm", so claim C4 rests on the tagged-denoising control alone.
 - **The first alias fixture leaked information.** In dense denoising, the model's own noisy token breaks the tie between aliased candidates, so the model beat the "alias ceiling" (72% vs about 53%). The fixture was redesigned with uninformative query tokens before any confirmatory run.
 - **A correct comb is not enough to generalize.** With period 24 and training length 64, a resolving bank learned exactly the right mixture but did not extrapolate (52% against a 95% Bayes oracle): a query saw at most three comb positions in training, so the content readout met a distribution shift at long lengths. Period 12 shows six comb positions per window and was adopted instead.
-- **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) come within about a point of ArithScope up to 2,048 tokens. They lose accuracy only at the longest lengths, after their comb has drifted, as the corollary of Theorem T5 predicts (claim S1, and the post-hoc drift analysis in [`docs/RESULTS.md`](docs/RESULTS.md)).
+- **Near-oracle accuracy hides a calibration cost.** RoPE + ArithScope matches the oracle's accuracy at 8,192 tokens, but its NLL grows with length while ArithScope alone does not. A post-hoc intervention traces the growth to distant keys in the second attention layer, whose scores depend on the offset itself only when RoPE is present (see Calibration above). The preregistered claims were about accuracy only.
+- **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) come within about a point of ArithScope up to 2,048 tokens. They lose accuracy only at the longest lengths, after their comb has drifted, as the drift remark under Theorem T5 predicts (claim S1, and the post-hoc drift analysis in [`docs/RESULTS.md`](docs/RESULTS.md)).
 
 ## Scope and limitations
 
 - **Synthetic tasks, tiny models, CPU.** Two layers, `d_model = 64`, 2,000 training steps. The tasks are designed so that periodic attention is Bayes-optimal; they test a mechanism, not language modeling.
+- **Not more expressive than a full Fourier bank.** A cosine bank with all 41 reduced frequencies contains every Ramanujan kernel in its span and matches ArithScope in E1. The contribution is the parameterization (one weight per order, a provably optimal comb, exact residues), not a pattern that no Fourier method can represent.
 - **ArithScope cannot express offset-specific patterns.** A head only sees `gcd(i − j, m)`, so "previous token" is out of reach. This is why the practical variant is `RoPE + ArithScope`.
 - **Not sub-quadratic.** The folded backend removes the `[N, N]` bias memory, not the quadratic attention compute.
 - **T5 is asymptotic.** A well-optimized RoPE head with large logits can hold a comb for thousands of tokens before it decays (see the theory figure above).
@@ -215,7 +230,7 @@ Negative results are kept, with their run files. The first three come from devel
 # Python >= 3.10; torch >= 2.4 (CPU is enough), numpy, scipy, matplotlib, pytest
 # exact environment: environment.yml, results/environment/conda-explicit.lock
 make oracle        # exact arithmetic checks, standard library only
-make test          # 57 tests (one opt-in): oracle match, masks, gradients, gamma = 0 equivalence, backends, Bayes oracles
+make test          # 65 tests (one opt-in): oracle match, masks, position layouts, gradients, gamma = 0, backends, Bayes oracles
 make lint          # ruff
 make theory        # theory figures and results/summary/theory.json
 make experiments   # the four preregistered suites, 182 runs (resumable; about 3 hours with 4 CPU workers)

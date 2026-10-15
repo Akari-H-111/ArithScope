@@ -161,6 +161,128 @@
 | RoPE + learned frequencies | -0.4 pp [-1.1, +0.2] (0/3) | -1.5 pp [-2.4, -0.6] (0/3) | +1.8 pp [+1.5, +2.1] (3/3) | +3.2 pp [-0.5, +7.0] (3/3) |
 | RoPE + relative bias (clipped) | +0.1 pp [-0.3, +0.5] (2/3) | +12.8 pp [+11.1, +14.5] (3/3) | +25.7 pp [+24.4, +26.9] (3/3) | +34.1 pp [+31.4, +36.8] (3/3) |
 
+**E1 NLL, P = 12** (nats per scored position; unseen positions for N > 64; mean ± 95% CI over seeds. NLL is recorded for every run but was not a preregistered decision metric):
+
+| variant | N=64 | N=128 | N=256 | N=512 | N=1024 | N=2048 | N=4096 | N=8192 |
+|---|---|---|---|---|---|---|---|---|
+| NoPE | 1.839 ± 0.000 | 1.694 ± 0.001 | 1.667 ± 0.002 | 1.664 ± 0.002 | 1.642 ± 0.003 | 1.607 ± 0.004 | 1.582 ± 0.005 | 1.598 ± 0.006 |
+| ALiBi | 1.812 ± 0.002 | 1.655 ± 0.003 | 1.635 ± 0.004 | 1.636 ± 0.004 | 1.617 ± 0.005 | 1.596 ± 0.005 | 1.582 ± 0.010 | 1.614 ± 0.011 |
+| RoPE | 1.100 ± 0.009 | 1.202 ± 0.216 | 1.773 ± 0.281 | 2.175 ± 0.299 | 2.174 ± 0.280 | 2.042 ± 0.304 | 2.058 ± 0.385 | 2.077 ± 0.289 |
+| ArithScope only | 1.079 ± 0.004 | 0.205 ± 0.005 | 0.119 ± 0.016 | 0.083 ± 0.023 | 0.072 ± 0.028 | 0.068 ± 0.029 | 0.066 ± 0.030 | 0.064 ± 0.032 |
+| RoPE + ArithScope | 1.073 ± 0.001 | 0.210 ± 0.008 | 0.126 ± 0.016 | 0.085 ± 0.031 | 0.092 ± 0.049 | 0.149 ± 0.110 | 0.177 ± 0.093 | 0.219 ± 0.112 |
+| RoPE + matched cosine bank | 1.073 ± 0.003 | 0.213 ± 0.008 | 0.157 ± 0.052 | 0.142 ± 0.105 | 0.142 ± 0.130 | 0.184 ± 0.163 | 0.206 ± 0.168 | 0.250 ± 0.109 |
+| RoPE + full Fourier bank | 1.073 ± 0.003 | 0.209 ± 0.004 | 0.140 ± 0.041 | 0.092 ± 0.045 | 0.098 ± 0.067 | 0.158 ± 0.138 | 0.219 ± 0.196 | 0.254 ± 0.164 |
+| RoPE + learned frequencies | 1.071 ± 0.003 | 0.208 ± 0.007 | 0.118 ± 0.016 | 0.084 ± 0.025 | 0.101 ± 0.062 | 0.185 ± 0.156 | 0.324 ± 0.206 | 0.658 ± 0.335 |
+| RoPE + relative bias (clipped) | 1.074 ± 0.002 | 0.377 ± 0.003 | 0.509 ± 0.021 | 0.892 ± 0.051 | 1.324 ± 0.091 | 1.681 ± 0.081 | 1.953 ± 0.074 | 2.224 ± 0.123 |
+
+Paired NLL difference, RoPE + ArithScope minus ArithScope only (positive: RoPE + ArithScope is worse): N = 1024: +0.019 [-0.026, +0.064] (4/5 seeds higher); N = 2048: +0.081 [-0.015, +0.177] (4/5 seeds higher); N = 4096: +0.111 [+0.031, +0.191] (5/5 seeds higher); N = 8192: +0.155 [+0.055, +0.256] (5/5 seeds higher).
+
+**E1 NLL, P = 13** (nats per scored position; unseen positions for N > 64; mean ± 95% CI over seeds. NLL is recorded for every run but was not a preregistered decision metric):
+
+| variant | N=64 | N=128 | N=256 | N=512 | N=1024 | N=2048 | N=4096 | N=8192 |
+|---|---|---|---|---|---|---|---|---|
+| NoPE | 1.862 ± 0.000 | 1.727 ± 0.001 | 1.708 ± 0.001 | 1.685 ± 0.003 | 1.690 ± 0.003 | 1.627 ± 0.003 | 1.671 ± 0.004 | 1.584 ± 0.008 |
+| ALiBi | 1.840 ± 0.001 | 1.694 ± 0.001 | 1.683 ± 0.001 | 1.665 ± 0.002 | 1.676 ± 0.002 | 1.624 ± 0.002 | 1.669 ± 0.003 | 1.596 ± 0.007 |
+| RoPE | 1.165 ± 0.017 | 1.300 ± 0.408 | 1.967 ± 0.600 | 2.120 ± 0.644 | 2.118 ± 0.685 | 1.840 ± 0.554 | 1.853 ± 0.432 | 1.996 ± 0.498 |
+| ArithScope only | 1.147 ± 0.001 | 0.245 ± 0.012 | 0.137 ± 0.025 | 0.090 ± 0.030 | 0.074 ± 0.036 | 0.075 ± 0.040 | 0.066 ± 0.041 | 0.067 ± 0.042 |
+| RoPE + ArithScope | 1.140 ± 0.002 | 0.246 ± 0.005 | 0.149 ± 0.026 | 0.106 ± 0.035 | 0.098 ± 0.045 | 0.110 ± 0.055 | 0.153 ± 0.050 | 0.220 ± 0.087 |
+| RoPE + matched cosine bank | 1.143 ± 0.002 | 0.977 ± 0.375 | 1.332 ± 0.560 | 1.450 ± 0.586 | 1.337 ± 0.538 | 1.265 ± 0.555 | 1.173 ± 0.587 | 0.969 ± 0.397 |
+| RoPE + full Fourier bank | 1.139 ± 0.004 | 0.244 ± 0.005 | 0.141 ± 0.024 | 0.090 ± 0.027 | 0.079 ± 0.032 | 0.116 ± 0.050 | 0.166 ± 0.117 | 0.260 ± 0.182 |
+| RoPE + learned frequencies | 1.135 ± 0.003 | 0.270 ± 0.020 | 0.167 ± 0.026 | 0.121 ± 0.034 | 0.116 ± 0.044 | 0.175 ± 0.107 | 0.319 ± 0.174 | 0.569 ± 0.153 |
+| RoPE + relative bias (clipped) | 1.140 ± 0.002 | 0.501 ± 0.012 | 0.650 ± 0.027 | 0.997 ± 0.076 | 1.424 ± 0.104 | 1.751 ± 0.086 | 2.011 ± 0.092 | 2.103 ± 0.147 |
+
+Paired NLL difference, RoPE + ArithScope minus ArithScope only (positive: RoPE + ArithScope is worse): N = 1024: +0.024 [-0.040, +0.088] (3/5 seeds higher); N = 2048: +0.035 [-0.042, +0.112] (3/5 seeds higher); N = 4096: +0.087 [+0.006, +0.168] (5/5 seeds higher); N = 8192: +0.152 [+0.081, +0.223] (5/5 seeds higher).
+
+**Post-hoc (not preregistered): NLL by query position** (4 fresh sequences of 8,192 tokens per checkpoint, data seed 20261015; mean over 5 seeds). Median, 99th percentile, and "top 1%" (the share of the mean carried by the worst 1% of positions) describe the per-position distribution; "from errors" is the part of the mean contributed by wrong predictions, the rest comes from correct ones:
+
+| P | variant | positions | accuracy | NLL | median | 99th pct. | top 1% | from errors | Bayes NLL |
+|---|---|---|---|---|---|---|---|---|---|
+| 12 | ArithScope only | 64–1,024 | 99.34% | 0.075 | 0.048 | 0.363 | 25.5% | 0.016 | 0.0207 |
+| 12 | ArithScope only | 1,024–2,048 | 100.00% | 0.065 | 0.056 | 0.152 | 2.4% | 0.000 | < 0.0001 |
+| 12 | ArithScope only | 2,048–4,096 | 100.00% | 0.067 | 0.059 | 0.155 | 2.3% | 0.000 | < 0.0001 |
+| 12 | ArithScope only | 4,096–8,192 | 100.00% | 0.069 | 0.062 | 0.159 | 2.3% | 0.000 | < 0.0001 |
+| 12 | RoPE + ArithScope | 64–1,024 | 99.37% | 0.084 | 0.037 | 0.558 | 24.4% | 0.015 | 0.0207 |
+| 12 | RoPE + ArithScope | 1,024–2,048 | 100.00% | 0.153 | 0.125 | 0.429 | 3.7% | 0.000 | < 0.0001 |
+| 12 | RoPE + ArithScope | 2,048–4,096 | 100.00% | 0.179 | 0.148 | 0.506 | 3.2% | 0.000 | < 0.0001 |
+| 12 | RoPE + ArithScope | 4,096–8,192 | 100.00% | 0.233 | 0.205 | 0.555 | 2.6% | 0.000 | < 0.0001 |
+| 12 | RoPE + full Fourier bank | 64–1,024 | 99.34% | 0.100 | 0.054 | 0.638 | 24.7% | 0.015 | 0.0207 |
+| 12 | RoPE + full Fourier bank | 1,024–2,048 | 100.00% | 0.183 | 0.177 | 0.396 | 2.7% | 0.000 | < 0.0001 |
+| 12 | RoPE + full Fourier bank | 2,048–4,096 | 100.00% | 0.249 | 0.255 | 0.497 | 2.5% | 0.000 | < 0.0001 |
+| 12 | RoPE + full Fourier bank | 4,096–8,192 | 100.00% | 0.285 | 0.293 | 0.543 | 2.8% | 0.000 | < 0.0001 |
+| 13 | ArithScope only | 64–1,024 | 99.53% | 0.081 | 0.058 | 0.400 | 19.2% | 0.010 | 0.0126 |
+| 13 | ArithScope only | 1,024–2,048 | 100.00% | 0.073 | 0.066 | 0.162 | 2.3% | 0.000 | < 0.0001 |
+| 13 | ArithScope only | 2,048–4,096 | 100.00% | 0.074 | 0.068 | 0.160 | 2.3% | 0.000 | < 0.0001 |
+| 13 | ArithScope only | 4,096–8,192 | 100.00% | 0.075 | 0.069 | 0.160 | 2.2% | 0.000 | < 0.0001 |
+| 13 | RoPE + ArithScope | 64–1,024 | 99.57% | 0.115 | 0.056 | 0.603 | 13.9% | 0.009 | 0.0126 |
+| 13 | RoPE + ArithScope | 1,024–2,048 | 100.00% | 0.140 | 0.092 | 0.507 | 4.2% | 0.000 | < 0.0001 |
+| 13 | RoPE + ArithScope | 2,048–4,096 | 100.00% | 0.205 | 0.150 | 0.632 | 3.2% | 0.000 | < 0.0001 |
+| 13 | RoPE + ArithScope | 4,096–8,192 | 100.00% | 0.258 | 0.204 | 0.658 | 2.6% | 0.000 | < 0.0001 |
+| 13 | RoPE + full Fourier bank | 64–1,024 | 99.56% | 0.072 | 0.034 | 0.600 | 20.6% | 0.009 | 0.0126 |
+| 13 | RoPE + full Fourier bank | 1,024–2,048 | 100.00% | 0.125 | 0.093 | 0.427 | 3.7% | 0.000 | < 0.0001 |
+| 13 | RoPE + full Fourier bank | 2,048–4,096 | 100.00% | 0.199 | 0.156 | 0.555 | 3.3% | 0.000 | < 0.0001 |
+| 13 | RoPE + full Fourier bank | 4,096–8,192 | 100.00% | 0.254 | 0.222 | 0.617 | 2.8% | 0.000 | < 0.0001 |
+
+Calibration over positions t ≥ 64 (top-label ECE with 15 bins, Brier score; mean over seeds): P = 12, ArithScope only: ECE 0.063, Brier 0.0075; P = 12, RoPE + ArithScope: ECE 0.162, Brier 0.0467; P = 12, RoPE + full Fourier bank: ECE 0.196, Brier 0.0677; P = 13, ArithScope only: ECE 0.070, Brier 0.0085; P = 13, RoPE + ArithScope: ECE 0.177, Brier 0.0552; P = 13, RoPE + full Fourier bank: ECE 0.169, Brier 0.0517.
+
+Readout limit (`experiments/posthoc_readout.py`, weights only): the lowest NLL that the final LayerNorm and linear readout can produce for the hardest target symbol, searched over all LayerNorm outputs (mean over seeds): P = 12, ArithScope only: 0.0053; P = 12, RoPE + ArithScope: 0.0057; P = 12, RoPE + full Fourier bank: 0.0057; P = 13, ArithScope only: 0.0056; P = 13, RoPE + ArithScope: 0.0073; P = 13, RoPE + full Fourier bank: 0.0066.
+
+**Post-hoc: limiting attention to the last 1,024 keys** (same sequences; positions below 1,024 are unaffected by construction). NLL, then accuracy:
+
+| P | variant | positions | NLL, no limit | all layers | layer 0 only | layer 1 only | accuracy, no limit | all layers |
+|---|---|---|---|---|---|---|---|---|
+| 12 | ArithScope only | 1,024–2,048 | 0.065 | 0.066 | 0.067 | 0.064 | 100.00% | 100.00% |
+| 12 | ArithScope only | 2,048–4,096 | 0.067 | 0.066 | 0.070 | 0.063 | 100.00% | 100.00% |
+| 12 | ArithScope only | 4,096–8,192 | 0.069 | 0.067 | 0.073 | 0.064 | 100.00% | 100.00% |
+| 12 | RoPE + ArithScope | 1,024–2,048 | 0.153 | 0.142 | 0.153 | 0.142 | 100.00% | 100.00% |
+| 12 | RoPE + ArithScope | 2,048–4,096 | 0.179 | 0.146 | 0.181 | 0.144 | 100.00% | 100.00% |
+| 12 | RoPE + ArithScope | 4,096–8,192 | 0.233 | 0.146 | 0.235 | 0.145 | 100.00% | 100.00% |
+| 12 | RoPE + full Fourier bank | 1,024–2,048 | 0.183 | 0.158 | 0.183 | 0.159 | 100.00% | 100.00% |
+| 12 | RoPE + full Fourier bank | 2,048–4,096 | 0.249 | 0.162 | 0.251 | 0.160 | 100.00% | 100.00% |
+| 12 | RoPE + full Fourier bank | 4,096–8,192 | 0.285 | 0.161 | 0.286 | 0.160 | 100.00% | 100.00% |
+| 13 | ArithScope only | 1,024–2,048 | 0.073 | 0.076 | 0.075 | 0.074 | 100.00% | 100.00% |
+| 13 | ArithScope only | 2,048–4,096 | 0.074 | 0.076 | 0.077 | 0.074 | 100.00% | 100.00% |
+| 13 | ArithScope only | 4,096–8,192 | 0.075 | 0.075 | 0.078 | 0.073 | 100.00% | 100.00% |
+| 13 | RoPE + ArithScope | 1,024–2,048 | 0.140 | 0.136 | 0.141 | 0.135 | 100.00% | 100.00% |
+| 13 | RoPE + ArithScope | 2,048–4,096 | 0.205 | 0.136 | 0.208 | 0.133 | 100.00% | 100.00% |
+| 13 | RoPE + ArithScope | 4,096–8,192 | 0.258 | 0.137 | 0.260 | 0.134 | 100.00% | 100.00% |
+| 13 | RoPE + full Fourier bank | 1,024–2,048 | 0.125 | 0.097 | 0.126 | 0.097 | 100.00% | 100.00% |
+| 13 | RoPE + full Fourier bank | 2,048–4,096 | 0.199 | 0.099 | 0.202 | 0.096 | 100.00% | 100.00% |
+| 13 | RoPE + full Fourier bank | 4,096–8,192 | 0.254 | 0.099 | 0.255 | 0.096 | 100.00% | 100.00% |
+
+**Post-hoc: change of NLL with query position, per seed** (seeds in order; mean NLL at positions 4,096–8,192 minus positions 1,024–2,048; keys limited to the last 1,024):
+
+| P | variant | no limit | all layers limited | layer 0 only | layer 1 only |
+|---|---|---|---|---|---|
+| 12 | ArithScope only | +0.003, +0.006, +0.004, +0.001, +0.006 | +0.001, +0.004, +0.000, +0.000, +0.002 | +0.004, +0.011, +0.006, +0.002, +0.009 | -0.000, -0.000, -0.001, -0.001, -0.000 |
+| 12 | RoPE + ArithScope | +0.043, -0.079, +0.019, +0.232, +0.186 | +0.001, +0.007, +0.007, -0.000, +0.001 | +0.045, -0.080, +0.022, +0.230, +0.190 | -0.001, +0.011, +0.006, -0.000, -0.001 |
+| 12 | RoPE + full Fourier bank | +0.087, +0.050, +0.165, +0.159, +0.046 | -0.001, +0.000, +0.001, +0.002, +0.011 | +0.088, +0.050, +0.169, +0.160, +0.048 | -0.001, -0.000, -0.001, -0.001, +0.008 |
+| 13 | ArithScope only | +0.003, +0.004, -0.000, +0.006, +0.000 | -0.006, +0.002, -0.001, +0.000, +0.000 | +0.003, +0.006, +0.000, +0.006, +0.001 | -0.004, -0.001, -0.002, +0.001, -0.000 |
+| 13 | RoPE + ArithScope | +0.147, +0.205, +0.100, +0.074, +0.060 | -0.000, -0.002, -0.004, +0.010, +0.000 | +0.147, +0.210, +0.101, +0.075, +0.061 | -0.003, -0.001, -0.003, +0.006, -0.004 |
+| 13 | RoPE + full Fourier bank | +0.280, +0.051, +0.156, +0.081, +0.078 | +0.007, -0.000, -0.000, +0.004, -0.003 | +0.285, +0.047, +0.157, +0.082, +0.074 | +0.001, -0.001, -0.001, +0.002, -0.005 |
+
+Paired NLL difference, RoPE + ArithScope minus ArithScope only, on the same sequences (seed-paired mean with 95% CI; then each of the 4 test sequences, averaged over seeds): P = 12, 1,024–2,048: +0.088 [-0.033, +0.208], sequences +0.106, +0.094, +0.074, +0.078; P = 12, 2,048–4,096: +0.112 [+0.007, +0.218], sequences +0.115, +0.130, +0.092, +0.111; P = 12, 4,096–8,192: +0.164 [+0.030, +0.298], sequences +0.165, +0.183, +0.143, +0.165; P = 13, 1,024–2,048: +0.068 [-0.054, +0.189], sequences +0.038, +0.022, +0.156, +0.054; P = 13, 2,048–4,096: +0.131 [+0.070, +0.192], sequences +0.093, +0.077, +0.232, +0.122; P = 13, 4,096–8,192: +0.182 [+0.121, +0.244], sequences +0.133, +0.141, +0.272, +0.183.
+
+Rank correlation of per-position NLL with the true symbol's vote share on the comb, positions 64–1,024 / 4,096–8,192 (an attention average sees vote shares; the Bayes posterior depends on vote counts): P = 12, ArithScope only: ρ = -0.46 / -0.14; P = 12, RoPE + ArithScope: ρ = -0.27 / -0.10; P = 12, RoPE + full Fourier bank: ρ = -0.29 / -0.12; P = 13, ArithScope only: ρ = -0.50 / -0.25; P = 13, RoPE + ArithScope: ρ = -0.26 / -0.11; P = 13, RoPE + full Fourier bank: ρ = -0.41 / -0.11. The rank correlation with the Bayes NLL, defined only where the Bayes NLL is not exactly 0, is -0.07, +0.01, -0.02, +0.05, +0.01, +0.07 in the same order at positions 64–1,024.
+
+Positions whose own token is corrupted make up 47% of positions 4,096–8,192. Their share of the NLL that the window removes (shown where the window removes more than 0.01 nats): P = 12, RoPE + ArithScope: 47%; P = 12, RoPE + full Fourier bank: 47%; P = 13, RoPE + ArithScope: 47%; P = 13, RoPE + full Fourier bank: 47%.
+
+**Post-hoc: attention off the comb** (attention mass on keys whose offset is not a multiple of P, averaged over heads and the query positions 1,087, 1,599, …, 7,743) and the largest learned gate |γ| per layer:
+
+| P | variant | layer | off the comb, all keys | off the comb, beyond the last 1,024 keys | max \|γ\| |
+|---|---|---|---|---|---|
+| 12 | ArithScope only | 0 | 1.3% | 0.9% | 7.35 |
+| 12 | ArithScope only | 1 | 85.5% | 58.2% | 5.41 |
+| 12 | RoPE + ArithScope | 0 | 0.2% | 0.2% | 8.35 |
+| 12 | RoPE + ArithScope | 1 | 73.5% | 47.6% | 3.13 |
+| 12 | RoPE + full Fourier bank | 0 | 0.2% | 0.2% | 8.41 |
+| 12 | RoPE + full Fourier bank | 1 | 67.7% | 42.6% | 3.82 |
+| 13 | ArithScope only | 0 | 0.9% | 0.6% | 7.55 |
+| 13 | ArithScope only | 1 | 89.6% | 60.7% | 7.46 |
+| 13 | RoPE + ArithScope | 0 | 0.2% | 0.2% | 8.62 |
+| 13 | RoPE + ArithScope | 1 | 68.8% | 43.4% | 4.21 |
+| 13 | RoPE + full Fourier bank | 0 | 0.3% | 0.2% | 8.42 |
+| 13 | RoPE + full Fourier bank | 1 | 74.1% | 46.6% | 3.80 |
+
 **ArithScope gate magnitudes** (exploratory; largest |γ| over the heads of each layer, all layers and seeds; γ starts at 0):
 
 | suite | variant | layers | median | min | max |
@@ -226,3 +348,17 @@
 | ArithScope, SDPA + dense bias mask | 18.5 (42) | 84.2 (136) | 334.6 (329) | 1224.3 (1277) | 6222.6 (4976) |
 | ArithScope, folded into q/k (fused) | 14.7 (24) | 26.5 (40) | 66.9 (65) | 163.6 (103) | 623.5 (177) |
 | ArithScope, compiled FlexAttention (forward only) | skipped | skipped | skipped | skipped | skipped |
+
+**Post-hoc sensitivity to multiplicity** (the preregistration used unadjusted 95% intervals; C3 uses fixed thresholds and is not included). One-sided paired t tests in the claimed direction:
+
+| comparison | mean difference | one-sided p | Bonferroni 98.75% interval | holds after Bonferroni | holds after Holm |
+|---|---|---|---|---|---|
+| C1, P = 12 | +60.02 pp | 6.3e-05 | [+42.38, +77.66] pp | yes | yes |
+| C1, P = 13 | +63.89 pp | 5.4e-04 | [+31.21, +96.56] pp | yes | yes |
+| C2, P = 13 | +40.20 pp | 5.2e-03 | [+2.17, +78.24] pp | yes | yes |
+| C4 (margin −1 pp) | -0.01 pp | 2.3e-06 | [-0.14, +0.12] pp | yes | yes |
+
+**Replays with the current code** (`experiments/replay.py`):
+
+- E1 checkpoints re-scored on the preregistered test sets at N = 1,024 and 8,192: 180 of 180 bitwise identical to the committed records.
+- confirmatory runs retrained from scratch: 11 of 11 bitwise identical to the committed records.

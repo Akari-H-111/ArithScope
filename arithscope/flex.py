@@ -7,7 +7,11 @@ per possible offset (a ``[heads, 2N - 1]`` table, from the same ``offset_values`
 explicit backend uses) and read back by index inside the kernel:
 
     score_mod(score, b, h, i, j) = score + table[h, pos[b, i] - pos[b, j] - lo]
-    mask_mod(b, h, i, j)         = pos[b, j] <= pos[b, i] and key_valid[b, j]
+    mask_mod(b, h, i, j)         = j <= i and key_valid[b, j]      (token order)
+
+When positions are sparse, so that this table would be large, ``score_mod`` instead
+evaluates each bias pointwise from the offset (:meth:`OffsetBias.score_fn`: residue
+lookups for ArithScope and the cosine banks, closed forms for the others).
 
 Uncompiled (the default), FlexAttention materializes the scores. After
 :func:`compile_kernels`, calls go through ``torch.compile(flex_attention)``, which fuses
@@ -24,6 +28,8 @@ from __future__ import annotations
 import functools
 
 import torch
+
+from .bias import _check_positions
 
 _COMPILE = False
 
@@ -55,6 +61,9 @@ def available() -> bool:
     return True
 
 
+TABLE_BUDGET = 1 << 16  # offset-table entries always allowed; beyond 16 * N the pointwise path is used
+
+
 def offset_table(biases, positions: torch.Tensor) -> tuple[torch.Tensor | None, int]:
     """Summed bias values ``[H, R]`` for every offset ``lo .. lo + R - 1`` that ``positions [B, N]`` can form."""
     span = positions.max(-1).values - positions.min(-1).values
@@ -67,11 +76,20 @@ def offset_table(biases, positions: torch.Tensor) -> tuple[torch.Tensor | None, 
     return table, lo
 
 
+def use_table(positions: torch.Tensor, n: int) -> bool:
+    """Whether the offset table stays small: contiguous positions give ``2N - 1`` offsets."""
+    span = int((positions.max(-1).values - positions.min(-1).values).max())
+    return 2 * span + 1 <= max(16 * n, TABLE_BUDGET)
+
+
 def attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, biases, positions: torch.Tensor,
               key_padding_mask: torch.Tensor | None, scale: float) -> torch.Tensor:
     """``q, k, v [B, H, N, d]``; integer ``positions [N]`` or ``[B, N]``. Same semantics as the explicit backend.
 
-    Rows with no allowed key return 0, as in the other backends.
+    Causality is by token index; positions enter only the biases. Rows with no allowed key
+    return 0, as in the other backends. Contiguous positions read a ``[H, 2N - 1]`` offset
+    table; sparse positions evaluate each bias pointwise, so memory never depends on the
+    numeric span of the positions.
     """
     from torch.nn.attention.flex_attention import create_block_mask, flex_attention
 
@@ -79,17 +97,29 @@ def attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, biases, positio
     pos = (positions if positions.dim() == 2 else positions.unsqueeze(0).expand(b, n)).long()
     valid = (torch.ones(b, n, dtype=torch.bool, device=q.device) if key_padding_mask is None
              else key_padding_mask.bool())
-    table, lo = offset_table(biases, pos)
-    if table is not None:
+    biases = list(biases)
+    if biases:
+        _check_positions(pos, pos)  # offsets below are formed in int64, as in the dense path
+    if not biases:
+        def score_mod(score, bi, h, qi, ki):
+            return score
+    elif use_table(pos, n):
+        table, lo = offset_table(biases, pos)
         table = table.to(q.dtype)
 
-    def score_mod(score, bi, h, qi, ki):
-        if table is None:
+        def score_mod(score, bi, h, qi, ki):
+            return score + table[h, pos[bi, qi] - pos[bi, ki] - lo]
+    else:
+        fns = [module.score_fn() for module in biases]
+
+        def score_mod(score, bi, h, qi, ki):
+            delta = pos[bi, qi] - pos[bi, ki]
+            for fn in fns:
+                score = score + fn(h, delta).to(score.dtype)
             return score
-        return score + table[h, pos[bi, qi] - pos[bi, ki] - lo]
 
     def mask_mod(bi, h, qi, ki):
-        return (pos[bi, ki] <= pos[bi, qi]) & valid[bi, ki]
+        return (ki <= qi) & valid[bi, ki]
 
     block_mask = create_block_mask(mask_mod, B=b, H=None, Q_LEN=n, KV_LEN=n, device=q.device.type,
                                    _compile=_COMPILE)
@@ -97,4 +127,4 @@ def attention(q: torch.Tensor, k: torch.Tensor, v: torch.Tensor, biases, positio
     return attend(q, k, v, score_mod=score_mod, block_mask=block_mask, scale=scale)
 
 
-__all__ = ["attention", "available", "compile_kernels", "offset_table"]
+__all__ = ["attention", "available", "compile_kernels", "offset_table", "use_table"]

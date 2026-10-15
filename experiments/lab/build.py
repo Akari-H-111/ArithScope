@@ -68,7 +68,8 @@ def results_data() -> dict | None:
     n = len(e1["13"]["rope+arith"]["mean"]) if "13" in e1 else 0
     intro = ("Tiny decoder-only Transformers (2 layers, d = 64) were trained on 64-token sequences and tested on positions "
              f"they never saw, up to {max(e1[next(iter(e1))]['lengths'])} tokens. Curves are means over seeds with 95% CIs; "
-             "the protocol was frozen and pushed before any confirmatory run.")
+             "the protocol was frozen and pushed before any confirmatory run. The curves show accuracy only: at long "
+             "lengths the RoPE-based models keep it while their NLL rises (found after an external audit; see Results).")
     attention = None
     att_path = ROOT / "results" / "summary" / "attention_profile.json"
     if att_path.exists():

@@ -4,8 +4,12 @@ Logit semantics (all backends):
 
     logits[b,h,i,j] = <q_i, k_j> / sqrt(d_head)  (q, k optionally rotated by RoPE)
                       + sum of additive biases b_h(pos_i - pos_j)
-    allowed[b,i,j]  = (pos_j <= pos_i) and key_valid[b,j]
+    allowed[b,i,j]  = (j <= i) and key_valid[b,j]       (token order, not position values)
     attn            = softmax over allowed keys; rows with no allowed key output 0
+
+Causality is by token index. Positions enter only the biases and RoPE, so they may
+repeat, restart (packed sequences), or carry offsets without letting a token see a
+later one.
 
 Backends compute the same function:
 
@@ -90,20 +94,23 @@ def make_bias(kind: str, num_heads: int, cfg: PositionConfig) -> OffsetBias:
     raise ValueError(f"unknown bias kind {kind!r}")
 
 
-def allowed_mask(q_pos: torch.Tensor, k_pos: torch.Tensor,
-                 key_padding_mask: torch.Tensor | None = None) -> torch.Tensor:
-    """Boolean ``[B or 1, Nq, Nk]``: causal by position, and ``key_padding_mask`` (True = valid key)."""
-    allowed = k_pos.unsqueeze(-2) <= q_pos.unsqueeze(-1)
-    if allowed.dim() == 2:
-        allowed = allowed.unsqueeze(0)
+def allowed_mask(n_q: int, n_k: int, key_padding_mask: torch.Tensor | None = None, q_offset: int = 0,
+                 device: torch.device | str | None = None) -> torch.Tensor:
+    """Boolean ``[B or 1, Nq, Nk]``: key index ``j <= q_offset + i`` (causal by token order) and ``key_padding_mask``.
+
+    ``q_offset`` is the token index of the first query row: the block start in blocked
+    evaluation, or ``Nk - Nq`` when the queries are the last tokens of the keys.
+    """
+    q_idx = torch.arange(q_offset, q_offset + n_q, device=device)
+    allowed = (torch.arange(n_k, device=device).unsqueeze(0) <= q_idx.unsqueeze(1)).unsqueeze(0)
     if key_padding_mask is not None:
         allowed = allowed & key_padding_mask.bool().unsqueeze(-2)
     return allowed
 
 
-def _allowed_and_row_ok(positions: torch.Tensor, key_padding_mask: torch.Tensor | None):
+def _allowed_and_row_ok(n: int, key_padding_mask: torch.Tensor | None, device):
     """Mask ``[B|1, 1, N, N]`` for the fused backends, and whether each query row has any allowed key."""
-    allowed = allowed_mask(positions, positions, key_padding_mask).unsqueeze(1)
+    allowed = allowed_mask(n, n, key_padding_mask, device=device).unsqueeze(1)
     return allowed, allowed.any(-1, keepdim=True)
 
 
@@ -157,10 +164,10 @@ class CausalSelfAttention(nn.Module):
             return (out, attn) if return_attention else out
         if backend == "sdpa":
             bias = self.total_bias(positions)
-            if bias is None and key_padding_mask is None and positions.dim() == 1:
+            if bias is None and key_padding_mask is None:
                 out = F.scaled_dot_product_attention(q, k, v, is_causal=True, scale=scale)
             else:
-                allowed, row_ok = _allowed_and_row_ok(positions, key_padding_mask)
+                allowed, row_ok = _allowed_and_row_ok(n, key_padding_mask, x.device)
                 zero = torch.zeros((), dtype=q.dtype)
                 mask = torch.where(allowed, zero if bias is None else bias, float("-inf"))
                 mask = torch.where(row_ok, mask, zero)
@@ -187,7 +194,8 @@ class CausalSelfAttention(nn.Module):
             bias = self.total_bias(q_pos, positions)
             if bias is not None:
                 logits = logits + bias
-            allowed = allowed_mask(q_pos, positions, key_padding_mask).unsqueeze(1)  # [B|1, 1, Bq, N]
+            allowed = allowed_mask(q_pos.shape[-1], n, key_padding_mask, q_offset=start,
+                                   device=q.device).unsqueeze(1)  # [B|1, 1, Bq, N]
             row_ok = allowed.any(-1, keepdim=True)
             logits = logits.masked_fill(~allowed, float("-inf"))
             logits = torch.where(row_ok, logits, torch.zeros((), dtype=logits.dtype))
@@ -212,9 +220,9 @@ class CausalSelfAttention(nn.Module):
         width = -(-max(q2.shape[-1], v.shape[-1]) // 8) * 8
         q2, k2 = F.pad(q2, (0, width - q2.shape[-1])), F.pad(k2, (0, width - k2.shape[-1]))
         v2 = F.pad(v, (0, width - v.shape[-1]))
-        if key_padding_mask is None and positions.dim() == 1:
+        if key_padding_mask is None:
             return F.scaled_dot_product_attention(q2, k2, v2, is_causal=True, scale=scale)[..., : v.shape[-1]]
-        allowed, row_ok = _allowed_and_row_ok(positions, key_padding_mask)
+        allowed, row_ok = _allowed_and_row_ok(q.shape[-2], key_padding_mask, q.device)
         mask = torch.where(allowed & row_ok, 0.0, float("-inf")).to(q.dtype)
         mask = torch.where(row_ok, mask, torch.zeros((), dtype=q.dtype))
         out = F.scaled_dot_product_attention(q2, k2, v2, attn_mask=mask, scale=scale) * row_ok

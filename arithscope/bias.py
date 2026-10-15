@@ -26,20 +26,31 @@ from . import arith
 DEFAULT_ORDERS: tuple[int, ...] = tuple(range(1, 17))
 
 
+POSITION_LIMIT = 2**62  # |position| < 2^62 keeps every int64 offset q_pos - k_pos exact (no overflow)
+
+
 def _check_positions(q_pos: torch.Tensor, k_pos: torch.Tensor) -> None:
     for name, pos in (("q_pos", q_pos), ("k_pos", k_pos)):
         if pos.dtype not in (torch.int32, torch.int64):
             raise TypeError(f"{name} must be an integer tensor, got {pos.dtype}")
         if pos.dim() < 1:
             raise ValueError(f"{name} must have a sequence dimension")
+        # min/max, not abs(): abs(-2**63) overflows to a negative number in int64
+        if pos.numel() and (int(pos.min()) <= -POSITION_LIMIT or int(pos.max()) >= POSITION_LIMIT):
+            raise ValueError(f"{name} must satisfy |position| < 2**62 so that offsets fit in int64")
 
 
 class OffsetBias(nn.Module):
     """Base class: an additive bias that depends only on the integer offset ``i - j``.
 
     Subclasses implement :meth:`offset_values`, mapping a 1-D int64 tensor of
-    offsets ``[R]`` to per-head values ``[heads, R]``. :meth:`forward` evaluates it
-    once per distinct offset (``O(heads * (Nq + Nk))``) and gathers the dense bias.
+    offsets ``[R]`` to per-head values ``[heads, R]``, and :meth:`score_fn`, the same
+    bias evaluated pointwise (used by the FlexAttention backend). :meth:`forward`
+    evaluates ``offset_values`` once per offset and gathers the dense bias.
+
+    Memory is bounded by the number of query/key pairs, never by the numeric span of
+    the positions: contiguous positions use the offset range ``[lo, hi]`` (at most
+    ``Nq + Nk - 1`` values), and sparse positions use only the offsets that occur.
     """
 
     num_heads: int
@@ -47,14 +58,20 @@ class OffsetBias(nn.Module):
     def offset_values(self, offsets: torch.Tensor) -> torch.Tensor:
         raise NotImplementedError
 
+    def score_fn(self):
+        """Return ``fn(h, delta) -> bias`` for integer tensors of head indices and offsets (same shape)."""
+        raise NotImplementedError
+
     def forward(self, q_pos: torch.Tensor, k_pos: torch.Tensor) -> torch.Tensor:
         """``q_pos [..., Nq]`` and ``k_pos [..., Nk]`` (broadcastable leading dims) -> ``[..., H, Nq, Nk]``."""
         _check_positions(q_pos, k_pos)
         diff = q_pos.long().unsqueeze(-1) - k_pos.long().unsqueeze(-2)
         lo, hi = int(diff.min()), int(diff.max())
-        offsets = torch.arange(lo, hi + 1, device=diff.device, dtype=torch.long)
-        values = self.offset_values(offsets)  # [H, R]
-        return values[:, diff - lo].movedim(0, -3)
+        if hi - lo < diff.numel():  # the offset range is no larger than the number of pairs
+            offsets = torch.arange(lo, hi + 1, device=diff.device, dtype=torch.long)
+            return self.offset_values(offsets)[:, diff - lo].movedim(0, -3)
+        offsets, index = torch.unique(diff, return_inverse=True)  # sparse positions
+        return self.offset_values(offsets)[:, index].movedim(0, -3)
 
 
 def _residue_table(orders: Sequence[int], entries: Sequence[Sequence[float]]) -> torch.Tensor:
@@ -103,6 +120,19 @@ class _GatedMixtureBias(OffsetBias):
     def offset_values(self, offsets: torch.Tensor) -> torch.Tensor:
         mix = self.alpha @ self.component_values(offsets)  # [H, R]
         return self.gamma.unsqueeze(-1) * mix
+
+    def score_fn(self):
+        weights = self.gamma.unsqueeze(-1) * self.alpha  # [H, C]
+        table = self.table.to(weights.dtype)
+        orders = [int(m) for m in self.row_orders]
+
+        def fn(h: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:
+            out = weights[h, 0] * table[0, torch.remainder(delta, orders[0])]
+            for c in range(1, len(orders)):
+                out = out + weights[h, c] * table[c, torch.remainder(delta, orders[c])]
+            return out
+
+        return fn
 
 
 class RamanujanBias(_GatedMixtureBias):
@@ -225,6 +255,18 @@ class LearnedFrequencyBias(OffsetBias):
         phase = self.omega.double().unsqueeze(-1) * offsets.double()  # [H, F, R]
         return (self.amplitude.double().unsqueeze(-1) * torch.cos(phase)).sum(1).to(self.amplitude.dtype)
 
+    def score_fn(self):
+        omega, amplitude, dtype = self.omega.double(), self.amplitude.double(), self.amplitude.dtype
+
+        def fn(h: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:
+            n = delta.double()
+            out = amplitude[h, 0] * torch.cos(omega[h, 0] * n)
+            for f in range(1, omega.shape[1]):
+                out = out + amplitude[h, f] * torch.cos(omega[h, f] * n)
+            return out.to(dtype)
+
+        return fn
+
 
 class RelativeBias(OffsetBias):
     """Learned per-offset table (Shaw/T5-style without log buckets), clipped at ``max_distance``.
@@ -245,6 +287,14 @@ class RelativeBias(OffsetBias):
         idx = offsets.clamp(-self.max_distance, self.max_distance) + self.max_distance
         return self.table[:, idx]
 
+    def score_fn(self):
+        table, d = self.table, self.max_distance
+
+        def fn(h: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:
+            return table[h, delta.clamp(-d, d) + d]
+
+        return fn
+
 
 class ALiBiBias(OffsetBias):
     """ALiBi (Press et al., 2022): fixed ``-slope_h * |n|`` with geometric slopes ``2^(-8 h / H)``."""
@@ -257,3 +307,11 @@ class ALiBiBias(OffsetBias):
 
     def offset_values(self, offsets: torch.Tensor) -> torch.Tensor:
         return -self.slopes.unsqueeze(-1) * offsets.abs().to(self.slopes.dtype)
+
+    def score_fn(self):
+        slopes = self.slopes
+
+        def fn(h: torch.Tensor, delta: torch.Tensor) -> torch.Tensor:
+            return -slopes[h] * delta.abs().to(slopes.dtype)
+
+        return fn
