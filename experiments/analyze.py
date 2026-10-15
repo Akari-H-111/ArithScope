@@ -721,8 +721,16 @@ def analyze_posthoc_nll(summary: dict, tables: list[str]) -> None:
         attention = [{k: float(np.mean([np.mean(r["attention"][j][k]) for r in rs])) for k in ("off_comb", "far_off_comb")}
                      for j in range(depth)]
         gates = [float(np.mean([max(r["gates"][j]) for r in rs])) for j in range(depth)]
+        # per seed: change of NLL from the first bucket beyond the window to the last one, with and without limits
+        first = next(i for i, b in enumerate(rs[0]["buckets"]) if b["start"] >= window)
+
+        def change(get, rs=rs, first=first):
+            return [float(get(r["buckets"][-1]) - get(r["buckets"][first])) for r in rs]
+
+        rise = {"no_limit": change(lambda b: b["nll"]), "all_layers": change(lambda b: b["nll_window"]),
+                **{f"layer_{j}": change(lambda b, j=j: b["nll_window_layer"][j]) for j in range(depth)}}
         out.setdefault(str(p), {})[v] = {"seeds": [r["seed"] for r in rs], "buckets": buckets, "attention": attention,
-                                        "gates": gates, "ece": float(np.mean([r["ece"] for r in rs])),
+                                        "gates": gates, "rise": rise, "ece": float(np.mean([r["ece"] for r in rs])),
                                         "brier": float(np.mean([r["brier"] for r in rs]))}
     # RoPE + ArithScope minus ArithScope only, paired by seed, and per test sequence (averaged over seeds)
     pairs = {}
@@ -779,17 +787,33 @@ def analyze_posthoc_nll(summary: dict, tables: list[str]) -> None:
                          + ", ".join(f"{x:+.3f}" for x in r["per_sequence"])
                          for p in sorted(pairs, key=int) for r in pairs[p] if r["start"] >= window) + ".")
     last = {p: {v: d["buckets"][-1] for v, d in out[p].items()} for p in periods}
-    notes.append(f"Positions {_last_span(out)}: rank correlation of per-position NLL with the true symbol's vote share on "
-                 "the comb (an attention average sees shares; the Bayes posterior depends on counts): " + "; ".join(
-                     f"P = {p}, {LABELS[v]}: ρ = {b['spearman_nll_share']:+.2f}" for p in periods
-                     for v, b in last[p].items() if b["spearman_nll_share"] is not None) + ".")
+    spans = [_span(next(iter(out[periods[0]].values()))["buckets"][i]) for i in (0, -1)]
+    notes.append(f"Rank correlation of per-position NLL with the true symbol's vote share on the comb, positions {spans[0]} "
+                 f"/ {spans[1]} (an attention average sees vote shares; the Bayes posterior depends on vote counts): "
+                 + "; ".join(f"P = {p}, {LABELS[v]}: ρ = {d['buckets'][0]['spearman_nll_share']:+.2f} / "
+                             f"{d['buckets'][-1]['spearman_nll_share']:+.2f}" for p in periods for v, d in out[p].items()
+                             if d["buckets"][0]["spearman_nll_share"] is not None
+                             and d["buckets"][-1]["spearman_nll_share"] is not None)
+                 + ". The rank correlation with the Bayes NLL, defined only where the Bayes NLL is not exactly 0, is "
+                 + ", ".join(f"{d['buckets'][0]['spearman_nll_bayes']:+.2f}" for p in periods for d in out[p].values()
+                             if d["buckets"][0]["spearman_nll_bayes"] is not None)
+                 + f" in the same order at positions {spans[0]}.")
     own = [(p, v, _own_share(b)) for p in periods for v, b in last[p].items() if _own_share(b) is not None]
     if own:
-        fracs = [b["own_token_wrong"] for p in periods for b in last[p].values()]
-        notes.append(f"Positions whose own token is corrupted make up {100 * min(fracs):.0f}–{100 * max(fracs):.0f}% of "
-                     f"positions {_last_span(out)}. Their share of the NLL that the window removes (shown where the window "
-                     "removes more than 0.01 nats): " + "; ".join(f"P = {p}, {LABELS[v]}: {100 * s:.0f}%"
-                                                                  for p, v, s in own) + ".")
+        fracs = sorted({f"{100 * b['own_token_wrong']:.0f}%" for p in periods for b in last[p].values()})
+        notes.append(f"Positions whose own token is corrupted make up {'–'.join(fracs)} of positions {_last_span(out)}. "
+                     "Their share of the NLL that the window removes (shown where the window removes more than 0.01 "
+                     "nats): " + "; ".join(f"P = {p}, {LABELS[v]}: {100 * s:.0f}%" for p, v, s in own) + ".")
+    depth = len(next(iter(out[periods[0]].values()))["attention"])
+    rise = [f"**Post-hoc: change of NLL with query position, per seed** (seeds in order; mean NLL at positions "
+            f"{spans[1]} minus positions {_span(next(b for b in next(iter(out[periods[0]].values()))['buckets'] if b['start'] >= window))}"
+            f"; keys limited to the last {window:,}):", "",
+            "| P | variant | no limit | all layers limited | " + " | ".join(f"layer {j} only" for j in range(depth)) + " |",
+            "|---|---|---|---|" + "---|" * depth]
+    for p in periods:
+        for v, d in out[p].items():
+            cells = [d["rise"]["no_limit"], d["rise"]["all_layers"]] + [d["rise"][f"layer_{j}"] for j in range(depth)]
+            rise.append(f"| {p} | {LABELS[v]} | " + " | ".join(", ".join(f"{x:+.3f}" for x in c) for c in cells) + " |")
     readout = ROOT / "results" / "posthoc" / "readout_floor.json"
     if readout.exists():
         floors = defaultdict(list)
@@ -805,7 +829,8 @@ def analyze_posthoc_nll(summary: dict, tables: list[str]) -> None:
                          if "readout_floor" in d) + ".")
     summary["posthoc_nll"] = out
     summary["posthoc_nll_pairs"] = pairs
-    tables += ["\n".join(nll) + "\n\n" + notes[0], "\n".join(win) + "\n\n" + "\n\n".join(notes[1:]), "\n".join(att)]
+    tables += ["\n".join(nll) + "\n\n" + notes[0], "\n".join(win), "\n".join(rise) + "\n\n" + "\n\n".join(notes[1:]),
+               "\n".join(att)]
     for mode in ("light", "dark"):
         plot_posthoc_nll(out, window, data["length"], mode)
 
@@ -814,9 +839,12 @@ POSTHOC_SCALARS = ("acc", "nll", "nll_from_errors", "acc_window", "nll_window", 
                    "own_token_wrong", "nll_from_own_token_wrong", "nll_window_from_own_token_wrong", "nll_top1pct_share")
 
 
-def _last_span(out: dict) -> str:
-    b = next(iter(next(iter(out.values())).values()))["buckets"][-1]
+def _span(b: dict) -> str:
     return f"{b['start']:,}–{b['end']:,}"
+
+
+def _last_span(out: dict) -> str:
+    return _span(next(iter(next(iter(out.values())).values()))["buckets"][-1])
 
 
 def _own_share(b: dict) -> float | None:
@@ -858,7 +886,7 @@ def plot_posthoc_nll(out: dict, window: int, length: int, mode: str) -> Path:
             ax.axvline(window, color=th["axis"], linewidth=1.0)
             ax.set_xscale("log", base=2)
             ax.set_xticks(x)
-            ax.set_xticklabels([f"{b['start']:,}–{b['end']:,}" for b in any_v["buckets"]], fontsize=8)
+            ax.set_xticklabels([f"{b['start']:,}–\n{b['end']:,}" for b in any_v["buckets"]], fontsize=8)
             ax.minorticks_off()
             ax.set_xlabel("query position t (bucket)")
             ax.set_title(f"Period P = {p}", loc="left", fontsize=10)
@@ -868,7 +896,7 @@ def plot_posthoc_nll(out: dict, window: int, length: int, mode: str) -> Path:
                     va="top")
         axes[0][0].set_ylabel("NLL (nats per position)")
         handles, labels = axes[0][0].get_legend_handles_labels()
-        fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, -0.01), ncol=3, fontsize=8.5, frameon=False)
+        fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, -0.05), ncol=3, fontsize=8.5, frameon=False)
         fig.suptitle(f"Post-hoc: NLL by query position at {length:,} tokens, with and without a recent-keys limit "
                      "(trained at 64)",
                      x=0.01, ha="left", fontweight="bold", fontsize=11, color=th["ink"])
@@ -1140,15 +1168,28 @@ def calibration_md(summary: dict) -> str:
     if "13" not in diag or "13" not in runs or not {"arith", "rope+arith"} <= set(diag["13"]):
         return ""
     t = runs["13"]["table"]
-    last = diag["13"]["rope+arith"]["buckets"][-1]
-    first = diag["13"]["rope+arith"]["buckets"][0]
-    arith_last = diag["13"]["arith"]["buckets"][-1]
-    layers = last["nll_window_layer"]
-    culprit = int(np.argmin(layers))
-    removed = (last["nll"] - layers[culprit]) / max(last["nll"] - last["nll_window"], 1e-12)
-    which = (f"and limiting only layer {culprit} is enough ({layers[culprit]:.3f})" if removed >= 0.8 else
-             "while no single layer accounts for it (" + ", ".join(f"layer {j} only: {x:.3f}"
-                                                           for j, x in enumerate(layers)) + ")")
+    ra, ar = diag["13"]["rope+arith"], diag["13"]["arith"]
+    beyond = next(b for b in ra["buckets"] if b["start"] >= 1024)  # the first bucket the window affects
+    last, ar_last = ra["buckets"][-1], ar["buckets"][-1]
+    depth = len(ra["attention"])
+    # the layer whose limit alone reproduces the all-layer effect, per model; named only if it is the same everywhere
+    rope = [d for vs in diag.values() for v, d in vs.items() if v.startswith("rope")]
+    culprits = {int(np.argmin([abs(np.mean(d["rise"][f"layer_{j}"])) for j in range(depth)])) for d in rope}
+    j = culprits.pop() if len(culprits) == 1 else None
+    rises = [x for d in rope for x in d["rise"]["no_limit"]]
+    flat = max(abs(x) for d in rope for x in d["rise"][f"layer_{j}" if j is not None else "all_layers"])
+    plain = max(abs(x) for vs in diag.values() for v, d in vs.items() if not v.startswith("rope") for x in d["rise"]["no_limit"])
+    ordinal = {0: "first", 1: "second"}.get(j, f"layer-{j}")
+    where = (f"to distant keys in the {ordinal} attention layer" if j is not None else "to distant keys")
+    limit = (f"limiting the {ordinal} layer to the last 1,024 keys holds it at {last['nll_window_layer'][j]:.3f} with "
+             f"accuracy {100 * last['acc_window_layer'][j]:.0f}%, while limiting the "
+             + " and ".join({0: "first", 1: "second"}.get(k, f"layer-{k}") for k in range(depth) if k != j)
+             + " layer changes nothing" if j is not None else
+             f"limiting every layer to the last 1,024 keys holds it at {last['nll_window']:.3f} with accuracy "
+             f"{100 * last['acc_window']:.0f}%")
+    floor = (f" while its readout alone could go as low as {ar['readout_floor']:.3f}" if "readout_floor" in ar else "")
+    limited = last["nll_window_layer"][j] if j is not None else last["nll_window"]
+    above = " RoPE + ArithScope stays above it even with the limit." if limited > ar_last["nll"] else ""
     return "\n".join([
         "### Calibration (post hoc)", "",
         '<p align="center">', "  <picture>",
@@ -1157,16 +1198,20 @@ def calibration_md(summary: dict) -> str:
         'Fourier bank, with the Bayes NLL and RoPE + ArithScope with attention limited to recent keys" '
         'src="results/figures/e1_nll_light.png" width="920">',
         "  </picture>", "</p>", "",
-        f"Accuracy is not the whole story. At N = 8,192 and period 13, RoPE + ArithScope and ArithScope alone are both "
-        f"at the oracle's accuracy, but the mean NLL on unseen positions is {t['rope+arith']['8192']['mean']:.3f} against "
+        f"Accuracy is not the whole story. At N = 8,192 and period 13, RoPE + ArithScope and ArithScope alone both match "
+        f"the oracle's accuracy, yet their mean NLL on unseen positions is {t['rope+arith']['8192']['mean']:.3f} and "
         f"{t['arith']['8192']['mean']:.3f} nats (committed run files, 5 seeds). A post-hoc diagnosis on fresh sequences "
-        f"locates the excess: RoPE + ArithScope's NLL grows from {first['nll']:.3f} to {last['nll']:.3f} as the query "
-        f"moves deeper into the sequence ({first['start']:,}–{first['end']:,} vs {last['start']:,}–{last['end']:,}), "
-        f"while ArithScope alone stays at {arith_last['nll']:.3f}. Limiting attention to the last 1,024 keys brings "
-        f"RoPE + ArithScope back to {last['nll_window']:.3f} with unchanged accuracy, {which}. Distant keys, seen "
-        "through rotary phases at offsets that never occurred in training, lower the probability of the correct "
-        "symbol without changing the argmax. This was found after an external audit and is not a preregistered "
-        "result; details in [`docs/RESULTS.md`](docs/RESULTS.md).",
+        f"traces the part of the gap that grows with length {where}. Beyond 1,024 tokens, RoPE + ArithScope's NLL rises with the query position, from "
+        f"{beyond['nll']:.3f} at positions {_span(beyond)} to {last['nll']:.3f} at {_span(last)}, at "
+        f"{100 * last['acc']:.0f}% accuracy; {limit}. Across both periods, the NLL rises by more than 0.01 nats in "
+        f"{sum(x > 0.01 for x in rises)} of the {len(rises)} models with RoPE (RoPE + ArithScope and RoPE + full Fourier "
+        f"bank), and the limit leaves a change of at most {flat:.3f} nats in every one of them. Over the same positions, "
+        f"ArithScope alone changes by at most {plain:.3f} nats without any limit, although its second layer also attends "
+        f"to distant keys.{above} ArithScope alone has "
+        f"a floor of its own: {ar_last['nll']:.3f} nats where the Bayes NLL is 0,{floor}. That fits a softmax average, "
+        "which reports the share of votes on the comb rather than their number ([`MATH.md`](docs/MATH.md), P3 and the "
+        "proof sketch after it). This was found after an external audit and is not preregistered; details in "
+        "[`docs/RESULTS.md`](docs/RESULTS.md).",
     ])
 
 

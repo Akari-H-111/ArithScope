@@ -48,6 +48,8 @@ Verdicts are computed by `experiments/analyze.py` from the preregistered decisio
 | RoPE + ArithScope keeps its accuracy under absolute shifts up to 10^9 at the training length | **observed** (post hoc, not preregistered) |
 | Mixed unlabeled periods (E5) | exploratory, 3 seeds: learned frequencies ahead at short lengths, RoPE + ArithScope ahead at the longest |
 | At long lengths, the RoPE-containing variants that keep oracle accuracy (RoPE + ArithScope and RoPE + full Fourier bank at both periods, the matched cosine bank at P = 12) have NLL that rises with length, above ArithScope alone, whose NLL does not rise | **observed** (post hoc; NLL was recorded but not preregistered as a decision metric); diagnosis in [`RESULTS.md`](RESULTS.md) |
+| In those models the change of NLL with query position beyond 1,024 tokens runs through distant keys in the second attention layer: limiting that layer to the last 1,024 keys removes it with accuracy unchanged, in all 20 models with RoPE that were diagnosed; limiting the first (comb) layer does not | **observed** (post-hoc intervention; two-layer models, one task, four fresh sequences) | [`RESULTS.md`](RESULTS.md); `results/posthoc/nll_diagnostics.json` |
+| ArithScope alone keeps a flat NLL above the Bayes NLL at long lengths, and the floor is not a readout limit | **observed** (post hoc); explained by MATH P3 (proved) and the proof sketch after it | [`RESULTS.md`](RESULTS.md); `results/posthoc/readout_floor.json` |
 | The confirmatory verdicts hold after Bonferroni and Holm adjustment for the interval-based claims | **observed** (post-hoc sensitivity analysis) |
 
 ## Not claimed
