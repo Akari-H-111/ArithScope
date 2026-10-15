@@ -4,7 +4,7 @@ PY ?= python3
 WORKERS ?= 4
 SUITES = e1_periodic e2_alias e3_tagged e5_mixed
 
-.PHONY: help oracle test lint theory pilots experiments e6 e7 analyze lab bench all
+.PHONY: help oracle test lint theory pilots experiments e6 e7 e8 e9 analyze lab bench all
 
 help:  ## list targets
 	@grep -E '^[a-z0-9_]+:.*## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
@@ -35,6 +35,15 @@ e6:  ## E6 long-length calibration suite (docs/PREREGISTRATION.md, Section 9; re
 e7:  ## E7 ArithScope-only NLL floor suite (docs/PREREGISTRATION.md, Section 10; resumable), then its verdicts
 	$(PY) experiments/run_suite.py e7_floor --workers $(WORKERS)
 	$(PY) experiments/e7_verdicts.py
+
+e8:  ## E8 powered retest of E7's W1 (docs/PREREGISTRATION.md, Section 11; resumable), then its verdicts
+	$(PY) experiments/run_suite.py e8_power_retest --workers $(WORKERS)
+	$(PY) experiments/e8_verdicts.py
+
+e9:  ## E9 paired window dose-response (Section 12): train once per seed, evaluate each window, then verdicts
+	$(PY) experiments/run_suite.py e9_paired_window --workers $(WORKERS)
+	$(PY) experiments/e9_window_eval.py --workers $(WORKERS)
+	$(PY) experiments/e9_verdicts.py
 
 analyze:  ## regenerate every results table/figure from run JSON files
 	$(PY) experiments/analyze.py

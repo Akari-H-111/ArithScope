@@ -293,3 +293,71 @@ Command: `make e7 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e
 | W1, second-layer window on ArithScope alone lowers its far NLL | **FALSIFIED** (the far-NLL interval reaches 0 at P = 12) |
 | S6, `arith_window` far NLL above `window` | **not as predicted** |
 | S7, `window` far NLL below `reference` | **not as predicted** |
+
+
+## Stage 12: E8 preparation (2026-10-15)
+
+E8 ([`PREREGISTRATION.md`](PREREGISTRATION.md), Section 11) runs on the Stage 8 machine and environment. The library is unchanged since E6. E8 adds the seed-count script `experiments/e8_power.py` (output `results/summary/e8_power.json`), the suite `e8_power_retest` (`experiments/suites.py`), the frozen verdict script `experiments/e8_verdicts.py`, and `make e8`. There is no pilot (Section 11.4).
+
+| Step | Command | Result |
+|---|---|---|
+| Seed count | `python experiments/e8_power.py` | n = 21 (seeds 6–26), joint power 0.901 under the Section 11.3 plan |
+| Suite definition | `python experiments/run_suite.py e8_power_retest --dry-run` | 84 runs, 42 per arm, data seed 20261018. No file name is shared with any other suite, and seeds 6–26 appear in no other suite (others use 0–5) |
+| Verdict script plumbing | scratch script: E7's `reference` and `arith_window` run files relabelled as E8 specs in a temporary directory, one replaced by a simulated failure, then `e8_verdicts.main()`; then one record deleted | runs end to end, writes every field, and leaves the failed seed out of its period. It stops when a record is missing without a failure. Output discarded (not E8 evidence) |
+
+
+## Stage 13: E8 runs (2026-10-15)
+
+Command: `make e8 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e8_power_retest --workers 4`, then `python experiments/e8_verdicts.py`), started 2026-10-15 08:06:02 UTC from a clean working tree at `20b8ffa`. That commit was pushed to `origin/prereg/e8-far-nll-power` at 08:05:54 UTC, before the runner started. The verdicts were written at 10:07:44 UTC.
+
+| Suite | Runs | Failures | Wall time per run (4 in parallel) | Training time |
+|---|---|---|---|---|
+| `e8_power_retest` | 84 | 0 | 296–407 s (mean 347 s) | 175–275 s |
+
+**Status: PASS.** 84 runs, all `COMPLETED`, every training loss finite. Machine and environment as in Stage 8. Other processes used some CPU (load average about 3.4 before the start); this changes wall times only (each run is single-threaded and deterministic).
+
+**Provenance.** Every run file records `git_commit = 20b8ffa`. The first run to finish records `git_dirty = false`. The other 83 record `true` only because the earlier run files were already in `results/runs/e8_power_retest/` and still untracked; `git status` after the suite showed no other change than those files and `results/summary/e8.json`. Results commit: `4c74cfa`.
+
+**Verdicts** (`experiments/e8_verdicts.py` → [`results/summary/e8.json`](../results/summary/e8.json); rules in [`PREREGISTRATION.md`](PREREGISTRATION.md), Section 11.5):
+
+| Item | Outcome |
+|---|---|
+| Sanity check: `arith_window` and `reference` train bitwise alike | **PASS** for all 42 period-seed pairs |
+| W2, E7's W1 retested with 21 seeds | **SUPPORTED** |
+| S8, spread of far NLL at least 3× larger without the limit | **as predicted** |
+| S9, `arith_window` growth within ±0.02 nats | **as predicted** |
+
+**Reporting.** `experiments/analyze.py` gained `analyze_e8` and `e8_findings` (the `e8_findings` block in [`RESULTS.md`](RESULTS.md), the E8 table, and the figure `results/figures/e8_nll_*.png`). `plot_e7` now takes the arm labels, file name, and title as arguments, and it sets the shared y-axis floor after every panel is drawn (before, the P = 13 panel of the E8 figure clipped its first bucket; the E7 figure is unchanged). `make analyze` on this machine also re-renders the E1–E5, hero, and overhead figures with sub-pixel differences from the committed ones (another platform's renderer). Their data is unchanged, so they were restored from git and not committed.
+
+
+## Stage 14: E9 preparation (2026-10-15)
+
+| Step | Command | Result |
+|---|---|---|
+| Machinery, before E8 finished | `experiments/e9_window_eval.py`, `e9_power.py`, `e9_verdicts.py`, `tests/test_e9.py`; commit `543e402`, pushed to `origin/prereg/e9-paired-window` (GitHub: 08:59:41 UTC, while E8 had 36 of 84 runs done) | **PASS**: 12 new tests; a mutation check (window never set; slope sign flipped) makes them fail |
+| Cost probe | 1 window evaluation at N = 8,192 on random weights, 1 thread, while E8 ran | 55–75 s per window |
+| Seed count | `python experiments/e9_power.py` on `results/summary/e8.json` (written 10:07:43 UTC), script unchanged since `543e402` | **PASS**: n = 15 per period, joint power 0.904 (`results/summary/e9_power.json`) |
+| Checks | `make lint`, `make test`, `make oracle` | **PASS**: ruff clean; 80 passed, 1 skipped; 81 run, 54 skipped (stdlib) |
+| Preregistration | Section 12, commit `5ce34b8`, pushed at 11:03:24 UTC (GitHub) | before any E9 run |
+
+## Stage 15: E9 runs (2026-10-15)
+
+Command: `make e9 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e9_paired_window --workers 4`, then `python experiments/e9_window_eval.py --workers 4`, then `python experiments/e9_verdicts.py`), started 11:03:37 UTC from a clean working tree at `5ce34b8`. The verdicts were written at 12:23:07 UTC.
+
+| Step | Count | Failures | Wall time per item (4 in parallel) |
+|---|---|---|---|
+| Training runs (`e9_paired_window`) | 30 | 0 | 132–371 s (mean 225 s; training 130–369 s) |
+| Window evaluations (`e9_paired_window_eval`, 4 windows per checkpoint) | 120 | 0 | 175–600 s per checkpoint (mean 384 s) |
+
+**Status: PASS.** Every training loss finite; every record `COMPLETED`.
+
+**Provenance.** Every training run and window record holds `git_commit = 5ce34b8`. Only the first training run records `git_dirty = false`. The other runs and every window record record `true`, because untracked files were already present when they ran: the earlier E9 result files, and an unrelated `research/` directory, which appeared in the working tree during the run (11:36–12:15 UTC). That directory is an isolated study not made by this suite; it is not committed here. `git status --untracked-files=no` after the suite showed no change to any tracked file. Results commit: `d6b365f`.
+
+**Verdicts** (`experiments/e9_verdicts.py` → [`results/summary/e9.json`](../results/summary/e9.json); rules in [`PREREGISTRATION.md`](PREREGISTRATION.md), Section 12.5):
+
+| Item | Outcome |
+|---|---|
+| Sanity checks: one checkpoint per seed across windows, one test set per period, one code commit, training completed | **PASS** |
+| R1, window dose-response | **SUPPORTED** |
+| S10, near-monotone | **as predicted** |
+| S11, W = 64 below the whole sequence (E8 replicates) | **as predicted** |

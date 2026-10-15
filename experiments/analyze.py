@@ -1473,7 +1473,8 @@ def analyze_e7(summary: dict, tables: list[str]) -> None:
         plot_e7(curves, mode)
 
 
-def plot_e7(curves: dict, mode: str) -> Path:
+def plot_e7(curves: dict, mode: str, labels: dict | None = None, name: str = "e7_nll", title: str | None = None) -> Path:
+    labels = labels or E7_ARM_LABELS
     with themed(mode) as th:
         periods = sorted(curves, key=int)
         fig, axes = plt.subplots(1, len(periods), figsize=(10.5, 3.9), sharey=True, squeeze=False)
@@ -1483,7 +1484,7 @@ def plot_e7(curves: dict, mode: str) -> Path:
         for ax, p in zip(axes[0], periods):
             any_arm = next(iter(curves[p].values()))
             x = [(a + b) / 2 for a, b in any_arm["buckets"]]  # equal-width buckets: a linear axis
-            for arm, label in E7_ARM_LABELS.items():
+            for arm, label in labels.items():
                 c, ls, marker = styles[arm]
                 ax.fill_between(x, [v["lo"] for v in curves[p][arm]["nll"]], [v["hi"] for v in curves[p][arm]["nll"]],
                                 color=c, alpha=0.15, linewidth=0)
@@ -1491,15 +1492,15 @@ def plot_e7(curves: dict, mode: str) -> Path:
                         markersize=5, markeredgecolor=th["surface"], markeredgewidth=1.0, label=label, linewidth=2.0)
             ax.set_xticks(x)
             ax.set_xticklabels([f"{a // 1024}–{b // 1024}k" for a, b in any_arm["buckets"]], fontsize=8)
-            ax.set_ylim(bottom=0)
             ax.set_xlabel("query position t (bucket)")
             ax.set_title(f"Period P = {p}", loc="left", fontsize=10)
+        axes[0][0].set_ylim(bottom=0)  # after every panel is drawn, so the shared top fits all of them
         axes[0][0].set_ylabel("NLL (nats per position)")
         handles, labels = axes[0][0].get_legend_handles_labels()
         fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, -0.05), ncol=2, fontsize=8.5, frameon=False)
-        fig.suptitle("E7 (preregistered): NLL by query position at 8,192 tokens, trained at 64 "
+        fig.suptitle(title or "E7 (preregistered): NLL by query position at 8,192 tokens, trained at 64 "
                      "(mean and 95% CI over 5 seeds)", x=0.01, ha="left", fontweight="bold", fontsize=11, color=th["ink"])
-        return save(fig, FIG, "e7_nll", mode)
+        return save(fig, FIG, name, mode)
 
 
 def e7_findings(summary: dict) -> str:
@@ -1537,6 +1538,107 @@ def e7_findings(summary: dict) -> str:
         f"- **Descriptive.** Mean far NLL of ArithScope only, unlimited and limited, and of RoPE + ArithScope limited: {means}. Share of the gap closed by the limit on ArithScope only: {share}.",
     ])
 
+
+E8_ARM_LABELS = {k: E7_ARM_LABELS[k] for k in ("reference", "arith_window")}
+
+
+def analyze_e8(summary: dict, tables: list[str]) -> None:
+    """E8 (preregistered, PREREGISTRATION.md Section 11), a powered retest of E7's W1. Verdicts and paired
+    intervals come from results/summary/e8.json, written by the frozen experiments/e8_verdicts.py; per-arm
+    intervals and the NLL-by-position figure are computed here from the same run files with E6's metric
+    functions, over the seeds that the verdict script used."""
+    path = ROOT / "results" / "summary" / "e8.json"
+    if not path.exists() or not (RUNS / "e8_power_retest").exists():
+        return
+    import experiments.e6_verdicts as e6
+    import experiments.e8_verdicts as e8
+
+    frozen = json.loads(path.read_text())
+    plan = json.loads((ROOT / "results" / "summary" / "e8_power.json").read_text())
+    runs, failed = e8.load()
+    m = {k: e6.metrics(r) for k, r in runs.items()}
+    out = {"verdicts": frozen["verdicts"], "holm": frozen["holm"], "failed_runs": failed,
+           "planned_seeds": frozen["planned_seeds"], "plan": {k: plan[k] for k in ("n_seeds", "joint_power_at_n")},
+           "periods": {}}
+    pct = lambda c: f"{100 * c['mean']:.1f} ± {100 * (c['hi'] - c['mean']):.1f}"  # noqa: E731
+    nats = lambda c: f"{c['mean']:.4f} ± {c['hi'] - c['mean']:.4f}"  # noqa: E731
+    diff = lambda c: f"{c['mean']:+.4f} [{c['lo']:+.4f}, {c['hi']:+.4f}]"  # noqa: E731
+    counts = sorted({len(frozen["periods"][str(p)]["seeds"]) for p in e6.PERIODS})
+    lines = ["**E8, a powered retest of E7's W1 (preregistered, Section 11).** N = 8,192; far region = positions "
+             "4,096–8,191; growth = NLL on positions 7,168–8,191 minus NLL on positions 1,024–2,047. Mean ± 95% CI "
+             f"half-width over {' or '.join(map(str, counts))} seeds (seeds {frozen['planned_seeds'][0]}–"
+             f"{frozen['planned_seeds'][-1]}; {len(failed)} failed runs). Seed-to-seed SD of far NLL in the last column.",
+             "", "| P | arm | far NLL (nats) | far accuracy (%) | growth (nats) | SD of far NLL |", "|---|---|---|---|---|---|"]
+    curves = {}
+    for p in e6.PERIODS:
+        c = frozen["periods"][str(p)]
+        seeds, cell = c["seeds"], {}
+        for arm, label in E8_ARM_LABELS.items():
+            stats = {k: e6.ci95([m[(p, arm, s)][k] for s in seeds]) for k in ("far_nll", "far_acc", "growth")}
+            cell[arm] = stats
+            lines.append(f"| {p} | {label} | {nats(stats['far_nll'])} | {pct(stats['far_acc'])} | "
+                         f"{nats(stats['growth'])} | {c['far_nll_sd'][arm]:.4f} |")
+            test = [next(t for t in runs[(p, arm, s)]["test"] if t["length"] == e6.LENGTH) for s in seeds]
+            curves.setdefault(str(p), {})[arm] = {
+                "buckets": [(b["start"], b["end"]) for b in test[0]["by_position"]],
+                "nll": [e6.ci95([t["by_position"][i]["nll"] for t in test]) for i in range(len(test[0]["by_position"]))]}
+        out["periods"][str(p)] = {"arms": cell, **{k: v for k, v in c.items() if k != "means"}}
+    lines += ["", "Paired differences, limited minus unlimited (mean [95% CI], seeds lower / seeds):", ""]
+    for p in e6.PERIODS:
+        aw = frozen["periods"][str(p)]["arith_window_vs_reference"]
+        n = aw["far_nll"]["n"]
+        lines.append(f"- P = {p}: far NLL {diff(aw['far_nll'])} ({aw['far_nll']['lower']}/{n}); far accuracy "
+                     f"{100 * aw['far_acc']['mean']:+.2f} pp [{100 * aw['far_acc']['lo']:+.2f}, "
+                     f"{100 * aw['far_acc']['hi']:+.2f}]; growth {diff(aw['growth'])} ({aw['growth']['lower']}/{n}).")
+    lines += ["", "Holm-adjusted one-sided p-values for W2's two far-NLL comparisons (sensitivity only): "
+              + "; ".join(f"P = {k.rsplit('_p', 1)[1]}: {v['p_holm']:.2g}" for k, v in sorted(frozen["holm"].items())) + "."]
+    tables.append("\n".join(lines))
+    out["curves"] = curves
+    summary["E8"] = out
+    for mode in ("light", "dark"):
+        plot_e7(curves, mode, labels=E8_ARM_LABELS, name="e8_nll",
+                title=f"E8 (preregistered): NLL by query position at 8,192 tokens, trained at 64 "
+                      f"(mean and 95% CI over {' or '.join(map(str, counts))} seeds)")
+
+
+def e8_findings(summary: dict) -> str:
+    """E8 verdicts (PREREGISTRATION.md Section 11), as computed by experiments/e8_verdicts.py."""
+    e = summary.get("E8")
+    if not e:
+        return "(results pending)"
+    v, ps = e["verdicts"], e["periods"]
+    w2_word, w2_why = (v["W2_arith_window_below_reference"].split(" ", 1) + [""])[:2]
+
+    def far() -> str:
+        parts = []
+        for p, c in ps.items():
+            d, a = c["arith_window_vs_reference"]["far_nll"], c["arith_window_vs_reference"]["far_acc"]
+            parts.append(f"P = {p}: {d['mean']:+.4f}, 95% CI [{d['lo']:+.4f}, {d['hi']:+.4f}], negative in "
+                         f"{d['lower']}/{d['n']} seeds; accuracy lower bound {100 * a['lo']:+.2f} pp")
+        return "; ".join(parts)
+
+    sds = "; ".join(f"P = {p}: unlimited {c['far_nll_sd']['reference']:.4f}, limited {c['far_nll_sd']['arith_window']:.4f} "
+                    f"(ratio {c['far_nll_sd']['reference'] / c['far_nll_sd']['arith_window']:.1f})" for p, c in ps.items())
+    growth = "; ".join(f"P = {p}: {c['growth']['arith_window']['mean']:+.4f}" for p, c in ps.items())
+    means = "; ".join(f"P = {p}: unlimited {c['arms']['reference']['far_nll']['mean']:.4f}, limited "
+                      f"{c['arms']['arith_window']['far_nll']['mean']:.4f}" for p, c in ps.items())
+    failed = (f"{len(e['failed_runs'])} failed runs, reported and not replaced" if e["failed_runs"] else "no failed runs")
+    return "\n".join([
+        f"- **Design.** {e['plan']['n_seeds']} fresh seeds ({e['planned_seeds'][0]}–{e['planned_seeds'][-1]}) per arm "
+        f"and period, from the preregistered power rule (planned joint power {e['plan']['joint_power_at_n']:.2f}); "
+        f"{failed}.",
+        f"- **Sanity check (limited and unlimited ArithScope only train bitwise alike): "
+        f"{'passed' if v['sanity_arith_window_training_identical'] else 'FAILED'}.**",
+        f"- **W2 (E7's W1 retested: ArithScope only, second layer limited to 64 keys, has lower far NLL): "
+        f"{w2_word.lower()}**{f' {w2_why}' if w2_why else ''}. Limited minus unlimited: {far()}.",
+        f"- **S8 (seed-to-seed SD of far NLL at least 3× larger without the limit): "
+        f"{'as predicted' if v['S8_spread_in_reference'] else 'not as predicted'}.** {sds}.",
+        f"- **S9 (limited model flat, mean growth within ±0.02 nats): "
+        f"{'as predicted' if v['S9_arith_window_flat'] else 'not as predicted'}.** Growth {growth}.",
+        f"- **Descriptive.** Mean far NLL: {means}.",
+    ])
+
+
 def rewrite_block(path: Path, name: str, content: str) -> None:
     if not path.exists():
         return
@@ -1566,6 +1668,7 @@ def main() -> None:
     analyze_replay(summary, tables)
     analyze_e6(summary, tables)
     analyze_e7(summary, tables)
+    analyze_e8(summary, tables)
     summary.pop("_hero_panels", None)
     SUMMARY.mkdir(parents=True, exist_ok=True)
     (SUMMARY / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
@@ -1582,6 +1685,7 @@ def main() -> None:
         rewrite_block(ROOT / "docs" / "RESULTS.md", "findings", findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e6_findings", e6_findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e7_findings", e7_findings(summary))
+        rewrite_block(ROOT / "docs" / "RESULTS.md", "e8_findings", e8_findings(summary))
     print(md)
 
 
