@@ -179,6 +179,9 @@ The ArithScope term reads only `(i − j) mod m` in int64, so it is bitwise inva
   </picture>
 </p>
 
+<!-- AUTO:calibration:BEGIN -->
+<!-- AUTO:calibration:END -->
+
 <!-- AUTO:overhead:BEGIN -->
 ### Cost
 
@@ -194,16 +197,18 @@ One attention layer, inference forward pass, batch 1, CPU with 4 threads (`exper
 
 ## What did not work
 
-Negative results are kept, with their run files. The first three come from development pilots; their numbers are copied from the pilot tables in [`docs/EXECUTION_LEDGER.md`](docs/EXECUTION_LEDGER.md).
+Negative results are kept, with their run files. The first three come from development pilots; their numbers are copied from the pilot tables in [`docs/EXECUTION_LEDGER.md`](docs/EXECUTION_LEDGER.md). An external cold audit of the released code found two library defects and an error in the theory notes; all are fixed and documented in [`docs/AUDIT_RESPONSE.md`](docs/AUDIT_RESPONSE.md).
 
 - **MQAR was dropped before the confirmatory runs.** No variant learned multi-query associative recall within the budget (6–27% against a 100% oracle; 19% in an easier setting). A floor effect cannot test "no harm", so claim C4 rests on the tagged-denoising control alone.
 - **The first alias fixture leaked information.** In dense denoising, the model's own noisy token breaks the tie between aliased candidates, so the model beat the "alias ceiling" (72% vs about 53%). The fixture was redesigned with uninformative query tokens before any confirmatory run.
 - **A correct comb is not enough to generalize.** With period 24 and training length 64, a resolving bank learned exactly the right mixture but did not extrapolate (52% against a 95% Bayes oracle): a query saw at most three comb positions in training, so the content readout met a distribution shift at long lengths. Period 12 shows six comb positions per window and was adopted instead.
+- **Near-oracle accuracy hides a calibration cost.** RoPE + ArithScope matches the oracle's accuracy at 8,192 tokens, but its NLL grows with length while ArithScope alone does not; RoPE's distant keys are the cause (see Calibration above). The preregistered claims were about accuracy only.
 - **Learned frequencies are a strong baseline.** Free frequencies (16 per head, initialized at log-spaced periods from 2 to 32, phases in float64, same positional learning rate) come within about a point of ArithScope up to 2,048 tokens. They lose accuracy only at the longest lengths, after their comb has drifted, as the corollary of Theorem T5 predicts (claim S1, and the post-hoc drift analysis in [`docs/RESULTS.md`](docs/RESULTS.md)).
 
 ## Scope and limitations
 
 - **Synthetic tasks, tiny models, CPU.** Two layers, `d_model = 64`, 2,000 training steps. The tasks are designed so that periodic attention is Bayes-optimal; they test a mechanism, not language modeling.
+- **Not more expressive than a full Fourier bank.** A cosine bank with all 41 reduced frequencies contains every Ramanujan kernel in its span and matches ArithScope in E1. The contribution is the parameterization (one weight per order, a provably optimal comb, exact residues), not a pattern that no Fourier method can represent.
 - **ArithScope cannot express offset-specific patterns.** A head only sees `gcd(i − j, m)`, so "previous token" is out of reach. This is why the practical variant is `RoPE + ArithScope`.
 - **Not sub-quadratic.** The folded backend removes the `[N, N]` bias memory, not the quadratic attention compute.
 - **T5 is asymptotic.** A well-optimized RoPE head with large logits can hold a comb for thousands of tokens before it decays (see the theory figure above).

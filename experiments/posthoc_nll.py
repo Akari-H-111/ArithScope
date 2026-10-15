@@ -3,13 +3,13 @@
     python experiments/posthoc_nll.py [--workers 4]
 
 Uses the saved E1 checkpoints (P = 12 and 13; ArithScope only, RoPE + ArithScope, RoPE + full
-Fourier bank; seeds 1-5) on a fresh diagnostic test set: 8 sequences of 8,192 tokens drawn with
+Fourier bank; seeds 1-5) on a fresh diagnostic test set: 4 sequences of 8,192 tokens drawn with
 data seed 20261015, which no earlier evaluation used. Per position bucket it records
 
 * model NLL and accuracy next to the exact Bayes NLL (posterior over the motif symbol given the
   votes seen so far, a closed form for this task);
-* the same NLL with every attention layer restricted to the last ``WINDOW`` keys, a causal test of
-  whether distant keys cause the excess loss;
+* the same NLL with attention restricted to the last ``WINDOW`` keys, in every layer and in one layer
+  at a time: a causal test of whether, and through which layer, distant keys cause the excess loss;
 * the attention mass that each layer puts off the comb (offsets not divisible by P), in total and
   beyond ``WINDOW``.
 
@@ -28,7 +28,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-LENGTH, SEQS, DATA_SEED, WINDOW = 8192, 8, 20261015, 1024
+LENGTH, SEQS, DATA_SEED, WINDOW = 8192, 4, 20261015, 1024
 BUCKETS = ((64, 1024), (1024, 2048), (2048, 4096), (4096, 8192))
 VARIANTS = ("arith", "rope+arith", "rope+fourier_full")
 ROWS = tuple(range(1024 + 63, LENGTH, 512))  # query positions for the attention-mass probe
@@ -84,27 +84,38 @@ def diagnose(path: str) -> dict:
                                                  LENGTH))
     positions = torch.arange(LENGTH)
 
-    def run(window: int | None):
-        original = attention_module.allowed_mask
+    def run(windows: tuple[int | None, ...]):
+        """Logits with attention in layer l restricted to the last ``windows[l]`` keys (None: unrestricted)."""
+        original, state = attention_module.allowed_mask, {"window": None}
 
         def windowed(n_q, n_k, key_padding_mask=None, q_offset=0, device=None):
             allowed = original(n_q, n_k, key_padding_mask, q_offset, device)
+            if state["window"] is None:
+                return allowed
             q_idx = torch.arange(q_offset, q_offset + n_q).unsqueeze(1)
-            return allowed & (q_idx - torch.arange(n_k).unsqueeze(0) < window)
+            return allowed & (q_idx - torch.arange(n_k).unsqueeze(0) < state["window"])
 
-        if window is not None:
-            attention_module.allowed_mask = windowed
+        hooks = [block.attn.register_forward_pre_hook(lambda module, args, w=w: state.update(window=w))
+                 for block, w in zip(model.blocks, windows)]
+        attention_module.allowed_mask = windowed
         try:
             with torch.no_grad():
                 logits = torch.cat([model(batch.tokens[i:i + 1], positions) for i in range(SEQS)])
         finally:
             attention_module.allowed_mask = original
+            for hook in hooks:
+                hook.remove()
         return logits.double()
 
-    logits = run(None)
+    def loss(windows):
+        return F.cross_entropy(run(windows).transpose(1, 2), batch.targets, reduction="none")
+
+    depth = len(model.blocks)
+    logits = run((None,) * depth)
     nll = F.cross_entropy(logits.transpose(1, 2), batch.targets, reduction="none")
     correct = (logits.argmax(-1) == batch.targets).double()
-    nll_window = F.cross_entropy(run(WINDOW).transpose(1, 2), batch.targets, reduction="none")
+    nll_window = loss((WINDOW,) * depth)
+    nll_window_layer = [loss(tuple(WINDOW if j == layer else None for j in range(depth))) for layer in range(depth)]
     bayes = bayes_nll(batch.tokens, batch.targets, period, task.vocab_size, task.noise)
 
     probs = logits.softmax(-1)[:, 64:]
@@ -124,7 +135,9 @@ def diagnose(path: str) -> dict:
     buckets = []
     for a, b in BUCKETS:
         buckets.append({"start": a, "end": b, "acc": float(correct[:, a:b].mean()), "nll": float(nll[:, a:b].mean()),
-                        "nll_window": float(nll_window[:, a:b].mean()), "bayes_nll": float(bayes[:, a:b].mean())})
+                        "nll_window": float(nll_window[:, a:b].mean()),
+                        "nll_window_layer": [float(x[:, a:b].mean()) for x in nll_window_layer],
+                        "bayes_nll": float(bayes[:, a:b].mean())})
 
     rows = torch.tensor(ROWS)
     offsets = rows.unsqueeze(1) - torch.arange(LENGTH).unsqueeze(0)  # [R, N]
@@ -139,7 +152,7 @@ def diagnose(path: str) -> dict:
             x = block(x, positions)
     gates = []
     for block in model.blocks:
-        gates.append([float(g) for g in next(iter(block.attn.biases.values())).gamma.abs()])
+        gates.append([float(g) for g in next(iter(block.attn.biases.values())).gamma.detach().abs()])
     return {"period": period, "variant": spec.variant, "seed": spec.seed, "buckets": buckets,
             "ece": ece, "brier": brier, "nll_share_from_errors": share, "attention": layers, "gates": gates,
             "digest": batch.digest()}

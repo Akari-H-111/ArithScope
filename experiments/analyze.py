@@ -701,12 +701,15 @@ def analyze_posthoc_nll(summary: dict, tables: list[str]) -> None:
     lines = [f"**Post-hoc (not preregistered): where the NLL comes from** ({data['sequences']} fresh sequences of "
              f"{data['length']:,} tokens per model, data seed {data['data_seed']}; mean over seeds). "
              f"\"Window\" restricts every attention layer to the last {window:,} keys:", "",
-             "| P | variant | position | accuracy | NLL | NLL, window | Bayes NLL | layer-0 / layer-1 attention off the "
-             f"comb beyond {window:,} keys |", "|---|---|---|---|---|---|---|---|"]
+             "| P | variant | position | accuracy | NLL | NLL, window in all layers | window in layer 0 only | "
+             f"window in layer 1 only | Bayes NLL | layer-0 / layer-1 attention off the comb beyond {window:,} keys |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
     for (p, v), rs in sorted(by.items()):
         buckets = []
         for i, b in enumerate(rs[0]["buckets"]):
             row = {k: float(np.mean([r["buckets"][i][k] for r in rs])) for k in ("acc", "nll", "nll_window", "bayes_nll")}
+            row["nll_window_layer"] = [float(np.mean([r["buckets"][i]["nll_window_layer"][j] for r in rs]))
+                                       for j in range(len(b["nll_window_layer"]))]
             buckets.append({"start": b["start"], "end": b["end"], **row})
         far = [float(np.mean([np.mean(r["attention"][layer]["far_off_comb"]) for r in rs]))
                for layer in range(len(rs[0]["attention"]))]
@@ -716,8 +719,8 @@ def analyze_posthoc_nll(summary: dict, tables: list[str]) -> None:
                                         "nll_share_from_errors": float(np.mean([r["nll_share_from_errors"] for r in rs]))}
         for b in buckets:
             lines.append(f"| {p} | {LABELS[v]} | {b['start']:,}–{b['end']:,} | {100 * b['acc']:.2f}% | {b['nll']:.3f} | "
-                         f"{b['nll_window']:.3f} | {b['bayes_nll']:.3f} | "
-                         + " / ".join(f"{100 * x:.1f}%" for x in far) + " |")
+                         f"{b['nll_window']:.3f} | " + " | ".join(f"{x:.3f}" for x in b["nll_window_layer"])
+                         + f" | {b['bayes_nll']:.3f} | " + " / ".join(f"{100 * x:.1f}%" for x in far) + " |")
     lines += ["", "Calibration over positions t ≥ 64 (mean over seeds): " + "; ".join(
         f"P = {p}, {LABELS[v]}: ECE {d['ece']:.3f}, Brier {d['brier']:.4f}, share of NLL from wrong predictions "
         f"{100 * d['nll_share_from_errors']:.1f}%" for p, vs in sorted(out.items()) for v, d in vs.items()) + "."]
@@ -1019,6 +1022,42 @@ def overhead_md(summary: dict) -> str:
     ])
 
 
+def calibration_md(summary: dict) -> str:
+    """README calibration paragraph from the post-hoc NLL diagnosis (empty until it has run)."""
+    diag, runs = summary.get("posthoc_nll", {}), summary.get("E1_nll", {})
+    if "13" not in diag or "13" not in runs or not {"arith", "rope+arith"} <= set(diag["13"]):
+        return ""
+    t = runs["13"]["table"]
+    last = diag["13"]["rope+arith"]["buckets"][-1]
+    first = diag["13"]["rope+arith"]["buckets"][0]
+    arith_last = diag["13"]["arith"]["buckets"][-1]
+    layers = last["nll_window_layer"]
+    culprit = int(np.argmin(layers))
+    removed = (last["nll"] - layers[culprit]) / max(last["nll"] - last["nll_window"], 1e-12)
+    which = (f"and limiting only layer {culprit} is enough ({layers[culprit]:.3f})" if removed >= 0.8 else
+             "while no single layer accounts for it (" + ", ".join(f"layer {j} only: {x:.3f}"
+                                                           for j, x in enumerate(layers)) + ")")
+    return "\n".join([
+        "### Calibration (post hoc)", "",
+        '<p align="center">', "  <picture>",
+        '    <source media="(prefers-color-scheme: dark)" srcset="results/figures/e1_nll_dark.png">',
+        '    <img alt="NLL by query position at length 8192 for ArithScope only, RoPE + ArithScope, and RoPE + full '
+        'Fourier bank, with the Bayes NLL and RoPE + ArithScope with attention limited to recent keys" '
+        'src="results/figures/e1_nll_light.png" width="920">',
+        "  </picture>", "</p>", "",
+        f"Accuracy is not the whole story. At N = 8,192 and period 13, RoPE + ArithScope and ArithScope alone are both "
+        f"at the oracle's accuracy, but the mean NLL on unseen positions is {t['rope+arith']['8192']['mean']:.3f} against "
+        f"{t['arith']['8192']['mean']:.3f} nats (committed run files, 5 seeds). A post-hoc diagnosis on fresh sequences "
+        f"locates the excess: RoPE + ArithScope's NLL grows from {first['nll']:.3f} to {last['nll']:.3f} as the query "
+        f"moves deeper into the sequence ({first['start']:,}–{first['end']:,} vs {last['start']:,}–{last['end']:,}), "
+        f"while ArithScope alone stays at {arith_last['nll']:.3f}. Limiting attention to the last 1,024 keys brings "
+        f"RoPE + ArithScope back to {last['nll_window']:.3f} with unchanged accuracy, {which}. Distant keys, seen "
+        "through rotary phases at offsets that never occurred in training, lower the probability of the correct "
+        "symbol without changing the argmax. This was found after an external audit and is not a preregistered "
+        "result; details in [`docs/RESULTS.md`](docs/RESULTS.md).",
+    ])
+
+
 def _pd(summary: dict, period: str, other: str, length: int) -> dict | None:
     return summary.get(f"E1_P{period}", {}).get("paired_vs", {}).get(other, {}).get(str(length))
 
@@ -1130,6 +1169,7 @@ def main() -> None:
         rewrite_block(ROOT / "README.md", "headline", headline(summary))
         rewrite_block(ROOT / "README.md", "tldr", tldr(summary))
         rewrite_block(ROOT / "README.md", "overhead", overhead_md(summary))
+        rewrite_block(ROOT / "README.md", "calibration", calibration_md(summary))
         rewrite_block(ROOT / "README.md", "findings", findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "findings", findings(summary))
     print(md)
