@@ -660,4 +660,6 @@ make e10 PY=~/mamba/envs/arithscope/bin/python WORKERS=4          # E10 runs, co
 
 ### 13.10 Deviations log (E10)
 
-No entries.
+No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
+
+1. **Reporting code after the results** (after `a4ca15a`, which holds the 80 training runs, the 160 copied-law records, and the verdicts). `experiments/analyze.py` gained `analyze_e10`, `plot_e10`, `e10_findings`, and helpers. They format the frozen verdicts and intervals from `results/summary/e10.json`, draw `results/figures/e10_evidence_*.png` from the same records (the exact Bayes NLL recomputed from the regenerated test batches, digests checked), and fill the `e10_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e10_verdicts.py` and `experiments/e10_power.py` are unchanged since `56e9b44`. Theorem T9 moved from the research draft into [`MATH.md`](MATH.md) with its labels unchanged, and its exact items are now checked by `tests/test_t9.py`.
