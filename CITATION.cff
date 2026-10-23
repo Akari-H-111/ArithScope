@@ -5,14 +5,15 @@ abstract: >-
   A zero-initialized, Ramanujan-sum relative-position bias for attention heads, with proofs
   (optimal positive-definite periodic comb, CRT composition, alias partitions, residue-blindness
   of incommensurate frequency banks such as RoPE), an exact low-rank form for fused attention
-  kernels, and preregistered matched-baseline experiments on length extrapolation.
+  kernels, preregistered matched-baseline experiments on length extrapolation and calibration, and an
+  opt-in evidence-count readout whose exact arithmetic kernel follows the Bayes posterior on synthetic periodic denoising with independent noise.
 type: software
 authors:
   - family-names: "Hayami"
     given-names: "A."
-version: "0.2.0"
+version: "0.3.0"
 license: MIT
-date-released: "2026-10-15"
+date-released: "2026-10-23"
 repository-code: "https://github.com/Akari-H-111/ArithScope"
 keywords:
   - transformer
