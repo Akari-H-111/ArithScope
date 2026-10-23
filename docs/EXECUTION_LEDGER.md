@@ -415,3 +415,34 @@ NLL and accuracy at N = 8,192 (2 test sequences):
 | NLL at 256, copied law (k = 4), `arith` / `arith_ev` / exact Bayes | 1.418 / 2.445 / 1.0803 | 1.540 / 2.631 / 1.1588 |
 | cosine(β, D_P), minimum over `arith_ev` and `rope_ev` seeds | 0.9997 | 1.0000 |
 | effective scale, range over `arith_ev` seeds (log 17 = 2.833) | 2.815–2.850 | 2.817–2.847 |
+
+## Stage 17: E10 runs (2026-10-23)
+
+Command: `make e10 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e10_evidence --workers 4`, then
+`python experiments/e10_copy_eval.py --workers 4`, then `python experiments/e10_verdicts.py`), started 06:46:53 UTC from a
+clean working tree at `56e9b44`. That commit, which holds Section 13 of [`PREREGISTRATION.md`](PREREGISTRATION.md), was
+pushed to `origin/research/evidence-readout` before the runner started. The verdicts were written at 08:22:12 UTC.
+
+| Step | Count | Failures | Wall time per item (4 in parallel) |
+|---|---|---|---|
+| Training runs (`e10_evidence`) | 80 | 0 | 205–351 s (mean 273 s; training 94–255 s) |
+| Copied-law evaluations (`e10_evidence_copy_eval`, N = 256 and 1,024 per checkpoint) | 160 | 0 | 9–12 s per checkpoint |
+
+**Status: PASS.** Every training loss finite; every record `COMPLETED`.
+
+**Provenance.** Every training run and copied-law record holds `git_commit = 56e9b44`. Only the first runs record
+`git_dirty = false`; the others record `true` because earlier E10 result files were already present and untracked (as in
+Stages 13 and 15). `git status --untracked-files=no` after the suite showed no change to any tracked file.
+
+**Verdicts** (`experiments/e10_verdicts.py` → [`results/summary/e10.json`](../results/summary/e10.json); rules in
+[`PREREGISTRATION.md`](PREREGISTRATION.md), Section 13.6):
+
+| Item | Outcome |
+|---|---|
+| Sanity checks: all records accounted for, training completed, one code commit, one test set per period and length, copy checkpoints match the suite | **PASS** |
+| V1, the head lowers ArithScope alone's far NLL | **SUPPORTED** |
+| V2, the head follows the Bayes NLL at 1,024 | **SUPPORTED** |
+| V3, the exact basis matters at P = 13 | **SUPPORTED** |
+| V4, the head restores RoPE's extrapolation | **SUPPORTED** |
+| B1, copied observations make the head worse than no head | **SUPPORTED** (a preregistered limitation) |
+| S12–S15 | **as predicted** (all four) |
