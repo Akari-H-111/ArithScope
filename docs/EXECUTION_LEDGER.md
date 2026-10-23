@@ -361,3 +361,88 @@ Command: `make e9 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e
 | R1, window dose-response | **SUPPORTED** |
 | S10, near-monotone | **as predicted** |
 | S11, W = 64 below the whole sequence (E8 replicates) | **as predicted** |
+
+
+## Stage 16: E10 preparation (2026-10-23)
+
+Same machine and environment as Stage 8. The work ran in a separate worktree on branch `research/evidence-readout`,
+from `354ea6c`, with the library changes uncommitted; every pilot record therefore holds `git_commit = 354ea6c` and
+`git_dirty = true`. The source files' SHA-256 were recorded before the spread pilot
+(`research/evidence_readout/2026-10-23/e10_prep/source_sha256_before_spread_pilot.txt`) and still match. Design and
+theory: `research/evidence_readout/2026-10-23/` (`E10_SPEC.md`, `theory/T9_DRAFT.md`, `audit/`). Implementation by
+Claude Sonnet workers (Claude Code CLI) under an orchestrating Claude Opus session; the T9 check script by Claude Sonnet
+via the Antigravity CLI.
+
+| Step | Command | Result |
+|---|---|---|
+| Checks before the change (`354ea6c`) | `make oracle`, `make test`, `make lint` | **PASS**: 86 run, 55 skipped (stdlib); 85 passed, 1 skipped; ruff clean |
+| Library: opt-in evidence head | `arithscope/evidence.py`; `ModelConfig.evidence`, `RunSpec.evidence` (left out of the run id at its default) | **PASS**: `tests/test_evidence.py`. Zero-initialized head bitwise equal to the base model (logits and every base gradient) for five kernels on four variants; causality by token index; padding; bitwise shift invariance at 10^12; exact Bayes posterior from the D_P construction to 1e-9; D_P in the span of `arith` and `cosine_full`, not `cosine_fund` |
+| Library: copied-observation task, exact Bayes NLL | `CopiedPeriodicDenoising`, `periodic_bayes_nll` in `arithscope/tasks.py` | **PASS**: `tests/test_e10.py`. k = 1 equals `PeriodicDenoising` bitwise; Bayes NLL equals a brute-force posterior for both laws |
+| Development pilot `pilot_evidence` | `python experiments/run_suite.py pilot_evidence --workers 4`, then `python experiments/pilot_evidence_report.py` (data seed 7, seed 0) | **PASS**: 20 of 20 runs; table below |
+| E10 machinery | `experiments/e10_copy_eval.py`, `e10_power.py`, `e10_verdicts.py`, suites `pilot_e10_spread` and `e10_evidence`, `make e10` | **PASS**: decision rules tested on synthetic records |
+| Replay with the new library | `research/.../e10_prep/replay_e9.py`, `replay_e9_train.py` | **PASS**: E9 checkpoints (P = 12, 13, seed 27; windows 64 and 8,192) re-evaluate bitwise (4 of 4); `e9_p13__arith__s27` retrains bitwise |
+| Spread pilot `pilot_e10_spread` | `python experiments/run_suite.py pilot_e10_spread --workers 4`, then `python experiments/e10_copy_eval.py --suite pilot_e10_spread --workers 4` (data seed 7, seeds 1000–1003) | **PASS**: 40 of 40 runs, 80 of 80 copied-law evaluations; table below |
+| Seed count | `python experiments/e10_power.py` | **PASS**: n = 8 (V1 binds; joint power 0.914), no stop condition; `results/summary/e10_power.json` |
+| Checks after the change (seed count set to 8) | `make oracle`, `make test`, `make lint`; `run_suite.py e10_evidence --dry-run` | **PASS**: 133 run, 102 skipped (stdlib); 132 passed, 1 skipped; ruff clean; 80 runs |
+
+**`pilot_evidence`** (development pilot, one seed, not confirmatory; `results/summary/pilot_evidence.md`). Whole-sequence
+NLL and accuracy at N = 8,192 (2 test sequences):
+
+| Arm | NLL, P = 12 | acc, P = 12 | NLL, P = 13 | acc, P = 13 |
+|---|---|---|---|---|
+| exact Bayes / plurality oracle | 0.0118 | 0.997 | 0.0147 | 0.996 |
+| `arith` | 0.032 | 0.996 | 0.037 | 0.996 |
+| `arith` + head `arith` | 0.012 | 0.996 | 0.015 | 0.997 |
+| `arith` + head `cosine_fund` | 0.011 | 0.997 | 5.937 | 0.602 |
+| `arith` + head `cosine_full` | 0.012 | 0.996 | 0.015 | 0.997 |
+| `arith` + head `cosine_learned` | 66.546 | 0.239 | 3.330 | 0.493 |
+| `arith` + head `uniform` | 12.280 | 0.419 | 8.732 | 0.417 |
+| `rope` | 2.109 | 0.423 | 2.280 | 0.334 |
+| `rope` + head `arith` | 0.012 | 0.996 | 0.015 | 0.996 |
+| `rope+arith` | 0.341 | 0.996 | 0.073 | 0.996 |
+| `rope+arith` + head `arith` | 0.012 | 0.996 | 0.015 | 0.996 |
+
+**`pilot_e10_spread`** (development data, seeds 1000–1003; means over seeds;
+`research/evidence_readout/2026-10-23/e10_prep/spread_pilot_dryrun.txt`):
+
+| Quantity | P = 12 | P = 13 |
+|---|---|---|
+| far NLL, `arith` / `arith_ev` / `arith_evfund` | 0.0342 / 0.0000 / 0.0000 | 0.0389 / 0.0000 / 13.9098 |
+| far accuracy, `arith_evfund` | 1.0000 | 0.4523 |
+| far accuracy, `rope` / `rope_ev` | 0.4854 / 1.0000 | 0.3811 / 1.0000 |
+| excess NLL at 1,024 over exact Bayes, `arith` / `arith_ev` | +0.03233 / +0.00013 | +0.04080 / +0.00006 |
+| NLL at 256, ordinary law, `arith` / `arith_ev` | 0.3524 / 0.3182 | 0.3840 / 0.3424 |
+| NLL at 256, copied law (k = 4), `arith` / `arith_ev` / exact Bayes | 1.418 / 2.445 / 1.0803 | 1.540 / 2.631 / 1.1588 |
+| cosine(β, D_P), minimum over `arith_ev` and `rope_ev` seeds | 0.9997 | 1.0000 |
+| effective scale, range over `arith_ev` seeds (log 17 = 2.833) | 2.815–2.850 | 2.817–2.847 |
+
+## Stage 17: E10 runs (2026-10-23)
+
+Command: `make e10 PY=<env python> WORKERS=4` (`python experiments/run_suite.py e10_evidence --workers 4`, then
+`python experiments/e10_copy_eval.py --workers 4`, then `python experiments/e10_verdicts.py`), started 06:46:53 UTC from a
+clean working tree at `56e9b44`. That commit, which holds Section 13 of [`PREREGISTRATION.md`](PREREGISTRATION.md), was
+pushed to `origin/research/evidence-readout` before the runner started. The verdicts were written at 08:22:12 UTC.
+
+| Step | Count | Failures | Wall time per item (4 in parallel) |
+|---|---|---|---|
+| Training runs (`e10_evidence`) | 80 | 0 | 205–351 s (mean 273 s; training 94–255 s) |
+| Copied-law evaluations (`e10_evidence_copy_eval`, N = 256 and 1,024 per checkpoint) | 160 | 0 | 9–12 s per checkpoint |
+
+**Status: PASS.** Every training loss finite; every record `COMPLETED`.
+
+**Provenance.** Every training run and copied-law record holds `git_commit = 56e9b44`. Only the first runs record
+`git_dirty = false`; the others record `true` because earlier E10 result files were already present and untracked (as in
+Stages 13 and 15). `git status --untracked-files=no` after the suite showed no change to any tracked file.
+
+**Verdicts** (`experiments/e10_verdicts.py` → [`results/summary/e10.json`](../results/summary/e10.json); rules in
+[`PREREGISTRATION.md`](PREREGISTRATION.md), Section 13.6):
+
+| Item | Outcome |
+|---|---|
+| Sanity checks: all records accounted for, training completed, one code commit, one test set per period and length, copy checkpoints match the suite | **PASS** |
+| V1, the head lowers ArithScope alone's far NLL | **SUPPORTED** |
+| V2, the head follows the Bayes NLL at 1,024 | **SUPPORTED** |
+| V3, the exact basis matters at P = 13 | **SUPPORTED** |
+| V4, the head restores RoPE's extrapolation | **SUPPORTED** |
+| B1, copied observations make the head worse than no head | **SUPPORTED** (a preregistered limitation) |
+| S12–S15 | **as predicted** (all four) |

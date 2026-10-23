@@ -7,6 +7,7 @@ import torch
 from torch import nn
 
 from .attention import CausalSelfAttention, PositionConfig
+from .evidence import EvidenceConfig, EvidenceHead
 
 
 @dataclass(frozen=True)
@@ -18,10 +19,13 @@ class ModelConfig:
     d_ff: int = 256
     pos: PositionConfig = field(default_factory=PositionConfig)
     attn_windows: tuple[int | None, ...] = ()  # per-layer key window (empty: none in any layer)
+    evidence: EvidenceConfig | None = None  # opt-in evidence head (arithscope/evidence.py)
 
     def to_dict(self) -> dict:
         out = asdict(self)
         out["pos"]["name"] = self.pos.name
+        if self.evidence is None:  # a model without the head keeps its earlier record unchanged
+            del out["evidence"]
         return out
 
 
@@ -56,6 +60,9 @@ class TinyDecoder(nn.Module):
         self.ln_f = nn.LayerNorm(cfg.d_model)
         self.head = nn.Linear(cfg.d_model, cfg.vocab_size, bias=False)
         self.apply(self._init_weights)
+        # Built after the normal init, with zero/constant init only: the global RNG stream and every
+        # base parameter are exactly those of a model without the head.
+        self.evidence = None if cfg.evidence is None else EvidenceHead(cfg.evidence, cfg.vocab_size, cfg.vocab_size)
 
     @staticmethod
     def _init_weights(module: nn.Module) -> None:
@@ -71,10 +78,14 @@ class TinyDecoder(nn.Module):
         x = self.embed(tokens)
         for block in self.blocks:
             x = block(x, positions, key_padding_mask, backend)
-        return self.head(self.ln_f(x))
+        logits = self.head(self.ln_f(x))
+        if self.evidence is not None:
+            logits = logits + self.evidence(tokens, positions, key_padding_mask)
+        return logits
 
     def positional_parameters(self) -> list[nn.Parameter]:
-        return [p for blk in self.blocks for p in blk.attn.biases.parameters()]
+        params = [p for blk in self.blocks for p in blk.attn.biases.parameters()]
+        return params if self.evidence is None else params + self.evidence.positional_parameters()
 
     def count_parameters(self) -> dict[str, int]:
         total = sum(p.numel() for p in self.parameters())

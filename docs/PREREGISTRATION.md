@@ -513,3 +513,153 @@ make e9 PY=~/mamba/envs/arithscope/bin/python WORKERS=4   # 30 runs, 120 window 
 No entry changes a claim, decision rule, window, seed, hyperparameter, or test set.
 
 1. **Reporting code after the results** (after `d6b365f`, which holds the 30 training runs, the 120 window records, and the verdicts). `experiments/analyze.py` gained `analyze_e9`, `plot_e9`, and `e9_findings`. They format the frozen verdicts and intervals from `results/summary/e9.json`, draw `results/figures/e9_dose_*.png` from the same window records with E6's metric functions, and fill the `e9_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e9_verdicts.py` is unchanged since `5ce34b8`.
+
+## 13. Sixth preregistration: E10, an evidence-count readout (2026-10-23)
+
+This section is written before any E10 run. It is committed and pushed before the runner starts; the results commit
+must come after it. Sections 1–12 are unchanged. Later changes to this section go to Section 13.10 and are never made
+silently. The authoritative design file, from which the code was written, is
+`research/evidence_readout/2026-10-23/E10_SPEC.md`.
+
+### 13.1 Motivation
+
+A softmax average reports vote shares, not vote counts ([`MATH.md`](MATH.md), T8a), so a model ending in LayerNorm and a
+linear readout has a positive NLL floor (P3, C8), while the Bayes NLL of periodic denoising decays exponentially in the
+number of comb votes (B1). E6–E9 lowered that floor by limiting the broad layer; they did not remove it. `HANDOFF.md`
+(open question 3) names the remaining remedy: give the readout a vote-count signal.
+
+E10 tests that remedy. The *evidence head* adds, after the final LayerNorm,
+
+```math
+\ell_i \mathrel{+}= W_{\text{out}}\,E_i,\qquad E_i=\sum_{j\le i}\kappa(i-j)\,\mathrm{onehot}(x_j),
+```
+
+with causality by token index and `W_out` initialized to 0, so a model with the head equals the model without it bitwise
+at initialization (tested). The kernel κ is an unconstrained combination of the bank's Ramanujan kernels
+(`kernel = "arith"`) or, as the matched control, of fundamental cosines of the same 16 orders (`"cosine_fund"`).
+
+The theory is a development draft, `research/evidence_readout/2026-10-23/theory/T9_DRAFT.md`, audited in
+`research/evidence_readout/2026-10-23/audit/` (no theorem found wrong). Its predictions for this design:
+
+- **T9a.** With κ = D_P = Σ_{m|P} φ(m)/P K_m = 1[P | n] and W_out = (log 17) I, the head's output is exactly the Bayes posterior at every position.
+- **T9b.** D_P is in the span of the Ramanujan bank {1, …, 16} for P = 12 and 13, and not in the span of fundamental cosines of any orders unless φ(P) ≤ 2.
+- **T9c.6.** For a learned fundamental-cosine kernel, a random motif fails to get a positive margin at some residue rarely at P = 12 and almost always at P = 13 (Monte Carlo on the pilot's folds).
+- **T9e.** If each observation is copied, the count overstates the evidence and the head is no longer Bayes.
+
+In the development pilot (Section 13.8) the `arith` head learned β proportional to D_P's coefficients and tracked the
+exact Bayes NLL from the training length to 128× beyond it, at one seed. E10 tests this on fresh seeds and data, with a
+matched control, a drop-in arm on RoPE, and a preregistered boundary where the head is predicted to do harm.
+
+### 13.2 Arms
+
+All arms use E8/E9's setup: periodic denoising (V = 16, ε = 1/2), P = 12 and P = 13 as separate models, bank
+`M = {1, …, 16}`, 2 layers, 2,000 steps at length 64 with batch 32, E1's preregistered periodic hyperparameters per
+variant. **Nothing is tuned for E10.**
+
+| Arm | Variant | Evidence head | Role |
+|---|---|---|---|
+| `arith` | `arith` | none | ArithScope alone (E8's `reference`, E9's W = 8,192) |
+| `arith_ev` | `arith` | `arith` kernel | the candidate |
+| `arith_evfund` | `arith` | `cosine_fund` kernel (same 16 coefficients) | matched control for the basis |
+| `rope` | `rope` | none | RoPE alone |
+| `rope_ev` | `rope` | `arith` kernel | drop-in on a model that fails to extrapolate |
+
+- Within a period and seed, `arith`, `arith_ev`, and `arith_evfund` share initial base weights and the training-batch generator; so do `rope` and `rope_ev`. Gradient clipping is global, so the arms separate after the first step.
+- The head's kernel coefficients are positional parameters (positional learning-rate multiplier); `W_out` is in the ordinary groups.
+- **Not run:** `rope+arith` with the head (it behaved like `arith_ev` in the pilot; no claim needs it), the `cosine_full` and `cosine_learned` kernels, and the plain count (development pilot only; Section 13.8).
+
+### 13.3 The copied-observation law (boundary)
+
+`CopiedPeriodicDenoising` (`periodic_copied`) draws exactly the random numbers of `PeriodicDenoising`, in the same order,
+then cuts each residue class into blocks of k = 4 consecutive visits and copies the block's first observation to the whole
+block. The per-position marginal law is unchanged; only independence is broken. With k = 1 it equals `PeriodicDenoising`
+bitwise (tested). The exact Bayes posterior counts block leaders only.
+
+`experiments/e10_copy_eval.py` evaluates every E10 checkpoint, unchanged, on this law at N = 256 and 1,024. Models are
+trained on the ordinary law only: the boundary asks what the head does when its independence assumption is wrong at test time.
+
+### 13.4 Seed count
+
+`experiments/e10_power.py` encodes the rule of `E10_SPEC.md`, fixed before the spread pilot ran:
+
+- **Spread** is the sample SD raised to its one-sided 80% upper confidence limit; **power** of one part with standardized effect d and n seeds is the noncentral t probability that the 95% t interval clears its threshold; parts of a claim (periods, conditions) multiply.
+- **V1** is planned on confirmatory data from the same setup: E8's `reference` (seeds 6–26) and E9's W = 8,192 (seeds 27–41) far NLL of ArithScope alone, 36 values per period, with the head's far NLL taken as 0 (checked: at most 0.001 in every pilot seed, else stop).
+- **V2, V3, V4, B1** are planned on the development spread pilot `pilot_e10_spread` (seeds 1000–1003, data seed 7), with the thresholds of Section 13.6 subtracted from the effects.
+- n is the largest of the per-claim smallest n ≥ 5 with joint power ≥ 0.90; above 20 seeds per period the script stops and the design needs a decision.
+
+**Outcome** (`results/summary/e10_power.json`; no stop condition fired, and the head's far NLL was at most 0.001 in every
+pilot seed): V1 binds, with d = 1.84 (P = 12) and 1.39 (P = 13) from E8/E9's floor of ArithScope alone (mean far NLL
+0.064 and 0.065, SD 0.031 and 0.042 over 36 seeds), and needs **n = 8 seeds** (joint power 0.914). V2, V3, V4, and B1
+each need only the minimum of 5. E10 uses **seeds 42–49**. Sensitivity (no decision depends on it): n = 7 with the point
+SD or with a 0.80 target, and 25 if every effect were halved.
+
+### 13.5 Fixed setup
+
+- **Suite:** `e10_evidence` in [`experiments/suites.py`](../experiments/suites.py): 2 periods × 5 arms × 8 seeds = 80 training runs, then 80 × 2 copied-law evaluations; experiment names `e10_p12`, `e10_p13`. About 1.5–2 hours with four workers (the spread pilot's runs took about 4 minutes each).
+- **Test data:** data seed `20261020` (fresh: E1–E5 `20261014`, diagnosis `20261015`, E6–E9 `20261016`–`20261019`). Lengths 64, 256, 1,024, 8,192; 65,536 predictions per length (8 sequences at N = 8,192, 64 at 1,024, 256 at 256). The copied-law test sets use the same data seed with the copied task's description, so they are different sequences.
+- **Hardware:** the E6–E9 machine (Apple M2, macOS, conda-forge PyTorch 2.14.1 osx-arm64, float32), one thread per run, four in parallel.
+- **Library changes since E9** (all opt-in): the evidence head (`arithscope/evidence.py`; `ModelConfig.evidence`, `RunSpec.evidence`), the copied-observation task, and the exact Bayes NLL helper. With the head absent every computation, record field, and earlier run id is unchanged (tested), and E9 replays bit for bit (Section 13.8).
+
+### 13.6 Claims and decision rules
+
+**Metrics.** Far NLL and far accuracy are E6's (positions 4,096–8,191 of the N = 8,192 test, `experiments/e6_verdicts.py`
+unchanged). *Excess NLL at 1,024* is the NLL over all positions of the N = 1,024 test minus the exact Bayes NLL on the
+same positions. *Copy NLL at 256* is the NLL over all positions of the copied-law test at N = 256. *Independent NLL at
+256* is the same on the ordinary N = 256 test. Every comparison is a paired difference per seed within a period, with a
+95% t interval over seeds, the per-seed values, and a sign count.
+
+| | Claim | Supported if | Falsified otherwise |
+|---|---|---|---|
+| **V1** | The head lowers ArithScope alone's far NLL, at no cost in accuracy. | at both periods: far NLL (`arith_ev − arith`) interval below 0, **and** far accuracy (`arith_ev − arith`) lower bound above −1 pp | either fails at either period |
+| **V2** | The head follows the Bayes NLL at 16× the training length. | at both periods: upper bound of `arith_ev`'s excess NLL at 1,024 below 0.005 nats | upper bound ≥ 0.005 at either period |
+| **V3** | At the prime period the exact basis matters (C2's structure, now for counting). | at P = 13: far NLL (`arith_evfund − arith_ev`) interval above 0, **and** far accuracy (`arith_ev − arith_evfund`) lower bound above +10 pp | either fails |
+| **V4** | Drop-in: the head restores RoPE's extrapolation. | at both periods: far accuracy (`rope_ev − rope`) lower bound above +20 pp, **and** far NLL (`rope_ev − rope`) interval below 0 | either fails at either period |
+| **B1** | Boundary, a preregistered prediction of harm: with copied observations the head does worse than no head. | at both periods: copy NLL at 256 (`arith_ev − arith`) interval above 0 | interval reaches 0 at either period |
+
+A supported B1 is reported as a limitation of the method, with the same weight as V1–V4.
+
+**Secondary predictions** (stated in advance; no decision depends on them):
+
+- **S12 (no difference at P = 12).** The far-accuracy interval of `arith_ev − arith_evfund` lies within ±1 pp at P = 12.
+- **S13 (SGD finds the construction).** The cosine between the learned β and D_P's coefficients is at least 0.99 in every seed of `arith_ev` and `rope_ev`, at both periods.
+- **S14 (the Bayes scale).** The effective scale (Σ_{m|P} β_m) × (mean diagonal − mean off-diagonal of `W_out`) is within ±10% of log 17 in every seed of `arith_ev` and `rope_ev`.
+- **S15 (crossover).** On the ordinary law the head lowers the NLL at 256: interval of `arith_ev − arith` below 0 at both periods, so B1's harm comes from the dependence, not from the head at short lengths.
+
+**Sanity checks.** No verdict is reported until a failing one is resolved and logged in Section 13.10: every run
+completed; all records come from one code commit; within a period and length all records share one test digest; each
+copy record's checkpoint SHA-256 matches a run of the suite; the suite's seed count equals `e10_power.json`'s.
+
+**Statistics.**
+- No multiplicity correction for the verdicts; the periods are an intersection, as in Sections 9–12. Holm-adjusted one-sided p-values over the interval tests of V1–V4 and B1 are reported as a sensitivity analysis.
+- A failed run is reported and never replaced; its seed is left out of every comparison of that period that uses the failed arm.
+- E10 is analyzed alone and not pooled with the pilots or with E8/E9.
+- `experiments/e10_verdicts.py` encodes these rules and is committed with this section.
+
+### 13.7 Scope of any conclusion
+
+- **Task.** One synthetic law that is exactly the head's Bayes model when observations are independent. V1–V4 say nothing about data where they are not; B1 tests one deliberate departure (copying), not dependence in general.
+- **Models.** Two-layer models, 128× the training length; the head reads raw tokens with one fixed kernel per model.
+- **Population.** The test sequences are shared across seeds, so results concern seeds on these test sets.
+- **Not claimed:** speed or memory (the head is computed densely here), linear or sub-quadratic attention, calibration in general, natural language, or novelty of counting earlier tokens (cache language models are classical).
+
+### 13.8 Design history (development data only)
+
+- **`pilot_evidence`** (data seed 7, seed 0, 20 runs; [`EXECUTION_LEDGER.md`](EXECUTION_LEDGER.md), Stage 16): chose the arms and the thresholds of V2 (0.005 nats), V3 (+10 pp), and V4 (+20 pp), each well inside the pilot's single-seed effect. It also ran `cosine_full`, `cosine_learned`, the plain count, and `rope+arith` with the head, which E10 does not repeat.
+- **E10_SPEC.md** fixed the copied law (k = 4), the boundary metric (copy NLL at 256), and the seed-count rule before any copied-law data or spread-pilot run existed.
+- **`pilot_e10_spread`** (data seed 7, seeds 1000–1003; 40 runs and 80 copied-law evaluations, 0 failures; [`EXECUTION_LEDGER.md`](EXECUTION_LEDGER.md), Stage 16). It ran after `E10_SPEC.md` and `experiments/e10_power.py` were fixed; the source hashes recorded before it still match. Its only use is the seed count. Applying the frozen decision code to it as a dry run, every claim and secondary prediction comes out as predicted on development data; that is a check of the code and of feasibility, not evidence.
+- **Library replay** (the same machine): stored E9 checkpoints for P = 12 and 13, seed 27, re-evaluated with windows 64 and 8,192, are bitwise identical to their committed records (4 of 4), and a retrain of `e9_p13__arith__s27` reproduces its loss curve, validation curve, test metrics, and positional snapshot bit for bit.
+
+### 13.9 Commands
+
+```bash
+python experiments/run_suite.py pilot_e10_spread --workers 4      # development spread pilot (data seed 7)
+python experiments/e10_copy_eval.py --suite pilot_e10_spread --workers 4
+python experiments/e10_power.py                                   # seed count -> results/summary/e10_power.json
+make e10 PY=~/mamba/envs/arithscope/bin/python WORKERS=4          # E10 runs, copied-law evaluations, verdicts
+```
+
+### 13.10 Deviations log (E10)
+
+No entry changes a claim, decision rule, arm, seed, hyperparameter, or test set.
+
+1. **Reporting code after the results** (after `a4ca15a`, which holds the 80 training runs, the 160 copied-law records, and the verdicts). `experiments/analyze.py` gained `analyze_e10`, `plot_e10`, `e10_findings`, and helpers. They format the frozen verdicts and intervals from `results/summary/e10.json`, draw `results/figures/e10_evidence_*.png` from the same records (the exact Bayes NLL recomputed from the regenerated test batches, digests checked), and fill the `e10_findings` block in [`RESULTS.md`](RESULTS.md). `experiments/e10_verdicts.py` and `experiments/e10_power.py` are unchanged since `56e9b44`. Theorem T9 moved from the research draft into [`MATH.md`](MATH.md) with its labels unchanged, and its exact items are now checked by `tests/test_t9.py`.

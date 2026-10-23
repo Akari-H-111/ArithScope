@@ -1,0 +1,13 @@
+{
+  "branch_lint": "PASS: ruff check research/metacognition/2026-10-15",
+  "branch_tests": "10 passed",
+  "exact_replay": "PASS: study.py --verify results/exact_v1.json, observed in tool execution",
+  "gradient_replay": "PASS: see gradient_replay.log",
+  "parent_isolation": "535 pre-existing tracked files unchanged; two original checkpoint byte hashes unchanged",
+  "report_replay": "PASS: render_report.py --verify REPORT.md, observed in tool execution",
+  "retained_failure": "First gradient run failed on omitted RunSpec defaults; failed log and source retained, schema repair succeeded.",
+  "root_lint": "PASS: make lint with registered interpreter",
+  "root_oracle_before_and_after": "81 tests, 54 skips, stdlib interpreter",
+  "root_test_before_and_after": "80 passed, 1 skipped",
+  "status": "PASS"
+}

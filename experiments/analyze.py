@@ -1757,6 +1757,216 @@ def e9_findings(summary: dict) -> str:
     ])
 
 
+E10_ARM_LABELS = {"arith": "ArithScope only", "arith_ev": "ArithScope + evidence head",
+                  "arith_evfund": "ArithScope + head, fundamental cosines", "rope": "RoPE",
+                  "rope_ev": "RoPE + evidence head"}
+E10_ARM_SLOT = {"arith": 0, "arith_ev": 2, "arith_evfund": 3, "rope": 1, "rope_ev": 4}
+E10_FLOOR = 1e-12  # plotting floor of the log axis: later buckets of the exact Bayes NLL and of the head underflow
+
+
+def _e10_bayes(rec: dict, length: int, copy_rec: dict | None = None) -> dict:
+    """Exact Bayes NLL of the regenerated test batch of ``rec`` (``copy_rec``: its copied-law batch): the mean over
+    all positions and over the record's position buckets, after checking the batch digest against the stored record."""
+    import experiments.e10_verdicts as e10
+    from arithscope.tasks import make_task, periodic_bayes_nll
+    from arithscope.train import _generator, task_dict
+    from experiments.e10_copy_eval import copied_task
+
+    spec = e10.spec_of(rec)
+    if copy_rec is None:
+        task = make_task(spec.task["kind"], **{k: v for k, v in spec.task.items() if k != "kind"})
+        test = next(t for t in rec["test"] if t["length"] == length)
+    else:
+        task, test = copied_task(spec, copy_rec["copied_task"]["copies"]), copy_rec["test"][0]
+    num = max(2, (spec.eval_tokens if length <= 2048 else spec.eval_tokens_long) // length)
+    parts = ("test", spec.data_seed, json.dumps(task_dict(task), sort_keys=True), length)
+    batch = task.sample(num, length, _generator(*parts))
+    if batch.digest() != test["digest"]:
+        raise ValueError(f"regenerated test batch differs from the record's digest: {spec.filename}")
+    nll = periodic_bayes_nll(batch, task)
+    return {"all": float(nll.mean()),
+            "buckets": [float(nll[:, b["start"]:b["end"]].mean()) for b in test["by_position"]]}
+
+
+def e10_mean(m: dict, p: int, arm: str, key: str, seeds) -> float | None:
+    vals = [m[(p, arm, s)][key] for s in seeds if key in m.get((p, arm, s), {})]
+    return sum(vals) / len(vals) if vals else None
+
+
+def analyze_e10(summary: dict, tables: list[str]) -> None:
+    """E10 (preregistered, PREREGISTRATION.md Section 13), an evidence-count readout. Verdicts and paired intervals
+    come from results/summary/e10.json, written by the frozen experiments/e10_verdicts.py; the figure reads the same
+    run and copied-law records and recomputes the exact Bayes NLL of its test batches."""
+    path = ROOT / "results" / "summary" / "e10.json"
+    if not path.exists() or not (RUNS / "e10_evidence_copy_eval").exists():
+        return
+    import experiments.e10_verdicts as e10
+
+    frozen = json.loads(path.read_text())
+    plan = json.loads((ROOT / "results" / "summary" / "e10_power.json").read_text())
+    loaded = e10.load()
+    m = e10.collect(loaded)
+    seeds = frozen["planned_seeds"]
+    out = {"verdicts": frozen["verdicts"], "holm": frozen["holm"], "failed": frozen["failed"],
+           "planned_seeds": seeds,  # V1 is the claim that binds the seed count
+           "plan": {"n_seeds": plan["n_seeds"], "joint_power_at_n": plan["claims"]["V1"]["joint_power_at_n"]},
+           "sanity": frozen["sanity"], "periods": frozen["periods"]}
+    lines = ["**E10, an evidence-count readout (preregistered, Section 13).** Mean over seeds "
+             f"{seeds[0]}–{seeds[-1]} ({len(frozen['failed'])} failed). Far = positions 4,096–8,191 of N = 8,192; "
+             "excess = NLL at N = 1,024 minus the exact Bayes NLL; independent = ordinary law at N = 256; "
+             "copied = copied law (k = 4) at N = 256.", "",
+             "| P | arm | far NLL | far accuracy | excess NLL at 1,024 | independent NLL at 256 | copied NLL at 256 |",
+             "|---|---|---|---|---|---|---|"]
+    bayes, curves = {}, {}
+    for p in e10.PERIODS:
+        rec = loaded["runs"][(p, "arith", seeds[0])]  # one test digest per period and length (sanity check)
+        bayes[p] = {"buckets_1024": _e10_bayes(rec, 1024)["buckets"], "indep_256": _e10_bayes(rec, 256)["all"],
+                    "copy_256": _e10_bayes(rec, 256, loaded["copies"][(p, "arith", seeds[0], e10.COPY_LENGTH)])["all"]}
+        curves[p] = {}
+        for arm in e10.ARMS:
+            used = [s for s in seeds if (p, arm, s) in m]
+            by = np.array([[b["nll"] for b in next(t for t in loaded["runs"][(p, arm, s)]["test"]
+                                                   if t["length"] == 1024)["by_position"]] for s in used])
+            curves[p][arm] = {"mean": by.mean(0).tolist(), "lo": by.min(0).tolist(), "hi": by.max(0).tolist(),
+                              "indep_256": [m[(p, arm, s)]["indep_nll_256"] for s in used],
+                              "copy_256": [m[(p, arm, s)]["copy_nll_256"] for s in used if "copy_nll_256" in m[(p, arm, s)]]}
+            far, acc, exc, ind, cop = (e10_mean(m, p, arm, k, seeds)
+                                       for k in ("far_nll", "far_acc", "excess_1024", "indep_nll_256", "copy_nll_256"))
+            lines.append(f"| {p} | {E10_ARM_LABELS[arm]} | {far:.4f} | {100 * acc:.2f}% | {exc:.4f} | {ind:.4f} | "
+                         f"{'n/a' if cop is None else f'{cop:.4f}'} |")
+    lines += ["", "Exact Bayes NLL on the same test batches: "
+              + "; ".join(f"P = {p}: independent law at 256 {b['indep_256']:.4f}, copied law at 256 {b['copy_256']:.4f}"
+                          for p, b in bayes.items()) + ".", ""]
+    d = lambda c: f"{c['mean']:+.4f} [{c['lo']:+.4f}, {c['hi']:+.4f}]"  # noqa: E731
+    pp = lambda c: f"{100 * c['mean']:+.2f} pp [{100 * c['lo']:+.2f}, {100 * c['hi']:+.2f}]"  # noqa: E731
+    lines.append("Paired differences (mean [95% CI]):")
+    lines.append("")
+    for p in e10.PERIODS:
+        c = frozen["periods"][str(p)]
+        lines.append(
+            f"- P = {p}: V1 far NLL, head − none {d(c['v1_far_nll'])}, far accuracy {pp(c['v1_far_acc'])}. "
+            f"V2 excess NLL at 1,024 {c['v2_excess_1024']['mean']:.5f} (upper bound {c['v2_excess_1024']['hi']:.5f}). "
+            f"V3 far NLL, fundamental − arithmetic {d(c['v3_far_nll'])}, far accuracy, arithmetic − fundamental "
+            f"{pp(c['v3_far_acc'])}. V4 (RoPE) far accuracy, head − none {pp(c['v4_far_acc'])}, far NLL "
+            f"{d(c['v4_far_nll'])}. B1 copied NLL at 256, head − none {d(c['b1_copy_nll_256'])}. S15 independent NLL "
+            f"at 256, head − none {d(c['s15_indep_nll_256'])}.")
+    lines += ["", "Holm-adjusted one-sided p-values over the interval tests (sensitivity only): "
+              + "; ".join(f"{k}: {v['p_holm']:.2g}" for k, v in sorted(frozen["holm"].items())) + "."]
+    tables.append("\n".join(lines))
+    out["curves"], out["bayes"] = curves, bayes
+    summary["E10"] = out
+    for mode in ("light", "dark"):
+        plot_e10(curves, bayes, mode)
+
+
+def plot_e10(curves: dict, bayes: dict, mode: str) -> Path:
+    with themed(mode) as th:
+        periods = sorted(curves)
+        fig, axes = plt.subplots(len(periods), 2, figsize=(10.5, 7.4), gridspec_kw={"width_ratios": [1.5, 1]})
+        for (ax, bx), p in zip(axes, periods):
+            x = np.arange(len(bayes[p]["buckets_1024"]))
+            floor = lambda v: np.maximum(v, E10_FLOOR)  # noqa: E731 - NLL below the floor (even exactly 0) sits on it
+            for arm in ("rope", "arith", "arith_evfund", "arith_ev", "rope_ev"):
+                cv, c = curves[p][arm], th["series"][E10_ARM_SLOT[arm]]
+                ax.fill_between(x, floor(cv["lo"]), floor(cv["hi"]), color=c, alpha=0.18, linewidth=0)
+                ax.plot(x, floor(cv["mean"]), color=c, linewidth=2.0, label=E10_ARM_LABELS[arm],
+                        marker="o" if arm != "rope_ev" else "s", markersize=3.5 if arm != "rope_ev" else 6,
+                        linestyle="-" if arm != "rope_ev" else ":", markerfacecolor=c if arm != "rope_ev" else "none")
+            ax.plot(x, floor(bayes[p]["buckets_1024"]), color=th["ink"], linestyle="--", linewidth=1.6,
+                    label="exact Bayes NLL")
+            ax.set_yscale("log")
+            ax.set_ylim(E10_FLOOR / 3, 10)
+            ax.set_xticks(x)
+            ax.set_xticklabels([str(128 * i) for i in x])
+            ax.set_xlabel("position bucket start (buckets of 128 tokens)")
+            ax.set_ylabel(f"mean NLL (nats, log scale; floor {E10_FLOOR:.0e})")
+            ax.set_title(f"P = {p}: NLL by position at N = 1,024", loc="left", fontsize=10)
+            for j, key in enumerate(("indep_256", "copy_256")):
+                for k, arm in enumerate(("arith", "arith_ev")):
+                    vals, xs = curves[p][arm][key], j + (k - 0.5) * 0.34
+                    bx.bar(xs, np.mean(vals), width=0.3, color=th["series"][E10_ARM_SLOT[arm]], alpha=0.8)
+                    bx.scatter([xs] * len(vals), vals, s=10, color=th["ink"], alpha=0.55, zorder=3, linewidths=0)
+                bx.hlines(bayes[p][key], j - 0.38, j + 0.38, color=th["ink"], linestyle="--", linewidth=1.6, zorder=4)
+            bx.set_xticks([0, 1])
+            bx.set_xticklabels(["ordinary law", "copied law (k = 4)"])
+            bx.set_ylabel("NLL at N = 256 (nats)")
+            bx.set_title(f"P = {p}: NLL at N = 256, by law", loc="left", fontsize=10)
+            bx.grid(axis="x", visible=False)
+        handles, labels = axes[0][0].get_legend_handles_labels()
+        fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, 0.0), ncol=3, fontsize=8.5, frameon=False)
+        bx = axes[0][1]
+        from matplotlib.lines import Line2D
+        from matplotlib.patches import Patch
+        bx.legend(handles=[Patch(color=th["series"][E10_ARM_SLOT["arith"]], alpha=0.8, label="ArithScope only (left bar)"),
+                           Patch(color=th["series"][E10_ARM_SLOT["arith_ev"]], alpha=0.8, label="+ evidence head (right bar)"),
+                           Line2D([], [], color=th["ink"], linestyle="--", label="exact Bayes NLL of the law")],
+                  loc="upper left", fontsize=8, frameon=False)
+        n = len(curves[periods[0]]["arith"]["indep_256"])
+        fig.suptitle(f"E10 (preregistered): the evidence head against the exact Bayes NLL ({n} seeds per arm; "
+                     "band = seed range, dots = seeds)", x=0.01, y=0.995, ha="left", fontweight="bold", fontsize=11,
+                     color=th["ink"])
+        fig.tight_layout(rect=(0, 0, 1, 0.97))
+        return save(fig, FIG, "e10_evidence", mode)
+
+
+def e10_findings(summary: dict) -> str:
+    """E10 verdicts (PREREGISTRATION.md Section 13), as computed by experiments/e10_verdicts.py."""
+    e = summary.get("E10")
+    if not e:
+        return "(results pending)"
+    v, ps = e["verdicts"], e["periods"]
+    word = lambda key: v[key].lower() if v[key] == "SUPPORTED" else v[key]  # noqa: E731
+    asp = lambda key: "as predicted" if v[key] else "not as predicted"  # noqa: E731
+    cnt = lambda c, sign: f"{sum(x * sign > 0 for x in c['values'])}/{c['n']}"  # noqa: E731
+    d = lambda c: f"{c['mean']:+.4f}, 95% CI [{c['lo']:+.4f}, {c['hi']:+.4f}]"  # noqa: E731
+    pp = lambda c: f"{100 * c['mean']:+.2f} pp, 95% CI [{100 * c['lo']:+.2f}, {100 * c['hi']:+.2f}]"  # noqa: E731
+    per = lambda f: "; ".join(f"P = {p}: {f(c)}" for p, c in ps.items())  # noqa: E731
+    # per-period "mean, CI, seeds with the claimed sign" of one paired difference, in nats or in pp
+    nats = lambda key, sign, word: per(lambda c: d(c[key]) + f", {word} in {cnt(c[key], sign)} seeds")  # noqa: E731
+    pts = lambda key, sign, word: per(lambda c: pp(c[key]) + f", {word} in {cnt(c[key], sign)} seeds")  # noqa: E731
+    p13 = ps["13"]
+    sane = all(x for k, x in e["sanity"].items() if k != "code_commits")
+    failed = f"{len(e['failed'])} failed, reported and not replaced" if e["failed"] else "no failures"
+    arms = ("arith", "arith_ev", "arith_evfund", "rope", "rope_ev")
+    means = "; ".join(f"P = {p}: " + ", ".join(f"{E10_ARM_LABELS[a]} {c['means'][a]['far_nll']:.4f}" for a in arms)
+                      for p, c in ps.items())
+    cos = [x for c in ps.values() for arm in ("arith_ev", "rope_ev") for x in c["kernel"][arm]["cos_dp"]]
+    lam = [x for c in ps.values() for arm in ("arith_ev", "rope_ev") for x in c["kernel"][arm]["lambda_eff"]]
+    ex = lambda c: c["v2_excess_1024"]  # noqa: E731
+    return "\n".join([
+        f"- **Design.** {e['plan']['n_seeds']} fresh seeds ({e['planned_seeds'][0]}–{e['planned_seeds'][-1]}) per period "
+        f"and arm from the preregistered power rule (planned joint power {e['plan']['joint_power_at_n']:.2f}), five arms, "
+        f"each evaluated on the ordinary law and, unchanged, on the copied law; {failed}.",
+        f"- **Sanity checks (all records accounted for, one code commit, one test set per period and length, copy "
+        f"checkpoints match the suite): {'passed' if sane else 'FAILED'}.**",
+        f"- **V1 (the head lowers ArithScope alone's far NLL at no accuracy cost): {word('V1_head_lowers_far_nll')}**. "
+        f"Far NLL, head − none: {nats('v1_far_nll', -1, 'negative')}. "
+        f"Far accuracy: {per(lambda c: pp(c['v1_far_acc']))}.",
+        f"- **V2 (excess NLL at 1,024 below 0.005 nats): {word('V2_follows_bayes_at_1024')}**. "
+        + per(lambda c: f"mean {ex(c)['mean']:.5f}, 95% CI [{ex(c)['lo']:.5f}, {ex(c)['hi']:.5f}], below 0.005 in "
+                        f"{sum(x < 0.005 for x in ex(c)['values'])}/{ex(c)['n']} seeds") + ".",
+        f"- **V3 (at P = 13 the exact basis beats the matched fundamental cosines): "
+        f"{word('V3_exact_basis_matters_at_13')}**. P = 13: far NLL, fundamental − arithmetic {d(p13['v3_far_nll'])}, "
+        f"positive in {cnt(p13['v3_far_nll'], 1)} seeds; far accuracy, arithmetic − fundamental {pp(p13['v3_far_acc'])}, "
+        f"positive in {cnt(p13['v3_far_acc'], 1)} seeds.",
+        f"- **V4 (the head restores RoPE's extrapolation): {word('V4_restores_rope_extrapolation')}**. "
+        f"Far accuracy, head − none: {pts('v4_far_acc', 1, 'positive')}. "
+        f"Far NLL: {nats('v4_far_nll', -1, 'negative')}.",
+        f"- **B1 (boundary, preregistered: on copied observations the head is worse than none): "
+        f"{word('B1_copied_observations_harm')}**. Copied-law NLL at 256, head − none: "
+        f"{nats('b1_copy_nll_256', 1, 'positive')}.",
+        f"- **S12 (no difference at P = 12, far accuracy within ±1 pp): {asp('S12_no_failure_at_12')}.** "
+        f"P = 12, arithmetic − fundamental: {pp(ps['12']['v3_far_acc'])}.",
+        f"- **S13 (SGD finds D_P, cosine at least 0.99 in every seed): {asp('S13_sgd_finds_construction')}.** "
+        f"Smallest cosine to D_P's coefficients over {len(cos)} head fits: {min(cos):.4f}.",
+        f"- **S14 (effective scale within ±10% of log 17 in every seed): {asp('S14_bayes_scale')}.** "
+        f"λ_eff range {min(lam):.3f}–{max(lam):.3f} (log 17 = {math.log(17):.3f}).",
+        f"- **S15 (on the ordinary law the head lowers the NLL at 256): {asp('S15_crossover')}.** "
+        f"{nats('s15_indep_nll_256', -1, 'negative')}.",
+        f"- **Descriptive.** Mean far NLL: {means}.",
+    ])
+
+
 def rewrite_block(path: Path, name: str, content: str) -> None:
     if not path.exists():
         return
@@ -1788,6 +1998,7 @@ def main() -> None:
     analyze_e7(summary, tables)
     analyze_e8(summary, tables)
     analyze_e9(summary, tables)
+    analyze_e10(summary, tables)
     summary.pop("_hero_panels", None)
     SUMMARY.mkdir(parents=True, exist_ok=True)
     (SUMMARY / "summary.json").write_text(json.dumps(summary, indent=1, default=float))
@@ -1806,6 +2017,7 @@ def main() -> None:
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e7_findings", e7_findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e8_findings", e8_findings(summary))
         rewrite_block(ROOT / "docs" / "RESULTS.md", "e9_findings", e9_findings(summary))
+        rewrite_block(ROOT / "docs" / "RESULTS.md", "e10_findings", e10_findings(summary))
     print(md)
 
 

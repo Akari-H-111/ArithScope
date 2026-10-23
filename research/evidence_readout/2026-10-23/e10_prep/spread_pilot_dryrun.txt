@@ -1,0 +1,47 @@
+DEVELOPMENT SPREAD PILOT (data seed 7, seeds 1000-1003) -- dry run of e10_verdicts.decide; not evidence
+failed: []
+  V1_head_lowers_far_nll: SUPPORTED
+  V2_follows_bayes_at_1024: SUPPORTED
+  V3_exact_basis_matters_at_13: SUPPORTED
+  V4_restores_rope_extrapolation: SUPPORTED
+  B1_copied_observations_harm: SUPPORTED
+  S12_no_failure_at_12: True
+  S13_sgd_finds_construction: True
+  S14_bayes_scale: True
+  S15_crossover: True
+P = 12
+   v1_far_nll         mean -0.03416  95% CI [-0.04129, -0.02704]
+   v1_far_acc         mean +0.00000  95% CI [+0.00000, +0.00000]
+   v2_excess_1024     mean +0.00013  95% CI [+0.00003, +0.00023]
+   v3_far_nll         mean +0.00000  95% CI [+0.00000, +0.00000]
+   v3_far_acc         mean +0.00000  95% CI [+0.00000, +0.00000]
+   v4_far_acc         mean +0.51461  95% CI [+0.43717, +0.59205]
+   v4_far_nll         mean -2.01358  95% CI [-2.19080, -1.83635]
+   b1_copy_nll_256    mean +1.02635  95% CI [+0.97299, +1.07970]
+   s15_indep_nll_256  mean -0.03422  95% CI [-0.04046, -0.02798]
+   mean arith         far NLL 0.0342 far acc 1.0000 excess@1024 +0.03233 NLL@256 0.3524
+   mean arith_ev      far NLL 0.0000 far acc 1.0000 excess@1024 +0.00013 NLL@256 0.3182
+   mean arith_evfund  far NLL 0.0000 far acc 1.0000 excess@1024 +0.00318 NLL@256 0.3348
+   mean rope          far NLL 2.0136 far acc 0.4854 excess@1024 +1.89917 NLL@256 1.5459
+   mean rope_ev       far NLL 0.0000 far acc 1.0000 excess@1024 +0.00012 NLL@256 0.3182
+   kernel arith_ev: cos(beta, D_P) min 0.9997; lambda_eff [2.85, 2.815, 2.833, 2.823]
+   kernel rope_ev: cos(beta, D_P) min 0.9997; lambda_eff [2.85, 2.815, 2.832, 2.822]
+   copy NLL@256 arith: [1.437, 1.438, 1.374, 1.424] arith_ev: [2.459, 2.435, 2.449, 2.437] copy Bayes: 1.0803
+P = 13
+   v1_far_nll         mean -0.03887  95% CI [-0.04455, -0.03318]
+   v1_far_acc         mean +0.00000  95% CI [+0.00000, +0.00000]
+   v2_excess_1024     mean +0.00006  95% CI [-0.00011, +0.00024]
+   v3_far_nll         mean +13.90983  95% CI [+12.76140, +15.05825]
+   v3_far_acc         mean +0.54772  95% CI [+0.52059, +0.57485]
+   v4_far_acc         mean +0.61893  95% CI [+0.43172, +0.80615]
+   v4_far_nll         mean -2.09722  95% CI [-2.53912, -1.65531]
+   b1_copy_nll_256    mean +1.09112  95% CI [+1.07323, +1.10900]
+   s15_indep_nll_256  mean -0.04165  95% CI [-0.04554, -0.03777]
+   mean arith         far NLL 0.0389 far acc 1.0000 excess@1024 +0.04080 NLL@256 0.3840
+   mean arith_ev      far NLL 0.0000 far acc 1.0000 excess@1024 +0.00006 NLL@256 0.3424
+   mean arith_evfund  far NLL 13.9098 far acc 0.4523 excess@1024 +0.10317 NLL@256 0.3653
+   mean rope          far NLL 2.0972 far acc 0.3811 excess@1024 +1.58596 NLL@256 1.7371
+   mean rope_ev       far NLL 0.0000 far acc 1.0000 excess@1024 +0.00006 NLL@256 0.3423
+   kernel arith_ev: cos(beta, D_P) min 1.0000; lambda_eff [2.817, 2.831, 2.847, 2.826]
+   kernel rope_ev: cos(beta, D_P) min 1.0000; lambda_eff [2.816, 2.831, 2.848, 2.825]
+   copy NLL@256 arith: [1.54, 1.536, 1.545, 1.538] arith_ev: [2.618, 2.629, 2.651, 2.626] copy Bayes: 1.1588

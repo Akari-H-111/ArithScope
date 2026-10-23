@@ -1,0 +1,30 @@
+test_bayes_equality_exact (test_check_t9.TestConstruction) ... ok
+test_dp_identity_small (test_check_t9.TestConstruction) ... ok
+test_dp_period_one_is_constant (test_check_t9.TestConstruction) ... ok
+test_head_equals_comb_counts (test_check_t9.TestConstruction) ... ok
+test_noise_parameters_v16 (test_check_t9.TestConstruction) ... ok
+test_rate_bound_with_bounded_offset (test_check_t9.TestConstruction) ... ok
+test_excess_is_expected_kl_and_positive (test_check_t9.TestDependence) ... ok
+test_headline_numbers (test_check_t9.TestDependence) ... ok
+test_power_inequality (test_check_t9.TestDependence) ... ok
+test_b16_with_order_one_misses_p12 (test_check_t9.TestExpressibility) ... ok
+test_bank_design_crt_comb_is_not_counting (test_check_t9.TestExpressibility) ... ok
+test_cosine_span (test_check_t9.TestExpressibility) ... ok
+test_divisor_closed_bank_sweep (test_check_t9.TestExpressibility) ... ok
+test_harmonic_criterion (test_check_t9.TestExpressibility) ... ok
+test_residual_counterexample (test_check_t9.TestExpressibility) ... ok
+test_span_iff_divisors_in_bank (test_check_t9.TestExpressibility) ... ok
+test_drift_kernel_is_exactly_period_1000 (test_check_t9.TestNonResonant) ... ok
+test_limit_values_for_comb_kernel (test_check_t9.TestNonResonant) ... ok
+test_residue_blind_algebra (test_check_t9.TestNonResonant) ... ok
+test_comb_slope_is_motif_independent (test_check_t9.TestPositiveRate) ... ok
+test_dominance_criterion (test_check_t9.TestPositiveRate) ... ok
+test_expected_count_decomposition (test_check_t9.TestPositiveRate) ... ok
+test_fold_kills_orders_not_dividing_p (test_check_t9.TestPositiveRate) ... ok
+test_fold_projection (test_check_t9.TestPositiveRate) ... ok
+test_two_order_family (test_check_t9.TestPositiveRate) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 6.722s
+
+OK

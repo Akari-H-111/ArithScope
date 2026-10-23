@@ -432,3 +432,27 @@ Steps between adjacent windows, far NLL (mean [95% CI]); W = 64 minus the whole 
 - P = 13: 64→256 +0.0305 [+0.0165, +0.0445]; 256→1,024 +0.0148 [+0.0065, +0.0232]; 1,024→8,192 +0.0026 [+0.0009, +0.0043]. W = 64 minus whole: -0.0479 [-0.0716, -0.0242]. Accuracy: +0.00 pp [+0.00, +0.00].
 
 Holm-adjusted one-sided p-values for the two slope tests (sensitivity only): P = 12: 1.2e-05; P = 13: 0.00039.
+
+**E10, an evidence-count readout (preregistered, Section 13).** Mean over seeds 42–49 (0 failed). Far = positions 4,096–8,191 of N = 8,192; excess = NLL at N = 1,024 minus the exact Bayes NLL; independent = ordinary law at N = 256; copied = copied law (k = 4) at N = 256.
+
+| P | arm | far NLL | far accuracy | excess NLL at 1,024 | independent NLL at 256 | copied NLL at 256 |
+|---|---|---|---|---|---|---|
+| 12 | ArithScope only | 0.0815 | 100.00% | 0.0654 | 0.3472 | 1.4371 |
+| 12 | ArithScope + evidence head | 0.0000 | 100.00% | 0.0001 | 0.3081 | 2.3865 |
+| 12 | ArithScope + head, fundamental cosines | 0.0000 | 100.00% | 0.0049 | 0.3253 | 1.9551 |
+| 12 | RoPE | 2.1719 | 43.71% | 2.0210 | 1.5369 | 2.5258 |
+| 12 | RoPE + evidence head | 0.0000 | 100.00% | 0.0001 | 0.3081 | 2.3864 |
+| 13 | ArithScope only | 0.0701 | 100.00% | 0.0568 | 0.3991 | 1.4944 |
+| 13 | ArithScope + evidence head | 0.0000 | 100.00% | 0.0000 | 0.3517 | 2.4609 |
+| 13 | ArithScope + head, fundamental cosines | 12.4621 | 45.78% | 0.0806 | 0.3756 | 1.5975 |
+| 13 | RoPE | 2.1101 | 36.55% | 2.0527 | 1.8184 | 2.7048 |
+| 13 | RoPE + evidence head | 0.0000 | 100.00% | 0.0001 | 0.3517 | 2.4608 |
+
+Exact Bayes NLL on the same test batches: P = 12: independent law at 256 0.3078, copied law at 256 1.0700; P = 13: independent law at 256 0.3514, copied law at 256 1.1169.
+
+Paired differences (mean [95% CI]):
+
+- P = 12: V1 far NLL, head − none -0.0815 [-0.1178, -0.0452], far accuracy +0.00 pp [+0.00, +0.00]. V2 excess NLL at 1,024 0.00006 (upper bound 0.00020). V3 far NLL, fundamental − arithmetic +0.0000 [+0.0000, +0.0000], far accuracy, arithmetic − fundamental +0.00 pp [+0.00, +0.00]. V4 (RoPE) far accuracy, head − none +56.29 pp [+47.47, +65.11], far NLL -2.1719 [-2.3966, -1.9472]. B1 copied NLL at 256, head − none +0.9494 [+0.9230, +0.9759]. S15 independent NLL at 256, head − none -0.0391 [-0.0472, -0.0311].
+- P = 13: V1 far NLL, head − none -0.0701 [-0.1046, -0.0355], far accuracy +0.00 pp [+0.00, +0.00]. V2 excess NLL at 1,024 0.00005 (upper bound 0.00013). V3 far NLL, fundamental − arithmetic +12.4621 [+11.7558, +13.1683], far accuracy, arithmetic − fundamental +54.22 pp [+52.03, +56.41]. V4 (RoPE) far accuracy, head − none +63.45 pp [+48.56, +78.35], far NLL -2.1101 [-2.5433, -1.6769]. B1 copied NLL at 256, head − none +0.9665 [+0.9576, +0.9754]. S15 independent NLL at 256, head − none -0.0474 [-0.0553, -0.0396].
+
+Holm-adjusted one-sided p-values over the interval tests (sensitivity only): B1_copy_nll_p12: 4.1e-11; B1_copy_nll_p13: 2.1e-14; V1_far_acc_guard_p12: 0; V1_far_acc_guard_p13: 0; V1_far_nll_p12: 0.0011; V1_far_nll_p13: 0.0011; V2_excess_p12: 4.4e-11; V2_excess_p13: 7.7e-13; V3_far_acc_p13: 1.8e-09; V3_far_nll_p13: 4.1e-09; V4_far_acc_p12: 5.1e-05; V4_far_acc_p13: 0.00035; V4_far_nll_p12: 2.3e-07; V4_far_nll_p13: 2.1e-05.

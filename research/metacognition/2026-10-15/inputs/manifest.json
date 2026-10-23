@@ -1,0 +1,38 @@
+{
+  "checkpoints": [
+    {
+      "copy": "inputs/e6_p12__arith__s1__065307b3e4b6.pt",
+      "period": 12,
+      "record_copy": "inputs/e6_p12__arith__s1__065307b3e4b6.json",
+      "record_sha256": "1ca1435f9854834e5fffef2fba2af5a927e5b568673d56d1e063f68113453a5a",
+      "seed": 1,
+      "sha256": "ebd8c2d689b02c5627d10122e5e076e77612cb453ce4ea585db90e52fdeae6e5",
+      "source": "checkpoints/e6_calibration/e6_p12__arith__s1__065307b3e4b6.pt"
+    },
+    {
+      "copy": "inputs/e6_p13__arith__s1__07e6cd811c5d.pt",
+      "period": 13,
+      "record_copy": "inputs/e6_p13__arith__s1__07e6cd811c5d.json",
+      "record_sha256": "4b734ce77fcf84590079b4130810626b32b2d045300123f0aafe402995c4b101",
+      "seed": 1,
+      "sha256": "1d45f3d6c864d6c0a235d2036b07d7d7af6b0a98934e14003a31790d86a817ce",
+      "source": "checkpoints/e6_calibration/e6_p13__arith__s1__07e6cd811c5d.pt"
+    }
+  ],
+  "root_branch": "prereg/e9-paired-window",
+  "root_commit": "5ce34b874584be86b39b97353f6fb76e347248cd",
+  "selection_rule": "E6 ArithScope-only, seed 1, one completed checkpoint per registered period; chosen before branch probe results. E8 checkpoint files are unavailable locally.",
+  "snapshot_utc": "2026-10-15T11:36:21.052372+00:00",
+  "source_sha256": {
+    "arithscope/__init__.py": "8e3fd1487e6811321f717f264965391283a63af12e232980bb767d17e2c0fa54",
+    "arithscope/arith.py": "02fd357820b7d516eddc612fa97e4de6935bbcde1f9f8895292a85badc8b3ac6",
+    "arithscope/attention.py": "8471bf990d0c36ae9fc9ca205fcbdc98a65e06fb186004b679dab98814e1d781",
+    "arithscope/bias.py": "3a6875dee41739f9bf3e34e28e6f5247ea5899dd22bcb63f3d87c0ceb9211b54",
+    "arithscope/flex.py": "fd7fac35f78d29554eb4eb9ef7de8b1fd51134159c5202b9190fd512c7b4efbc",
+    "arithscope/model.py": "6deaeb043fefb4c34a7b69b23cd056b143fe01b77b6f3185b75f09db1ebddcb2",
+    "arithscope/rope.py": "910aa7e72655bdd7498efb7f7aa62315b09551298619291a10c83615f765e562",
+    "arithscope/tasks.py": "3bec96aa73dd73c662c5118121bc0ee76a94aea26b6625e4e97f52b9eaa67df9",
+    "arithscope/theory.py": "2d95c51989b53a20d42a972e17e09c5783caf1bd34241a88e721fda87cc804e6",
+    "arithscope/train.py": "2ef49d85cb10e0da5f9ecac3a3a49b8e092aa89141d4a0ca8fd9e29fd00cfead"
+  }
+}

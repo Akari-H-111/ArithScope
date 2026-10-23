@@ -1,0 +1,252 @@
+{
+ "status": "E10 seed-count plan (research/evidence_readout/2026-10-23/E10_SPEC.md)",
+ "target_joint_power": 0.9,
+ "ucl": 0.8,
+ "alpha_one_sided": 0.025,
+ "n_min": 5,
+ "n_cap": 20,
+ "spread_seeds": [
+  1000,
+  1001,
+  1002,
+  1003
+ ],
+ "stop_reasons": [],
+ "assumption_arith_ev_far_nll": {
+  "threshold": 0.001,
+  "values": {
+   "12": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "13": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  "holds": true
+ },
+ "claims": {
+  "V1": {
+   "parts": [
+    {
+     "name": "far NLL of ArithScope alone (D = -far NLL)",
+     "period": 12,
+     "n_values": 36,
+     "mean": -0.06432292875575109,
+     "sd": 0.031108610320778177,
+     "spread_ucl": 0.03488286957406337,
+     "d": 1.843968960729579,
+     "d_point_sd": 2.0676889161065573,
+     "stop": null
+    },
+    {
+     "name": "far NLL of ArithScope alone (D = -far NLL)",
+     "period": 13,
+     "n_values": 36,
+     "mean": -0.06526352585448573,
+     "sd": 0.04174594033626591,
+     "spread_ucl": 0.04681077608355756,
+     "d": 1.394198757525188,
+     "d_point_sd": 1.5633502402577195,
+     "stop": null
+    }
+   ],
+   "n_needed": 8,
+   "power_at_n": [
+    0.9930185565899932,
+    0.9200137088906815
+   ],
+   "joint_power_at_n": 0.9135906852456307
+  },
+  "V2": {
+   "parts": [
+    {
+     "name": "arith_ev excess NLL at 1,024",
+     "period": 12,
+     "n_values": 4,
+     "mean": 0.0001277880872420506,
+     "sd": 6.249355478112405e-05,
+     "spread_ucl": 0.00010796307120207024,
+     "d": 45.128504205283505,
+     "d_point_sd": 77.96343046610598,
+     "stop": null
+    },
+    {
+     "name": "arith_ev excess NLL at 1,024",
+     "period": 13,
+     "n_values": 4,
+     "mean": 6.269635173621058e-05,
+     "sd": 0.00010937120594200245,
+     "spread_ucl": 0.00018894830572414926,
+     "d": 26.13044678723869,
+     "d_point_sd": 45.142627858395855,
+     "stop": null
+    }
+   ],
+   "n_needed": 5,
+   "power_at_n": [
+    1.0,
+    1.0
+   ],
+   "joint_power_at_n": 1.0
+  },
+  "V3": {
+   "parts": [
+    {
+     "name": "far NLL arith_evfund - arith_ev",
+     "period": 13,
+     "n_values": 4,
+     "mean": 13.909826517105103,
+     "sd": 0.7217257344003662,
+     "spread_ucl": 1.2468442085641853,
+     "d": 11.15602608695042,
+     "d_point_sd": 19.27300892029553,
+     "stop": null
+    },
+    {
+     "name": "far accuracy arith_ev - arith_evfund",
+     "period": 13,
+     "n_values": 4,
+     "mean": 0.5477218627929688,
+     "sd": 0.017050896269507558,
+     "spread_ucl": 0.029456911747961334,
+     "d": 15.199212552346221,
+     "d_point_sd": 26.25796648552946,
+     "stop": null
+    }
+   ],
+   "n_needed": 5,
+   "power_at_n": [
+    1.0,
+    1.0
+   ],
+   "joint_power_at_n": 1.0
+  },
+  "V4": {
+   "parts": [
+    {
+     "name": "far accuracy rope_ev - rope",
+     "period": 12,
+     "n_values": 4,
+     "mean": 0.5146102905273438,
+     "sd": 0.04866564340203236,
+     "spread_ucl": 0.08407414719981905,
+     "d": 3.7420574695763413,
+     "d_point_sd": 6.46473093817568,
+     "stop": null
+    },
+    {
+     "name": "far NLL rope_ev - rope",
+     "period": 12,
+     "n_values": 4,
+     "mean": -2.013576105237007,
+     "sd": 0.11137689026982671,
+     "spread_ucl": 0.19241330048484373,
+     "d": 10.46484884445717,
+     "d_point_sd": 18.078939898203537,
+     "stop": null
+    },
+    {
+     "name": "far accuracy rope_ev - rope",
+     "period": 13,
+     "n_values": 4,
+     "mean": 0.6189346313476562,
+     "sd": 0.11765483119667666,
+     "spread_ucl": 0.20325899146308546,
+     "d": 2.0610878187090695,
+     "d_point_sd": 3.560709127595006,
+     "stop": null
+    },
+    {
+     "name": "far NLL rope_ev - rope",
+     "period": 13,
+     "n_values": 4,
+     "mean": -2.0972152799367905,
+     "sd": 0.2777164241945117,
+     "spread_ucl": 0.4797793657971382,
+     "d": 4.371207745569328,
+     "d_point_sd": 7.551642961051189,
+     "stop": null
+    }
+   ],
+   "n_needed": 5,
+   "power_at_n": [
+    0.9999999999939384,
+    1.0,
+    0.9984705781208858,
+    0.9999999999999999
+   ],
+   "joint_power_at_n": 0.9984705781148334
+  },
+  "B1": {
+   "parts": [
+    {
+     "name": "copy NLL at 256 arith_ev - arith",
+     "period": 12,
+     "n_values": 4,
+     "mean": 1.0263462960720062,
+     "sd": 0.03352862790264344,
+     "spread_ucl": 0.05792363155270815,
+     "d": 17.718956297449562,
+     "d_point_sd": 30.611043763919962,
+     "stop": null
+    },
+    {
+     "name": "copy NLL at 256 arith_ev - arith",
+     "period": 13,
+     "n_values": 4,
+     "mean": 1.09111750125885,
+     "sd": 0.011239820362475172,
+     "spread_ucl": 0.019417770846009146,
+     "d": 56.191697281415955,
+     "d_point_sd": 97.07606225644074,
+     "stop": null
+    }
+   ],
+   "n_needed": 5,
+   "power_at_n": [
+    1.0,
+    1.0
+   ],
+   "joint_power_at_n": 1.0
+  }
+ },
+ "n_seeds": 8,
+ "sensitivity": {
+  "point_sd": {
+   "overall": 7,
+   "per_claim": {
+    "V1": 7,
+    "V2": 5,
+    "V3": 5,
+    "V4": 5,
+    "B1": 5
+   }
+  },
+  "target_0.80": {
+   "overall": 7,
+   "per_claim": {
+    "V1": 7,
+    "V2": 5,
+    "V3": 5,
+    "V4": 5,
+    "B1": 5
+   }
+  },
+  "effect_halved": {
+   "overall": 25,
+   "per_claim": {
+    "V1": 25,
+    "V2": 5,
+    "V3": 5,
+    "V4": 12,
+    "B1": 5
+   }
+  }
+ }
+}

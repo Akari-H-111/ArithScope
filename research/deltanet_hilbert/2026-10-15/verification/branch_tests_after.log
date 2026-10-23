@@ -1,0 +1,15 @@
+test_change_point_and_order_are_distinct_from_mean (test_geometry.ExactGeometryTests.test_change_point_and_order_are_distinct_from_mean) ... ok
+test_exact_rank_and_mean (test_geometry.ExactGeometryTests.test_exact_rank_and_mean) ... ok
+test_orthogonal_write_preserves_other_address (test_geometry.ExactGeometryTests.test_orthogonal_write_preserves_other_address) ... ok
+test_simplex_cannot_store_constant_targets (test_geometry.ExactGeometryTests.test_simplex_cannot_store_constant_targets) ... ok
+test_gated_update_decays_before_residual (test_probe.OperatorTests.test_gated_update_decays_before_residual) ... ok
+test_nonunit_key_can_break_contraction (test_probe.OperatorTests.test_nonunit_key_can_break_contraction) ... ok
+test_primitive_features_match_both_grams (test_probe.OperatorTests.test_primitive_features_match_both_grams) ... ok
+test_recurrence_has_no_future_access (test_probe.OperatorTests.test_recurrence_has_no_future_access) ... ok
+test_sgd_and_matrix_oracle (test_probe.OperatorTests.test_sgd_and_matrix_oracle) ... ok
+test_tensor_product_blocks_cross_phase_content (test_probe.OperatorTests.test_tensor_product_blocks_cross_phase_content) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.168s
+
+OK

@@ -1,0 +1,30 @@
+{
+  "parent_commit": "5ce34b874584be86b39b97353f6fb76e347248cd",
+  "previous_branch_manifest_sha256": "74296ebb45344dc7c54c8011989dcc402be479ba65fa83d096a5448bc69e542e",
+  "snapshot_utc": "2026-10-15T11:59:04.949903+00:00",
+  "source_sha256": {
+    "arithscope/arith.py": "02fd357820b7d516eddc612fa97e4de6935bbcde1f9f8895292a85badc8b3ac6",
+    "arithscope/bias.py": "3a6875dee41739f9bf3e34e28e6f5247ea5899dd22bcb63f3d87c0ceb9211b54",
+    "arithscope/model.py": "6deaeb043fefb4c34a7b69b23cd056b143fe01b77b6f3185b75f09db1ebddcb2",
+    "arithscope/tasks.py": "3bec96aa73dd73c662c5118121bc0ee76a94aea26b6625e4e97f52b9eaa67df9",
+    "docs/CLAIM_LEDGER.md": "7bf1d29fa1a115375403eaa8de7ffd826154380329a7649d050f1e34216733bc",
+    "docs/MATH.md": "436edb8b6eeb997f95df1af8716f9568bda511b676cdd8d28d0c655355198422",
+    "reference/arithmetic_reference.py": "50d46c707c1cf280101fda773efa90d8a90653b79fb89975f52d8f3da42d8872"
+  },
+  "sources": [
+    {
+      "published_pdf": "https://proceedings.neurips.cc/paper_files/paper/2024/file/d13a3eae72366e61dfdc7eea82eeb685-Paper-Conference.pdf",
+      "title": "Parallelizing Linear Transformers with the Delta Rule over Sequence Length",
+      "url": "https://arxiv.org/abs/2406.06484v6"
+    },
+    {
+      "title": "Gated Delta Networks: Improving Mamba2 with Delta Rule",
+      "url": "https://proceedings.iclr.cc/paper_files/paper/2025/file/4904fad153f6434a7bcf04465d4be2cc-Paper-Conference.pdf"
+    },
+    {
+      "status": "PREPRINT; version dated 2026-09-29",
+      "title": "Kalman Delta Networks: Uncertainty-aware Associative Memory",
+      "url": "https://arxiv.org/abs/2609.07816v2"
+    }
+  ]
+}

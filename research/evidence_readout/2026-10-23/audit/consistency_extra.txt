@@ -1,0 +1,47 @@
+== 1. cosine_learned: window fold vs N ==
+P=12  frequency list (omega, amplitude, distance to nearest 2 pi a/P = delta, 1/delta):
+    omega=0.19040 amp=-0.1096 delta=0.19040  1/delta=5
+    omega=0.40502 amp=-0.0526 delta=0.11858  1/delta=8
+    omega=0.52412 amp=+0.7806 delta=0.00052  1/delta=1914
+    omega=0.52413 amp=+0.8171 delta=0.00054  1/delta=1867
+    omega=0.62697 amp=-0.0337 delta=0.10337  1/delta=10
+    omega=0.76736 amp=-0.0216 delta=0.24376  1/delta=4
+    omega=0.86906 amp=-0.0123 delta=0.17814  1/delta=6
+    omega=0.96743 amp=-0.0486 delta=0.07977  1/delta=13
+    omega=1.04407 amp=+1.5961 delta=0.00312  1/delta=320
+    omega=1.12607 amp=-0.0645 delta=0.07887  1/delta=13
+    omega=1.31358 amp=-0.0410 delta=0.25721  1/delta=4
+    omega=1.57364 amp=+1.5588 delta=0.00285  1/delta=351
+    omega=1.57540 amp=+0.0068 delta=0.00460  1/delta=217
+    omega=2.09605 amp=+1.5682 delta=0.00165  1/delta=605
+    omega=2.61720 amp=+1.5740 delta=0.00080  1/delta=1252
+    omega=3.13764 amp=+0.8151 delta=0.00396  1/delta=253
+  N=    8192: kappa_hat(0)=-0.19558  max_{s!=0}|kappa_hat(s)|=0.77620  sum|off|=4.49512  dominance margin=-4.69070
+  N=   65536: kappa_hat(0)=+0.02841  max_{s!=0}|kappa_hat(s)|=0.16016  sum|off|=0.66787  dominance margin=-0.63945
+  N=  262144: kappa_hat(0)=+0.00568  max_{s!=0}|kappa_hat(s)|=0.02853  sum|off|=0.11720  dominance margin=-0.11151
+  N= 1048576: kappa_hat(0)=+0.00393  max_{s!=0}|kappa_hat(s)|=0.00739  sum|off|=0.02904  dominance margin=-0.02511
+P=13  frequency list (omega, amplitude, distance to nearest 2 pi a/P = delta, 1/delta):
+    omega=0.09832 amp=-0.1313 delta=0.09832  1/delta=10
+    omega=0.18476 amp=-0.0385 delta=0.18476  1/delta=5
+    omega=0.18480 amp=-0.0884 delta=0.18480  1/delta=5
+    omega=0.29061 amp=-0.1296 delta=0.19272  1/delta=5
+    omega=0.38982 amp=-0.1382 delta=0.09351  1/delta=11
+    omega=0.48573 amp=+0.5540 delta=0.00240  1/delta=416
+    omega=0.58030 amp=-0.1619 delta=0.09698  1/delta=10
+    omega=0.68568 amp=-0.1188 delta=0.20236  1/delta=5
+    omega=0.79350 amp=-0.1225 delta=0.17314  1/delta=6
+    omega=0.96556 amp=+0.4409 delta=0.00109  1/delta=919
+    omega=1.45442 amp=+0.3398 delta=0.00445  1/delta=225
+    omega=1.63951 amp=-0.1004 delta=0.18954  1/delta=5
+    omega=1.85050 amp=-0.0764 delta=0.08279  1/delta=12
+    omega=2.13576 amp=-0.0427 delta=0.20248  1/delta=5
+    omega=2.80708 amp=-0.1498 delta=0.09285  1/delta=11
+    omega=2.98387 amp=-0.1594 delta=0.08394  1/delta=12
+  N=    8192: kappa_hat(0)=+0.03619  max_{s!=0}|kappa_hat(s)|=0.12037  sum|off|=0.76245  dominance margin=-0.72626
+  N=   65536: kappa_hat(0)=+0.00746  max_{s!=0}|kappa_hat(s)|=0.01184  sum|off|=0.08423  dominance margin=-0.07677
+  N=  262144: kappa_hat(0)=+0.00161  max_{s!=0}|kappa_hat(s)|=0.00447  sum|off|=0.02385  dominance margin=-0.02223
+  N= 1048576: kappa_hat(0)=+0.00011  max_{s!=0}|kappa_hat(s)|=0.00126  sum|off|=0.00641  dominance margin=-0.00629
+
+== 2. cosine_fund P=12, W=I: failure probability over random V=16 motifs ==
+fold = [5.806, 0.802, -1.132, 0.033, 0.63, -0.68, 1.477, -0.68, 0.63, 0.033, -1.132, 0.802]
+motifs with some non-positive linear-rate margin: 10 / 100000  (rule-of-three 95% upper bound ~ nan); worst margin seen -0.168

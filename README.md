@@ -206,6 +206,17 @@ The theory behind the floor is in [`docs/MATH.md`](docs/MATH.md):
 - **T8a:** a softmax average cannot see the total vote count.
 - **B1:** the Bayes NLL falls exponentially with the number of votes.
 
+### Counting the evidence: an opt-in readout (E10)
+
+E6–E9 lowered the NLL floor but could not remove it. A model that ends in a LayerNorm and a linear readout cannot follow the Bayes NLL to zero (P3), and a softmax average reports the share of votes on the comb, not their number (T8a), while the Bayes posterior sharpens with every vote. E10 tests the remedy this suggests ([`docs/PREREGISTRATION.md`](docs/PREREGISTRATION.md), Section 13; numbers in [`docs/RESULTS.md`](docs/RESULTS.md)). An *evidence head* adds kernel-weighted counts of earlier tokens to the logits after the final LayerNorm. Its output weights start at zero, so a model with the head equals the model without it at initialization.
+
+- **With an ArithScope kernel the floor disappears.** The NLL follows the exact Bayes NLL from the training length to 128× beyond it, at both periods. In every seed, gradient descent finds the construction of Theorem T9a: a kernel proportional to the exact comb indicator `D_P` and a scale near `log 17`, the Bayes value for this noise level.
+- **The exact basis matters where the theory says it should.** With the same 16 coefficients over fundamental cosines, the head fails at the prime period 13 and ties at period 12. In an unnormalized sum, an inexact kernel's errors grow with the count instead of being suppressed by the softmax ([`docs/MATH.md`](docs/MATH.md), T9b–T9d).
+- **It is a drop-in.** On RoPE alone, which fails to extrapolate, the same head restores the oracle's accuracy at 8,192 tokens.
+- **It has a preregistered limitation.** When each observation is copied four times at test time, the head treats the copies as independent evidence and does worse than no head at all (T9e). Its benefit depends on the independence of the evidence, which real data rarely guarantees.
+
+The head reads raw tokens with one kernel per model and is computed densely here; nothing is claimed about its cost, and it is untested on natural data.
+
 <!-- AUTO:overhead:BEGIN -->
 ### Cost
 
@@ -238,6 +249,7 @@ Negative results are kept, with their run files. The first three come from devel
 - **Not sub-quadratic.** The folded backend removes the `[N, N]` bias memory, not the quadratic attention compute.
 - **T5 is asymptotic.** A well-optimized RoPE head with large logits can hold a comb for thousands of tokens before it decays (see the theory figure above).
 - **Natural data is untested.** Periodic structure in real data is noisy and partial. Testing it is the first item in [`docs/HANDOFF.md`](docs/HANDOFF.md).
+- **The evidence head needs independent evidence.** It beats the readout floor on the synthetic task, whose observations are independent, and does harm when they are copied (E10, B1).
 
 ## Reproduce
 

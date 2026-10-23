@@ -1,0 +1,88 @@
+T9 checks (seed 20261023)
+  a_identity                   OK     EXACT
+  a_bayes_equality             OK     EXACT (float softmax comparison: NUMERICAL)
+  a_head_comb_counts           OK     EXACT
+  a_rate_bound                 OK     EXACT-ENUM (probabilities exact, logs float); the bound itself is PROVED in T9a
+  b_ramanujan_span             OK     EXACT (rank over Q on gcd-class representatives)
+  b_cosine_span                OK     EXACT (rank over Q of exact Fourier-coefficient vectors; characters are independent)
+  b_residual_counterexample    OK     EXACT
+  c_fold_projection            OK     EXACT
+  c_decomposition              OK     EXACT
+  c_dominance                  OK     EXACT
+  c_zero_mean_and_comb         OK     EXACT
+  d_algebra                    OK     EXACT (algebra of the limit formulas; the limits themselves are proved in T9 L9.1/T9d)
+  d_numeric                    OK     NUMERICAL (simulation, fixed seed 20261023)
+  e_dependence                 OK     EXACT-ENUM (exact probabilities/Fractions; log terms in floating point)
+
+(b) D_P in span{K_m}?  (exact)
+   default {1..16}                                      P=12  in_span=True  divisors_in_bank=True
+   default {1..16}                                      P=13  in_span=True  divisors_in_bank=True
+   default {1..16}                                      P=16  in_span=True  divisors_in_bank=True
+   default {1..16}                                      P=17  in_span=False divisors_in_bank=False
+   default {1..16}                                      P=24  in_span=False divisors_in_bank=False
+   B16 with order 1 {1,2,3,4,5,7,8,9,11,13,16}          P=12  in_span=False divisors_in_bank=False
+   B16 with order 1 {1,2,3,4,5,7,8,9,11,13,16}          P=13  in_span=True  divisors_in_bank=True
+   B16 as in MATH.md, order 1 excluded (10 orders)      P=13  in_span=False divisors_in_bank=False
+   divisors of 12                                       P=12  in_span=True  divisors_in_bank=True
+(b) cosines: P=12 harmonics a=0..6 in span of matched cosines: [(0, True), (1, True), (2, True), (3, True), (4, True), (5, False), (6, True)]
+    D_12 in span: False | prime P>=5 in span: [(5, False), (7, False), (11, False), (13, False), (17, False), (19, False), (23, False), (29, False), (31, False)]
+    P with D_P in span of matched cosines: [2, 3, 4, 6]
+(b) residual: P=3 delta=3/4 slope(W=I, /log rho)=-1/12 negative=True
+(b) residual: P=13 delta=1/10 slope(W=I, /log rho)=-1/130 negative=True
+(b) residual: P=13 delta=1/12 slope(W=I, /log rho)=0 negative=False
+(b) residual: P=13 delta=1/13 slope(W=I, /log rho)=1/338 negative=False
+(b) residual: P=13 delta=0 slope(W=I, /log rho)=1/26 negative=False
+
+(a) rate: a.s. slope per vote (p-nu)log(rho) vs expectation exponent -log(chi):
+    V=16: 1.416607 vs 0.363564 (chi=0.695194)
+    V=3: 0.693147 vs 0.182322 (chi=0.833333)
+
+(d) NUMERICAL table (P=13, V=16, eps=1/2; query residue 0, true=0, other=1):
+    kernel                                                    i   E_true/i  E_other/i      gap/i |  lim_true lim_other
+    D_13 (exact comb)                                       247    0.05263    0.00000    0.05263 |   0.04087   0.00240
+    D_13 (exact comb)                                      1014    0.04931    0.00099    0.04832 |   0.04087   0.00240
+    D_13 (exact comb)                                      4095    0.04420    0.00269    0.04151 |   0.04087   0.00240
+    D_13 (exact comb)                                     16380    0.03980    0.00250    0.03730 |   0.04087   0.00240
+    D_13 (exact comb)                                     65533    0.04073    0.00258    0.03815 |   0.04087   0.00240
+    (1+cos(2 pi n/13))/2  (exact period 13)                 247    0.05787    0.06361   -0.00574 |   0.05409   0.05188
+    (1+cos(2 pi n/13))/2  (exact period 13)                1014    0.06308    0.05292    0.01016 |   0.05409   0.05188
+    (1+cos(2 pi n/13))/2  (exact period 13)                4095    0.05632    0.05240    0.00392 |   0.05409   0.05188
+    (1+cos(2 pi n/13))/2  (exact period 13)               16380    0.05339    0.05166    0.00172 |   0.05409   0.05188
+    (1+cos(2 pi n/13))/2  (exact period 13)               65533    0.05411    0.05135    0.00276 |   0.05409   0.05188
+    (1+cos(n th))/2, th = 2pi/13*(1+1e-3)  (drift)          247    0.05792    0.06402   -0.00610 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi/13*(1+1e-3)  (drift)         1014    0.06255    0.05454    0.00802 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi/13*(1+1e-3)  (drift)         4095    0.04574    0.04832   -0.00258 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi/13*(1+1e-3)  (drift)        16380    0.03736    0.03852   -0.00116 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi/13*(1+1e-3)  (drift)        65533    0.03437    0.03460   -0.00023 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)     247    0.02129    0.04549   -0.02420 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)    1014    0.03436    0.03561   -0.00125 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)    4095    0.03616    0.03486    0.00131 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)   16380    0.03367    0.03480   -0.00113 |   0.03486   0.03486
+    (1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)   65533    0.03464    0.03416    0.00047 |   0.03486   0.03486
+
+(e) dependence, expected NLL (head = D_P count head, W = log(rho) I; copies k; m independent votes):
+      V   m   k |  E NLL Bayes | E NLL head (excess)
+      3   1   2 |     0.867563 |     1.041979 (+0.174416)   E[p_true]: head=11/18 bayes=1/2
+      3   1   4 |     0.867563 |     1.856175 (+0.988611)   E[p_true]: head=57/86 bayes=1/2
+      3   2   2 |     0.695406 |     0.827949 (+0.132543)   E[p_true]: head=3737/5676 bayes=65/108
+      3   2   4 |     0.695406 |     1.271761 (+0.576355)   E[p_true]: head=14935097/22413996 bayes=65/108
+      3   3   2 |     0.559656 |     0.698837 (+0.139181)   E[p_true]: head=1128559/1491672 bayes=181/264
+      3   3   4 |     0.559656 |     1.202580 (+0.642924)   E[p_true]: head=163255372777/210252095976 bayes=181/264
+      3   4   2 |     0.452504 |     0.570566 (+0.118062)   E[p_true]: head=98432087623/122918354064 bayes=130033/174064
+      3   4   4 |     0.452504 |     0.980487 (+0.527983)   E[p_true]: head=97946879979972856593503/120335655525882193060624 bayes=130033/174064
+      3   5   2 |     0.366763 |     0.467742 (+0.100980)   E[p_true]: head=211819493168994493/251605768874601504 bayes=92164451/115683552
+      3   5   4 |     0.366763 |     0.803343 (+0.436580)   E[p_true]: head=74944142689676899404383951139086351/88037369184210768079105774924146528 bayes=92164451/115683552
+      3   6   2 |     0.297945 |     0.384278 (+0.086333)   E[p_true]: head=73746021906682304314141/84355823976300385699008 bayes=2540185015/3039339072
+      3   6   4 |     0.297945 |     0.667823 (+0.369878)   E[p_true]: head=849447889958092990971697584765176335968144763/962840717314092292051770755698672758100501824 bayes=2540185015/3039339072
+     16   1   2 |     1.960591 |     2.706739 (+0.746147)   E[p_true]: head=77/152 bayes=19/64
+     16   1   4 |     1.960591 |     5.312455 (+3.351863)   E[p_true]: head=44371/83536 bayes=19/64
+     16   2   2 |     1.408892 |     1.832319 (+0.423427)   E[p_true]: head=1624717/3090832 bayes=273/608
+     16   2   4 |     1.408892 |     3.143566 (+1.734674)   E[p_true]: head=38691570042181/72833883598096 bayes=273/608
+     16   3   2 |     1.003989 |     1.288341 (+0.284352)   E[p_true]: head=227047576091/347756207084 bayes=188393/315392
+     16   3   4 |     1.003989 |     2.110715 (+1.106726)   E[p_true]: head=2608691420536813734331489831/3978168141886093301463478096 bayes=188393/315392
+     16   4   2 |     0.712113 |     0.928699 (+0.216586)   E[p_true]: head=4590049666561005691135471/6023865440475920371357936 bayes=452021913/636711392
+     16   4   4 |     0.712113 |     1.541057 (+0.828944)   E[p_true]: head=1536658694376356549306628577327143321258951832147432543/2009491819423369582503996918578447161833994474117387888 bayes=452021913/636711392
+    headline V=3, eps=1/2, k=2, m=1: E p_true head=11/18, bayes=1/2; E NLL head=1.041979276, bayes=0.867563228
+
+ALL EXACT/ENUM CHECKS OK: True
+wrote /private/tmp/claude-501/-Users-akari-hayami-64--claude-spares-spare-cj7Ax1/bf7f7b27-c7c0-4a54-b224-40f7e34e9990/scratchpad/results_t9_try1.json
