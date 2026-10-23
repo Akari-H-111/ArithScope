@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/Users/akari_hayami_64/ArithScope/research/metacognition/2026-10-15/probe.py", line 244, in <module>
+    main()
+    ~~~~^^
+  File "/Users/akari_hayami_64/ArithScope/research/metacognition/2026-10-15/probe.py", line 232, in main
+    result = payload()
+  File "/Users/akari_hayami_64/ArithScope/research/metacognition/2026-10-15/probe.py", line 223, in payload
+    "pointwise_collision": jacobian_collision(), "checkpoints": checkpoint_checks()}
+                                                                ~~~~~~~~~~~~~~~~~^^
+  File "/Users/akari_hayami_64/ArithScope/research/metacognition/2026-10-15/probe.py", line 162, in checkpoint_checks
+    period, vocab, noise = entry["period"], spec.task["vocab_size"], spec.task["noise"]
+                                            ~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'vocab_size'

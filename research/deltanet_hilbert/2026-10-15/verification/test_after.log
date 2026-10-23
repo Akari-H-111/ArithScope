@@ -1,0 +1,4 @@
+/Users/akari_hayami_64/mamba/envs/arithscope/bin/python -m pytest
+..................................s..................................... [ 88%]
+.........                                                                [100%]
+80 passed, 1 skipped in 34.58s

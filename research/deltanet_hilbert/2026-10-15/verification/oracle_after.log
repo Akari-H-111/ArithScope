@@ -1,0 +1,87 @@
+/usr/bin/python3 -m unittest discover -s tests -v
+test_alias_classes_divisor_closed_bank_are_gcd_classes_P1 (test_arith.ExactArithmeticTests) ... ok
+test_alias_fixture_banks (test_arith.ExactArithmeticTests) ... ok
+test_comb_gap_lemma_L2 (test_arith.ExactArithmeticTests) ... ok
+test_crt_comb_composition_T4 (test_arith.ExactArithmeticTests) ... ok
+test_divisor_formula_matches_closed_form_and_handoff_oracle (test_arith.ExactArithmeticTests) ... ok
+test_folded_rank_and_identifiability_modulus (test_arith.ExactArithmeticTests) ... ok
+test_input_validation (test_arith.ExactArithmeticTests) ... ok
+test_kernel_circulant_spectrum_is_nonnegative (test_arith.ExactArithmeticTests) ... ok
+test_kernel_closed_form_L1 (test_arith.ExactArithmeticTests) ... ok
+test_optimal_positive_definite_comb_T3 (test_arith.ExactArithmeticTests) ... ok
+test_prime_period_single_kernel_is_optimal (test_arith.ExactArithmeticTests) ... ok
+test_ramanujan_subspace_identities (test_arith.ExactArithmeticTests) ... ok
+test_c1 (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_c5 (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_descendants_sum (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_identifiability_modulus (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_invalid_router_keys (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_kernel_normalized_bounded (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_kernel_psd (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_mixture_gradient_numeric (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_phi (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_softmax_reduces_to_prior (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_trace_kernel_matches_feature_gram (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_white_integer_collapse (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_white_pointwise_identity (test_arithmetic_reference.ArithmeticReferenceTests) ... ok
+test_arith_only_model_is_exactly_shift_invariant (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_backends_agree (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_backends_agree_for_any_position_layout (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_backends_agree_with_padding_and_batched_positions (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_causality (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_compiled_flex_backend_matches_explicit (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_explicit_query_blocking_is_exact (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_flex_backend_matches_explicit (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_folded_backend_pads_head_dims_exactly (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_index_causality_equals_position_causality_for_increasing_positions (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_key_padding_and_fully_masked_rows (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_no_token_sees_a_later_token_for_any_position_layout (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_non_contiguous_input_and_long_positions (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_positions_outside_the_exact_int64_range_are_rejected (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_query_blocking_is_exact_for_any_position_layout (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_sparse_positions_cost_pairs_not_span (test_attention.BackendAndMaskTests) ... skipped 'torch not installed'
+test_alibi_plus_arith_equals_alibi (test_attention.GammaZeroEquivalenceTests) ... skipped 'torch not installed'
+test_arith_equals_nope (test_attention.GammaZeroEquivalenceTests) ... skipped 'torch not installed'
+test_rope_plus_arith_equals_rope (test_attention.GammaZeroEquivalenceTests) ... skipped 'torch not installed'
+test_zero_initialized_controls_equal_rope (test_attention.GammaZeroEquivalenceTests) ... skipped 'torch not installed'
+test_earlier_run_ids_are_unchanged (test_attention.KeyWindowTests) ... skipped 'torch not installed'
+test_model_windows_and_unchanged_initialization (test_attention.KeyWindowTests) ... skipped 'torch not installed'
+test_window_at_least_the_length_changes_nothing (test_attention.KeyWindowTests) ... skipped 'torch not installed'
+test_window_equals_attention_over_the_last_keys (test_attention.KeyWindowTests) ... skipped 'torch not installed'
+test_tiny_model_learns_a_periodic_sequence (test_attention.TrainingSmokeTests) ... skipped 'torch not installed'
+test_cosine_banks (test_bias.BaselineBiasTests) ... skipped 'torch not installed'
+test_learned_frequency_relative_alibi (test_bias.BaselineBiasTests) ... skipped 'torch not installed'
+test_ramanujan_span_is_inside_full_cosine_span (test_bias.BaselineBiasTests) ... skipped 'torch not installed'
+test_dense_shapes_offsets_and_symmetry (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_exact_shift_invariance (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_folded_features_reproduce_dense_bias (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_gamma_zero_is_exact_zero_and_alpha_gradient_trap (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_gradients_reach_mixture_when_gamma_nonzero (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_kernel_mixture_is_psd_with_unit_diagonal (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_matches_exact_mixture (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_rejects_float_positions_and_bad_orders (test_bias.RamanujanBiasTests) ... skipped 'torch not installed'
+test_no_reduction_stops (test_e9.SeedCountRuleTests) ... skipped 'torch/scipy not installed'
+test_noisy_effect_exceeds_the_budget (test_e9.SeedCountRuleTests) ... skipped 'torch/scipy not installed'
+test_plan (test_e9.SeedCountRuleTests) ... skipped 'torch/scipy not installed'
+test_power_increases_with_seeds (test_e9.SeedCountRuleTests) ... skipped 'torch/scipy not installed'
+test_accuracy_guard (test_e9.VerdictTests) ... skipped 'torch/scipy not installed'
+test_flat_or_falling_curve_is_falsified (test_e9.VerdictTests) ... skipped 'torch/scipy not installed'
+test_non_monotone_step_fails_s10_only (test_e9.VerdictTests) ... skipped 'torch/scipy not installed'
+test_rising_curve_is_supported (test_e9.VerdictTests) ... skipped 'torch/scipy not installed'
+test_sanity_detects_mixed_weights_and_test_sets (test_e9.VerdictTests) ... skipped 'torch/scipy not installed'
+test_slope (test_e9.VerdictTests) ... skipped 'torch/scipy not installed'
+test_suite_trains_without_a_window_and_windows_cover_the_sequence (test_e9.WindowEvaluationTests) ... skipped 'torch/scipy not installed'
+test_windows_reuse_one_checkpoint_and_the_full_window_is_the_plain_evaluation (test_e9.WindowEvaluationTests) ... skipped 'torch/scipy not installed'
+test_alias_vote_oracle_matches_brute_force (test_tasks.TaskOracleTests) ... skipped 'torch not installed'
+test_mqar_layout (test_tasks.TaskOracleTests) ... skipped 'torch not installed'
+test_periodic_oracle_matches_brute_force (test_tasks.TaskOracleTests) ... skipped 'torch not installed'
+test_query_positions_carry_no_evidence (test_tasks.TaskOracleTests) ... skipped 'torch not installed'
+test_samplers_are_deterministic (test_tasks.TaskOracleTests) ... skipped 'torch not installed'
+test_tagged_oracle_matches_brute_force (test_tasks.TaskOracleTests) ... skipped 'torch not installed'
+test_nll_never_beats_the_p3_bound (test_theory_notes.BoundedConfidenceTests) ... ok
+test_two_frequency_counterexample_keeps_residue_structure (test_theory_notes.LearnedFrequencyResonanceTests) ... ok
+
+----------------------------------------------------------------------
+Ran 81 tests in 5.628s
+
+OK (skipped=54)

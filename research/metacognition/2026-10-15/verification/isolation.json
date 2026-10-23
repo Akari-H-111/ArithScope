@@ -1,0 +1,21 @@
+{
+  "changed_parent_tracked_files": [],
+  "checked_utc": "2026-10-15T11:49:47.800948+00:00",
+  "checkpoint_checks": [
+    {
+      "copy_unchanged": true,
+      "original_unchanged": true,
+      "source": "checkpoints/e6_calibration/e6_p12__arith__s1__065307b3e4b6.pt"
+    },
+    {
+      "copy_unchanged": true,
+      "original_unchanged": true,
+      "source": "checkpoints/e6_calibration/e6_p13__arith__s1__07e6cd811c5d.pt"
+    }
+  ],
+  "current_parent_commit": "5ce34b874584be86b39b97353f6fb76e347248cd",
+  "initial_parent_commit": "5ce34b874584be86b39b97353f6fb76e347248cd",
+  "scope": "Only research/metacognition/2026-10-15 was written by this study; concurrent main experiment outputs are outside the tracked baseline.",
+  "shared_checkout_limit": "New untracked research files may affect concurrent git_dirty metadata. Shared hardware timings are not benchmark evidence.",
+  "tracked_files_checked": 535
+}

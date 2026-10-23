@@ -1,0 +1,2 @@
+/Users/akari_hayami_64/mamba/envs/arithscope/bin/python -m ruff check arithscope experiments tests examples
+All checks passed!

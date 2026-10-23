@@ -1,0 +1,11 @@
+{
+  "branch_tests": "10 passed",
+  "claims": "No model training, learned hybrid benefit, GPU, runtime, general calibration or main-line improvement claim",
+  "isolation": "535 main tracked files and 35 earlier-branch files unchanged",
+  "lint": "Root and branch passed",
+  "protocol": "One prospective addition of additive count reference; initial document retained; final protocol hash matches both outputs",
+  "replays": "Exact geometry, numerical mechanism and generated report passed",
+  "root_oracle": "Before and after: 81 tests, 54 expected skips with stdlib interpreter",
+  "root_tests": "Before and after: 80 passed, 1 expected skip",
+  "status": "PASS"
+}

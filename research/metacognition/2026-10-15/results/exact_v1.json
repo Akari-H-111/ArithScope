@@ -1,0 +1,159 @@
+{
+  "correlated_copies": [
+    {
+      "copies": 1,
+      "excess_brier": 0.0,
+      "excess_brier_exact": "0/1",
+      "naive_brier_exact": "1/2",
+      "naive_nll": 0.8675632284814613,
+      "proper_brier_exact": "1/2",
+      "proper_nll": 0.8675632284814613
+    },
+    {
+      "copies": 2,
+      "excess_brier": 0.07407407407407407,
+      "excess_brier_exact": "2/27",
+      "naive_brier_exact": "31/54",
+      "naive_nll": 1.0419792764029772,
+      "proper_brier_exact": "1/2",
+      "proper_nll": 0.8675632284814613
+    },
+    {
+      "copies": 4,
+      "excess_brier": 0.15900486749594375,
+      "excess_brier_exact": "294/1849",
+      "naive_brier_exact": "2437/3698",
+      "naive_nll": 1.8561746219352424,
+      "proper_brier_exact": "1/2",
+      "proper_nll": 0.8675632284814613
+    },
+    {
+      "copies": 8,
+      "excess_brier": 0.16663615141673443,
+      "excess_brier_exact": "59645042/357935787",
+      "naive_brier_exact": "477225871/715871574",
+      "naive_nll": 3.696815480098848,
+      "proper_brier_exact": "1/2",
+      "proper_nll": 0.8675632284814613
+    },
+    {
+      "copies": 32,
+      "excess_brier": 0.16666666666666666,
+      "excess_brier_exact": "4726143985013034212719453539473497202/28356863910078205294763465310550534827",
+      "naive_brier_exact": "37809151880104273720202372389497529231/56713727820156410589526930621101069654",
+      "naive_nll": 14.7871398519455,
+      "proper_brier_exact": "1/2",
+      "proper_nll": 0.8675632284814613
+    }
+  ],
+  "iid_risks": [
+    {
+      "bayes_brier": 0.6666666666666666,
+      "bayes_brier_exact": "2/3",
+      "bayes_nll": 1.0986122886681096,
+      "histories": 1,
+      "length": 0,
+      "probability_mass_exact": "1/1"
+    },
+    {
+      "bayes_brier": 0.5,
+      "bayes_brier_exact": "1/2",
+      "bayes_nll": 0.8675632284814613,
+      "histories": 3,
+      "length": 1,
+      "probability_mass_exact": "1/1"
+    },
+    {
+      "bayes_brier": 0.39814814814814814,
+      "bayes_brier_exact": "43/108",
+      "bayes_nll": 0.6954056861230046,
+      "histories": 9,
+      "length": 2,
+      "probability_mass_exact": "1/1"
+    },
+    {
+      "bayes_brier": 0.3143939393939394,
+      "bayes_brier_exact": "83/264",
+      "bayes_nll": 0.5596557209167344,
+      "histories": 27,
+      "length": 3,
+      "probability_mass_exact": "1/1"
+    },
+    {
+      "bayes_brier": 0.25295868186414194,
+      "bayes_brier_exact": "44031/174064",
+      "bayes_nll": 0.45250389793803547,
+      "histories": 81,
+      "length": 4,
+      "probability_mass_exact": "1/1"
+    },
+    {
+      "bayes_brier": 0.2033054880610858,
+      "bayes_brier_exact": "23519101/115683552",
+      "bayes_nll": 0.3667628270022438,
+      "histories": 243,
+      "length": 5,
+      "probability_mass_exact": "1/1"
+    },
+    {
+      "bayes_brier": 0.16423111906087456,
+      "bayes_brier_exact": "499154057/3039339072",
+      "bayes_nll": 0.29794532713140365,
+      "histories": 729,
+      "length": 6,
+      "probability_mass_exact": "1/1"
+    }
+  ],
+  "independent_histories_checked": 1093,
+  "protocol_sha256": "d614ddf610a39eaa342cb03fbdd2ae644a0aaa2ab96202cfc69bfe2f9913afc8",
+  "share_collision": {
+    "common_prediction_minimum_mean_brier_regret": 0.0030859374999627977,
+    "common_prediction_minimum_mean_brier_regret_exact": "392103418630175206615073722231789992356814728403/127061360975360714879119601718119114362194543539200",
+    "large_counts": [
+      20,
+      10,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "large_remaining_mass": 4.960332468187178e-13,
+    "large_remaining_mass_exact": "2015993900463/4064231406649588516302064",
+    "large_top_p": 0.999999999999504,
+    "large_top_p_exact": "4064231406647572522401601/4064231406649588516302064",
+    "same_shares_exact": true,
+    "small_counts": [
+      2,
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "small_top_p": 0.903125,
+    "small_top_p_exact": "289/320"
+  },
+  "source_sha256": "0bfcb77ce3eab8cbdd218032c805d3d59ff19dfbb7723717e7023f0dc16f2093",
+  "status": "EXACT FINITE CHECKS; LOG LOSSES NUMERICAL",
+  "suite": "mc_information_v1"
+}

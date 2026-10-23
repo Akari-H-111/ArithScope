@@ -1,0 +1,15 @@
+test_forward_collision_does_not_force_gradient_collision (test_probe.GradientChecks.test_forward_collision_does_not_force_gradient_collision) ... ok
+test_monitor_uses_only_prefix_and_preserves_weights (test_probe.GradientChecks.test_monitor_uses_only_prefix_and_preserves_weights) ... ok
+test_replication_invariance (test_probe.GradientChecks.test_replication_invariance) ... ok
+test_two_derivative_implementations (test_probe.GradientChecks.test_two_derivative_implementations) ... ok
+test_direct_binary_bayes_risk (test_study.ExactChecks.test_direct_binary_bayes_risk) ... ok
+test_duplicate_law_has_fixed_information (test_study.ExactChecks.test_duplicate_law_has_fixed_information) ... ok
+test_exchangeability_and_uniform_tie (test_study.ExactChecks.test_exchangeability_and_uniform_tie) ... ok
+test_original_task_collision_known_value (test_study.ExactChecks.test_original_task_collision_known_value) ... ok
+test_original_task_one_observation (test_study.ExactChecks.test_original_task_one_observation) ... ok
+test_reject_invalid_count_inputs (test_study.ExactChecks.test_reject_invalid_count_inputs) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.153s
+
+OK

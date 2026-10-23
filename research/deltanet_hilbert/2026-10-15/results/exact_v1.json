@@ -1,0 +1,138 @@
+{
+  "constant_recall": [
+    {
+      "geometry": "simplex",
+      "mean_squared_error": 1.59375,
+      "mean_squared_error_exact": "51/32",
+      "period": 3,
+      "rank": 2,
+      "readouts_exact": [
+        "-7/8",
+        "-1/8",
+        "1"
+      ]
+    },
+    {
+      "geometry": "orthogonal",
+      "mean_squared_error": 0.0,
+      "mean_squared_error_exact": "0",
+      "period": 3,
+      "rank": 3,
+      "readouts_exact": [
+        "1",
+        "1",
+        "1"
+      ]
+    },
+    {
+      "geometry": "simplex",
+      "mean_squared_error": 1.3001229070894627,
+      "mean_squared_error_exact": "1164169370956824008008836/895430243255237372246531",
+      "period": 12,
+      "rank": 11,
+      "readouts_exact": [
+        "-2353932024203/3138428376721",
+        "-2042682928991/3138428376721",
+        "-1703138461487/3138428376721",
+        "-1332726315119/3138428376721",
+        "-928640337263/3138428376721",
+        "-487819270511/3138428376721",
+        "-6923561327/3138428376721",
+        "517689939601/3138428376721",
+        "1089995576977/3138428376721",
+        "1714328999569/3138428376721",
+        "2395420006033/3138428376721",
+        "1"
+      ]
+    },
+    {
+      "geometry": "orthogonal",
+      "mean_squared_error": 0.0,
+      "mean_squared_error_exact": "0",
+      "period": 12,
+      "rank": 12,
+      "readouts_exact": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    },
+    {
+      "geometry": "simplex",
+      "mean_squared_error": 1.295162697736246,
+      "mean_squared_error_exact": "1235536213025637974105261711/953962166440690129601298432",
+      "period": 13,
+      "rank": 12,
+      "readouts_exact": [
+        "-79972595385853/106993205379072",
+        "-70313486566909/106993205379072",
+        "-59849452013053/106993205379072",
+        "-48513414579709/106993205379072",
+        "-36232707360253/106993205379072",
+        "-22928607872509/106993205379072",
+        "-8515833427453/106993205379072",
+        "7098005554691/106993205379072",
+        "24012997785347/106993205379072",
+        "42337572701891/106993205379072",
+        "62189195528147/106993205379072",
+        "83695120256591/106993205379072",
+        "1"
+      ]
+    },
+    {
+      "geometry": "orthogonal",
+      "mean_squared_error": 0.0,
+      "mean_squared_error_exact": "0",
+      "period": 13,
+      "rank": 13,
+      "readouts_exact": [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+      ]
+    }
+  ],
+  "kernel_identity": {
+    "period_max": 32,
+    "period_min": 2,
+    "residues_checked": 527
+  },
+  "order_and_drift": {
+    "change_point_fixed_exact": "175/256",
+    "change_point_mean_exact": "1/5",
+    "fixed_gain": "1/4",
+    "limiting_independent_sample_equivalent_exact": "7",
+    "same_multiset_fixed_a_exact": "1/4",
+    "same_multiset_fixed_b_exact": "3/16"
+  },
+  "protocol_sha256": "597d66982d931d06a8e6d9209f847bb2f9df49a95b0e9f66662d5227390ae445",
+  "running_mean": {
+    "additive_counts_exact": true,
+    "every_prefix_exact": true,
+    "period": 3,
+    "tokens_checked": 12,
+    "vocab": 4
+  },
+  "source_sha256": "d3746128f9dde72eb663362661abfacf220179fcd00fac49756f5e8f33c04885",
+  "status": "EXACT FINITE CHECKS",
+  "suite": "delta_hilbert_geometry_v1"
+}

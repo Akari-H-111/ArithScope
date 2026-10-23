@@ -1,0 +1,16 @@
+{
+  "checked_utc": "2026-10-15T12:15:22.863035+00:00",
+  "groups": {
+    "previous_branch": {
+      "changed_files": [],
+      "files_checked": 35
+    },
+    "tracked": {
+      "changed_files": [],
+      "files_checked": 535
+    }
+  },
+  "limits": "Shared checkout and hardware; untracked files can affect concurrent git_dirty metadata. Timing is not benchmark evidence.",
+  "parent_commit": "5ce34b874584be86b39b97353f6fb76e347248cd",
+  "scope": "Only research/deltanet_hilbert/2026-10-15 was written by this study. No main or prior-branch data was modified."
+}
