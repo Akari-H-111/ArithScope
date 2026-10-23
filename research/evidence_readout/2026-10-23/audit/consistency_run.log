@@ -1,0 +1,93 @@
+T9 vs pilot: consistency (referee). V=16 eps=0.50 p=0.53125 nu=0.03125 rho=17.0
+Pilot evaluation sizes: N=8192 -> 2 sequences, 4096 -> 4, 1024 -> 64 (eval_tokens 65536 / eval_tokens_long 16384)
+done P=12 arith      arith           kappa_P(0)=  8.8681  dom=   8.5730  lam_eff= 2.844  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=6s]
+done P=12 arith      cosine_fund     kappa_P(0)=  5.8065  dom=  -2.2252  lam_eff= 1.538  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=12s]
+done P=12 arith      cosine_full     kappa_P(0)=  9.7587  dom=   8.6861  lam_eff= 2.793  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=15s]
+done P=12 arith      cosine_learned  kappa_P(0)= -0.1955  dom=  -4.6903  lam_eff=-0.057  mc_all_pos(W=I)=0.000  pred_acc(finite)=0.052 obs_far_acc=0.050  [t=18s]
+done P=12 arith      uniform         kappa_P(0)=  1.0000  dom= -10.0000  lam_eff= 0.111  mc_all_pos(W=I)=0.000  pred_acc(finite)=0.212 obs_far_acc=0.292  [t=21s]
+done P=12 rope+arith arith           kappa_P(0)=  8.9314  dom=   8.6327  lam_eff= 2.844  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=24s]
+done P=12 rope       arith           kappa_P(0)=  8.7227  dom=   8.4282  lam_eff= 2.844  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=27s]
+done P=13 arith      arith           kappa_P(0)=  6.4369  dom=   6.3216  lam_eff= 2.838  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=32s]
+done P=13 arith      cosine_fund     kappa_P(0)=  0.9641  dom=  -4.4212  lam_eff= 0.209  mc_all_pos(W=I)=0.001  pred_acc(finite)=0.362 obs_far_acc=0.482  [t=39s]
+done P=13 arith      cosine_full     kappa_P(0)= 10.3014  dom=   7.8256  lam_eff= 2.761  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=42s]
+done P=13 arith      cosine_learned  kappa_P(0)=  0.0361  dom=  -0.7263  lam_eff= 0.008  mc_all_pos(W=I)=0.000  pred_acc(finite)=0.071 obs_far_acc=0.475  [t=46s]
+done P=13 arith      uniform         kappa_P(0)=  1.0000  dom= -11.0000  lam_eff= 0.088  mc_all_pos(W=I)=0.000  pred_acc(finite)=0.205 obs_far_acc=0.271  [t=49s]
+done P=13 rope+arith arith           kappa_P(0)=  6.6477  dom=   6.5353  lam_eff= 2.838  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=52s]
+done P=13 rope       arith           kappa_P(0)=  6.1767  dom=   6.0583  lam_eff= 2.838  mc_all_pos(W=I)=1.000  pred_acc(finite)=1.000 obs_far_acc=1.000  [t=56s]
+
+=== Summary table (arith-backbone arms; rope variants listed after) ===
+P   backbone    kernel             kP(0)  sum|off|  dom.marg lam_ef | MC W=I: allpos/respos/resneg | MC W=learned: allpos/respos/resneg | pred(acc,fin-i) obs far acc / far NLL
+12  arith       arith              8.868     0.295     8.573  2.844 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+12  arith       cosine_fund        5.806     8.032    -2.225  1.538 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+12  arith       cosine_full        9.759     1.073     8.686  2.793 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+12  arith       cosine_learned    -0.195     4.495    -4.690 -0.057 | 0.000 / 0.022 / 0.978        | 0.000 / 0.022 / 0.978           | 0.052  obs 0.050 / 104.068
+12  arith       uniform            1.000    11.000   -10.000  0.111 | 0.000 / 0.121 / 0.615        | 0.000 / 0.213 / 0.787           | 0.212  obs 0.292 / 19.986
+12  rope+arith  arith              8.931     0.299     8.633  2.844 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+12  rope        arith              8.723     0.294     8.428  2.844 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+13  arith       arith              6.437     0.115     6.322  2.838 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+13  arith       cosine_fund        0.964     5.385    -4.421  0.209 | 0.001 / 0.385 / 0.615        | 0.000 / 0.361 / 0.639           | 0.362  obs 0.482 / 9.642
+13  arith       cosine_full       10.301     2.476     7.826  2.761 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+13  arith       cosine_learned     0.036     0.762    -0.726  0.008 | 0.000 / 0.128 / 0.872        | 0.000 / 0.131 / 0.870           | 0.071  obs 0.475 / 3.081
+13  arith       uniform            1.000    12.000   -11.000  0.088 | 0.000 / 0.124 / 0.627        | 0.000 / 0.206 / 0.794           | 0.205  obs 0.271 / 14.469
+13  rope+arith  arith              6.648     0.112     6.535  2.838 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+13  rope        arith              6.177     0.118     6.058  2.838 | 1.000 / 1.000 / 0.000        | 1.000 / 1.000 / 0.000           | 1.000  obs 1.000 / 0.000
+
+=== Finite-i noise-free predicted far accuracy (mean over random motifs; SD over single motifs) with a crude base-network gap G0 ===
+P=12 arith      arith          G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=12 arith      cosine_fund    G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=12 arith      cosine_full    G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=12 arith      cosine_learned G0=0.0: 0.052(sd 0.046)  G0=2.0: 0.055(sd 0.047)  G0=4.0: 0.058(sd 0.048)  G0=6.0: 0.062(sd 0.048)   | obs far acc 0.050 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=12 arith      uniform        G0=0.0: 0.212(sd 0.056)  G0=2.0: 0.229(sd 0.066)  G0=4.0: 0.250(sd 0.077)  G0=6.0: 0.271(sd 0.086)   | obs far acc 0.292 ; P(2-motif mean within 0.1 of obs): G0=0 0.72, G0=4 0.88
+P=12 rope+arith arith          G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=12 rope       arith          G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=13 arith      arith          G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=13 arith      cosine_fund    G0=0.0: 0.362(sd 0.087)  G0=2.0: 0.390(sd 0.089)  G0=4.0: 0.421(sd 0.095)  G0=6.0: 0.451(sd 0.102)   | obs far acc 0.482 ; P(2-motif mean within 0.1 of obs): G0=0 0.46, G0=4 0.75
+P=13 arith      cosine_full    G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=13 arith      cosine_learned G0=0.0: 0.071(sd 0.041)  G0=2.0: 0.107(sd 0.051)  G0=4.0: 0.207(sd 0.072)  G0=6.0: 0.335(sd 0.085)   | obs far acc 0.475 ; P(2-motif mean within 0.1 of obs): G0=0 0.00, G0=4 0.00
+P=13 arith      uniform        G0=0.0: 0.205(sd 0.055)  G0=2.0: 0.229(sd 0.070)  G0=4.0: 0.256(sd 0.084)  G0=6.0: 0.287(sd 0.099)   | obs far acc 0.271 ; P(2-motif mean within 0.1 of obs): G0=0 0.79, G0=4 0.91
+P=13 rope+arith arith          G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+P=13 rope       arith          G0=0.0: 1.000(sd 0.000)  G0=2.0: 1.000(sd 0.000)  G0=4.0: 1.000(sd 0.000)  G0=6.0: 1.000(sd 0.000)   | obs far acc 1.000 ; P(2-motif mean within 0.1 of obs): G0=0 1.00, G0=4 1.00
+
+=== Sanity: checkpoint vs JSON ===
+P=12 arith      arith           max|kappa(n)-json row|(n<2P)=3.47e-18   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=2.70e-12
+P=12 arith      cosine_fund     max|kappa(n)-json row|(n<2P)=3.33e-16   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=2.58e-14
+P=12 arith      cosine_full     max|kappa(n)-json row|(n<2P)=2.71e-16   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=12 arith      cosine_learned  max|kappa(n)-json row|(n<2P)=4.44e-16   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=12 arith      uniform         max|kappa(n)-json row|(n<2P)=nan   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=12 rope+arith arith           max|kappa(n)-json row|(n<2P)=0.00e+00   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=12 rope       arith           max|kappa(n)-json row|(n<2P)=0.00e+00   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=13 arith      arith           max|kappa(n)-json row|(n<2P)=1.04e-17   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=3.22e-12
+P=13 arith      cosine_fund     max|kappa(n)-json row|(n<2P)=2.22e-16   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=1.04e-14
+P=13 arith      cosine_full     max|kappa(n)-json row|(n<2P)=4.93e-16   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=13 arith      cosine_learned  max|kappa(n)-json row|(n<2P)=1.11e-16   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=13 arith      uniform         max|kappa(n)-json row|(n<2P)=nan   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=13 rope+arith arith           max|kappa(n)-json row|(n<2P)=2.86e-17   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+P=13 rope       arith           max|kappa(n)-json row|(n<2P)=1.04e-17   max|W diag/off mean - json|=0.00e+00   fold brute-force dev=-
+
+=== Window-fold dominance margins (all arms; N = window length) ===
+P=12 arith      arith          exact=8.573  win256=8.569  win1024=8.573  win4096=8.573  win8192=8.573
+P=12 arith      cosine_fund    exact=-2.225  win256=-2.236  win1024=-2.231  win4096=-2.225  win8192=-2.226
+P=12 arith      cosine_full    exact=8.686  win256=8.484  win1024=8.600  win4096=8.722  win8192=8.688
+P=12 arith      cosine_learned win256=-0.182  win1024=-11.916  win4096=-9.697  win8192=-4.690
+P=12 arith      uniform        exact=-10.000  win256=-10.000  win1024=-10.000  win4096=-10.000  win8192=-10.000
+P=12 rope+arith arith          exact=8.633  win256=8.629  win1024=8.633  win4096=8.632  win8192=8.633
+P=12 rope       arith          exact=8.428  win256=8.425  win1024=8.428  win4096=8.428  win8192=8.428
+P=13 arith      arith          exact=6.322  win256=6.322  win1024=6.322  win4096=6.322  win8192=6.322
+P=13 arith      cosine_fund    exact=-4.421  win256=-4.431  win1024=-4.435  win4096=-4.423  win8192=-4.422
+P=13 arith      cosine_full    exact=7.826  win256=8.093  win1024=7.704  win4096=7.834  win8192=7.828
+P=13 arith      cosine_learned win256=-3.268  win1024=-3.716  win4096=-1.463  win8192=-0.726
+P=13 arith      uniform        exact=-11.000  win256=-11.000  win1024=-11.000  win4096=-11.000  win8192=-11.000
+P=13 rope+arith arith          exact=6.535  win256=6.536  win1024=6.536  win4096=6.535  win8192=6.535
+P=13 rope       arith          exact=6.058  win256=6.059  win1024=6.059  win4096=6.058  win8192=6.058
+
+=== fold values kappa_P(s) (arith backbone arms) ===
+P=12 arith          (exact): 8.868 0.007 0.061 -0.056 -0.010 0.007 0.010 0.007 -0.010 -0.056 0.061 0.007
+P=12 cosine_fund    (exact): 5.806 0.802 -1.132 0.033 0.630 -0.680 1.477 -0.680 0.630 0.033 -1.132 0.802
+P=12 cosine_full    (exact): 9.759 -0.134 -0.023 -0.059 0.078 0.149 0.186 0.149 0.078 -0.059 -0.023 -0.134
+P=12 cosine_learned (win8192): -0.195 -0.776 -0.510 -0.366 -0.459 0.003 0.490 0.586 0.529 0.462 0.280 -0.033
+P=12 uniform        (exact): 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000
+P=13 arith          (exact): 6.437 0.010 0.010 0.010 0.010 0.010 0.010 0.010 0.010 0.010 0.010 0.010 0.010
+P=13 cosine_fund    (exact): 0.964 0.910 0.759 0.546 0.320 0.132 0.027 0.027 0.132 0.320 0.546 0.759 0.910
+P=13 cosine_full    (exact): 10.301 -0.265 -0.208 -0.061 0.116 0.232 0.357 0.357 0.232 0.116 -0.061 -0.208 -0.265
+P=13 cosine_learned (win8192): 0.036 0.097 0.088 0.001 -0.101 -0.120 -0.042 0.058 0.085 0.034 -0.037 -0.065 -0.034
+P=13 uniform        (exact): 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000

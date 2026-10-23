@@ -4,7 +4,7 @@ PY ?= python3
 WORKERS ?= 4
 SUITES = e1_periodic e2_alias e3_tagged e5_mixed
 
-.PHONY: help oracle test lint theory pilots experiments e6 e7 e8 e9 analyze lab bench all
+.PHONY: help oracle test lint theory pilots experiments e6 e7 e8 e9 e10 analyze lab bench all
 
 help:  ## list targets
 	@grep -E '^[a-z0-9_]+:.*## ' $(MAKEFILE_LIST) | sed 's/:.*## /\t/'
@@ -44,6 +44,11 @@ e9:  ## E9 paired window dose-response (Section 12): train once per seed, evalua
 	$(PY) experiments/run_suite.py e9_paired_window --workers $(WORKERS)
 	$(PY) experiments/e9_window_eval.py --workers $(WORKERS)
 	$(PY) experiments/e9_verdicts.py
+
+e10:  ## E10 evidence head (E10_SPEC.md): train, evaluate every checkpoint on the copied law, then verdicts
+	$(PY) experiments/run_suite.py e10_evidence --workers $(WORKERS)
+	$(PY) experiments/e10_copy_eval.py --suite e10_evidence --workers $(WORKERS)
+	$(PY) experiments/e10_verdicts.py
 
 analyze:  ## regenerate every results table/figure from run JSON files
 	$(PY) experiments/analyze.py

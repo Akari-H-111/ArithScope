@@ -1,0 +1,3695 @@
+{
+  "a_bayes_equality": {
+    "cases": [
+      {
+        "V": 3,
+        "count_vectors_float_checked": 84,
+        "eps": "1/2",
+        "exact_mismatches": 0,
+        "max_abs_err_float_softmax_vs_exact (NUMERICAL)": 5.551115123125783e-17,
+        "n_max": 6,
+        "nu": "1/6",
+        "ok": true,
+        "p": "2/3",
+        "rho": "4",
+        "sequences_checked": 1093
+      },
+      {
+        "V": 4,
+        "count_vectors_float_checked": 70,
+        "eps": "1/3",
+        "exact_mismatches": 0,
+        "max_abs_err_float_softmax_vs_exact (NUMERICAL)": 2.220446049250313e-16,
+        "n_max": 4,
+        "nu": "1/12",
+        "ok": true,
+        "p": "3/4",
+        "rho": "9",
+        "sequences_checked": 341
+      },
+      {
+        "V": 16,
+        "count_vectors_float_checked": 969,
+        "eps": "1/2",
+        "exact_mismatches": 0,
+        "max_abs_err_float_softmax_vs_exact (NUMERICAL)": 1.5543122344752192e-15,
+        "n_max": 3,
+        "nu": "1/32",
+        "ok": true,
+        "p": "17/32",
+        "rho": "17",
+        "sequences_checked": 4369
+      }
+    ],
+    "label": "EXACT (float softmax comparison: NUMERICAL)",
+    "ok": true,
+    "statement": "softmax(log rho * counts) == product-likelihood posterior, exactly"
+  },
+  "a_head_comb_counts": {
+    "Ps": [
+      7,
+      12,
+      13
+    ],
+    "failures": [],
+    "label": "EXACT",
+    "length": 90,
+    "ok": true
+  },
+  "a_identity": {
+    "P_range": [
+      2,
+      32
+    ],
+    "failures": [],
+    "label": "EXACT",
+    "offsets": "n in [-3P, 3P]",
+    "ok": true,
+    "statement": "D_P(n) = sum_{m|P} phi(m)/P K_m(n) = 1[P | n]; weights phi(m)/P sum to 1",
+    "weights_sum_to_one": true
+  },
+  "a_rate_bound": {
+    "cases": [
+      {
+        "V": 16,
+        "as_slope_per_vote_(p-nu)log(rho)": 1.416606672028108,
+        "chi": 0.6951941016011038,
+        "eps": "1/2",
+        "expectation_exponent_-log(chi)": 0.3635641895302624,
+        "nu": "1/32",
+        "p": "17/32",
+        "rho": "17",
+        "rows": [
+          {
+            "B=0": {
+              "E_NLL": 1.960591313769862,
+              "E_NLL / chi^m": 2.820207060523698,
+              "bound (V-1) e^{B/2} chi^m": 10.427911524016558,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 2.7338552125853615,
+              "E_NLL / chi^m": 3.9325063407313303,
+              "bound (V-1) e^{B/2} chi^m": 17.192719538625088,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 4.573101593660363,
+              "E_NLL / chi^m": 6.578165124140204,
+              "bound (V-1) e^{B/2} chi^m": 46.73465710363735,
+              "ok": true
+            },
+            "chi_pow_m": 0.6951941016011038,
+            "m": 1
+          },
+          {
+            "B=0": {
+              "E_NLL": 1.408891631589853,
+              "E_NLL / chi^m": 2.915180378904388,
+              "bound (V-1) e^{B/2} chi^m": 7.249422583514489,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 2.0206571795666806,
+              "E_NLL / chi^m": 4.181003017043893,
+              "bound (V-1) e^{B/2} chi^m": 11.952277213734213,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 3.5410066374304754,
+              "E_NLL / chi^m": 7.326804162616102,
+              "bound (V-1) e^{B/2} chi^m": 32.48965795879882,
+              "ok": true
+            },
+            "chi_pow_m": 0.4832948389009659,
+            "m": 2
+          },
+          {
+            "B=0": {
+              "E_NLL": 1.0039894486536833,
+              "E_NLL / chi^m": 2.9882086091994013,
+              "bound (V-1) e^{B/2} chi^m": 5.039755820073108,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 1.457326389912866,
+              "E_NLL / chi^m": 4.337491066854085,
+              "bound (V-1) e^{B/2} chi^m": 8.309152619689302,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 2.6899360712505285,
+              "E_NLL / chi^m": 8.006150001960336,
+              "bound (V-1) e^{B/2} chi^m": 22.586618575994297,
+              "ok": true
+            },
+            "chi_pow_m": 0.3359837213382072,
+            "m": 3
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.7121131515780943,
+              "E_NLL / chi^m": 3.048770207584649,
+              "bound (V-1) e^{B/2} chi^m": 3.5036085196246587,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 1.0456057597843822,
+              "E_NLL / chi^m": 4.476552191523375,
+              "bound (V-1) e^{B/2} chi^m": 5.776473890511362,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 2.013683761196941,
+              "E_NLL / chi^m": 8.621184772432851,
+              "bound (V-1) e^{B/2} chi^m": 15.702084009145159,
+              "ok": true
+            },
+            "chi_pow_m": 0.23357390130831057,
+            "m": 4
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.5042001061662489,
+              "E_NLL / chi^m": 3.105078180541247,
+              "bound (V-1) e^{B/2} chi^m": 2.435687977162438,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.7501546265177637,
+              "E_NLL / chi^m": 4.619770472766114,
+              "bound (V-1) e^{B/2} chi^m": 4.015770576736279,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 1.491428110893974,
+              "E_NLL / chi^m": 9.184847104049915,
+              "bound (V-1) e^{B/2} chi^m": 10.915996186002726,
+              "ok": true
+            },
+            "chi_pow_m": 0.16237919847749585,
+            "m": 5
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.3564821196464094,
+              "E_NLL / chi^m": 3.1579211321232745,
+              "bound (V-1) e^{B/2} chi^m": 1.693275915064051,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.5371066241748204,
+              "E_NLL / chi^m": 4.757995605410564,
+              "bound (V-1) e^{B/2} chi^m": 2.7917400183303243,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 1.0957712646477011,
+              "E_NLL / chi^m": 9.70696436622603,
+              "bound (V-1) e^{B/2} chi^m": 7.588736161609242,
+              "ok": true
+            },
+            "chi_pow_m": 0.11288506100427007,
+            "m": 6
+          }
+        ]
+      },
+      {
+        "V": 3,
+        "as_slope_per_vote_(p-nu)log(rho)": 0.6931471805599453,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "expectation_exponent_-log(chi)": 0.1823215567939547,
+        "nu": "1/6",
+        "p": "2/3",
+        "rho": "4",
+        "rows": [
+          {
+            "B=0": {
+              "E_NLL": 0.8675632284814612,
+              "E_NLL / chi^m": 1.0410758741777535,
+              "bound (V-1) e^{B/2} chi^m": 1.6666666666666665,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 1.4656760024544078,
+              "E_NLL / chi^m": 1.7588112029452896,
+              "bound (V-1) e^{B/2} chi^m": 2.747868784500213,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 3.1409658764802377,
+              "E_NLL / chi^m": 3.7691590517762856,
+              "bound (V-1) e^{B/2} chi^m": 7.469481783896773,
+              "ok": true
+            },
+            "chi_pow_m": 0.8333333333333333,
+            "m": 1
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.6954056861230045,
+              "E_NLL / chi^m": 1.0013841880171266,
+              "bound (V-1) e^{B/2} chi^m": 1.3888888888888886,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 1.1760015567394422,
+              "E_NLL / chi^m": 1.693442241704797,
+              "bound (V-1) e^{B/2} chi^m": 2.2898906537501778,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 2.6147718127865978,
+              "E_NLL / chi^m": 3.7652714104127014,
+              "bound (V-1) e^{B/2} chi^m": 6.2245681532473105,
+              "ok": true
+            },
+            "chi_pow_m": 0.6944444444444443,
+            "m": 2
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.5596557209167345,
+              "E_NLL / chi^m": 0.9670850857441177,
+              "bound (V-1) e^{B/2} chi^m": 1.157407407407407,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.9448983960785211,
+              "E_NLL / chi^m": 1.632784428423685,
+              "bound (V-1) e^{B/2} chi^m": 1.908242211458481,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 2.1679535977592908,
+              "E_NLL / chi^m": 3.746223816928056,
+              "bound (V-1) e^{B/2} chi^m": 5.187140127706091,
+              "ok": true
+            },
+            "chi_pow_m": 0.5787037037037035,
+            "m": 3
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.45250389793803547,
+              "E_NLL / chi^m": 0.9383120827643108,
+              "bound (V-1) e^{B/2} chi^m": 0.9645061728395058,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.7642862906199204,
+              "E_NLL / chi^m": 1.5848240522294674,
+              "bound (V-1) e^{B/2} chi^m": 1.5902018428820675,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 1.7904652830727794,
+              "E_NLL / chi^m": 3.712708810979717,
+              "bound (V-1) e^{B/2} chi^m": 4.322616773088409,
+              "ok": true
+            },
+            "chi_pow_m": 0.4822530864197529,
+            "m": 4
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.3667628270022438,
+              "E_NLL / chi^m": 0.9126232776862236,
+              "bound (V-1) e^{B/2} chi^m": 0.8037551440329215,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.6190549385289087,
+              "E_NLL / chi^m": 1.5404067846402547,
+              "bound (V-1) e^{B/2} chi^m": 1.3251682024017228,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 1.476985590356341,
+              "E_NLL / chi^m": 3.675212784195492,
+              "bound (V-1) e^{B/2} chi^m": 3.602180644240341,
+              "ok": true
+            },
+            "chi_pow_m": 0.40187757201646074,
+            "m": 5
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.2979453271314037,
+              "E_NLL / chi^m": 0.8896599796891379,
+              "bound (V-1) e^{B/2} chi^m": 0.6697959533607678,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.5027694473720519,
+              "E_NLL / chi^m": 1.5012615255417898,
+              "bound (V-1) e^{B/2} chi^m": 1.104306835334769,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 1.2170133747043266,
+              "E_NLL / chi^m": 3.633982464653126,
+              "bound (V-1) e^{B/2} chi^m": 3.001817203533617,
+              "ok": true
+            },
+            "chi_pow_m": 0.3348979766803839,
+            "m": 6
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.2424671932917575,
+              "E_NLL / chi^m": 0.8688037916329148,
+              "bound (V-1) e^{B/2} chi^m": 0.5581632944673065,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.40907130113492784,
+              "E_NLL / chi^m": 1.4657764320576925,
+              "bound (V-1) e^{B/2} chi^m": 0.9202556961123074,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 1.0020826446586804,
+              "E_NLL / chi^m": 3.590643292354208,
+              "bound (V-1) e^{B/2} chi^m": 2.501514336278014,
+              "ok": true
+            },
+            "chi_pow_m": 0.27908164723365325,
+            "m": 7
+          },
+          {
+            "B=0": {
+              "E_NLL": 0.19760623306056604,
+              "E_NLL / chi^m": 0.8496706323155352,
+              "bound (V-1) e^{B/2} chi^m": 0.46513607872275536,
+              "ok": true
+            },
+            "B=1": {
+              "E_NLL": 0.3332761761222525,
+              "E_NLL / chi^m": 1.4330265544544094,
+              "bound (V-1) e^{B/2} chi^m": 0.766879746760256,
+              "ok": true
+            },
+            "B=3": {
+              "E_NLL": 0.8248988658455867,
+              "E_NLL / chi^m": 3.5469141336476206,
+              "bound (V-1) e^{B/2} chi^m": 2.084595280231678,
+              "ok": true
+            },
+            "chi_pow_m": 0.23256803936137768,
+            "m": 8
+          }
+        ]
+      }
+    ],
+    "label": "NUMERICAL (probabilities exact Fractions, logarithms floating point); the bound itself is PROVED in T9a",
+    "ok": true
+  },
+  "a_tightness": {
+    "cases": [
+      {
+        "E_NLL_ge_log2_Pr(S_m>=0)_m=1..6": true,
+        "V": 16,
+        "chi": 0.6951941016011038,
+        "eps": "1/2",
+        "rows": [
+          {
+            "(1/n)log Pr - log chi": -0.13526758509712533,
+            "Pr(S_n>=0)": 0.006817122982022639,
+            "chi^n": 0.026367004098193994,
+            "lower_bound": 0.00013927513587530136,
+            "n": 10,
+            "sqrt(n) Pr / chi^n": 0.8175989821364357
+          },
+          {
+            "(1/n)log Pr - log chi": -0.07122373899698758,
+            "Pr(S_n>=0)": 1.902611187318528e-05,
+            "chi^n": 0.00011288908857884262,
+            "lower_bound": 6.338453476065644e-08,
+            "n": 25,
+            "sqrt(n) Pr / chi^n": 0.8426904722460088
+          },
+          {
+            "(1/n)log Pr - log chi": -0.04229764000539149,
+            "Pr(S_n>=0)": 1.5375255833905607e-09,
+            "chi^n": 1.2743946320161776e-08,
+            "lower_bound": 5.721970860830094e-13,
+            "n": 50,
+            "sqrt(n) Pr / chi^n": 0.8531068312358263
+          },
+          {
+            "(1/n)log Pr - log chi": -0.024547326302629457,
+            "Pr(S_n>=0)": 1.3948613192528562e-17,
+            "chi^n": 1.6240816781116487e-16,
+            "lower_bound": 2.048002765498339e-22,
+            "n": 100,
+            "sqrt(n) Pr / chi^n": 0.8588615573046108
+          },
+          {
+            "(1/n)log Pr - log chi": -0.013988861527668428,
+            "Pr(S_n>=0)": 1.6075284209922227e-33,
+            "chi^n": 2.6376412971779485e-32,
+            "lower_bound": 2.1269591153314986e-40,
+            "n": 200,
+            "sqrt(n) Pr / chi^n": 0.8619020703458579
+          },
+          {
+            "(1/n)log Pr - log chi": -0.00785632840566719,
+            "Pr(S_n>=0)": 3.0036369475033866e-65,
+            "chi^n": 6.957151612578572e-64,
+            "lower_bound": 4.42523972846841e-75,
+            "n": 400,
+            "sqrt(n) Pr / chi^n": 0.8634674403452105
+          },
+          {
+            "(1/n)log Pr - log chi": -0.0043602314258539,
+            "Pr(S_n>=0)": 1.4789836639674461e-128,
+            "chi^n": 4.840195856040462e-127,
+            "lower_bound": 1.2589536547268191e-142,
+            "n": 800,
+            "sqrt(n) Pr / chi^n": 0.8642620333227813
+          }
+        ],
+        "theta_star=(1/2)log rho": 1.416606672028108,
+        "tilt_identity_n=30": {
+          "lhs": 2.8314003324659084e-06,
+          "rhs": 2.8314003324659084e-06
+        },
+        "tilted_variance_s2": 0.3706793556038632
+      },
+      {
+        "E_NLL_ge_log2_Pr(S_m>=0)_m=1..6": true,
+        "V": 3,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "rows": [
+          {
+            "(1/n)log Pr - log chi": -0.14032365090269325,
+            "Pr(S_n>=0)": 0.03969809501431014,
+            "chi^n": 0.16150558288984557,
+            "lower_bound": 0.002523524732653837,
+            "n": 10,
+            "sqrt(n) Pr / chi^n": 0.7772882941180829
+          },
+          {
+            "(1/n)log Pr - log chi": -0.07166532048809146,
+            "Pr(S_n>=0)": 0.0017473202820215022,
+            "chi^n": 0.010482596010396078,
+            "lower_bound": 3.26985125273617e-05,
+            "n": 25,
+            "sqrt(n) Pr / chi^n": 0.8334387208514967
+          },
+          {
+            "(1/n)log Pr - log chi": -0.04214913920350036,
+            "Pr(S_n>=0)": 1.3356134041623669e-05,
+            "chi^n": 0.00010988481911717178,
+            "lower_bound": 5.576780767698059e-08,
+            "n": 50,
+            "sqrt(n) Pr / chi^n": 0.8594647583846943
+          },
+          {
+            "(1/n)log Pr - log chi": -0.024364564100938402,
+            "Pr(S_n>=0)": 1.0561748481284387e-09,
+            "chi^n": 1.2074673472413559e-08,
+            "lower_bound": 4.699521952145888e-13,
+            "n": 100,
+            "sqrt(n) Pr / chi^n": 0.8747026166309441
+          },
+          {
+            "(1/n)log Pr - log chi": -0.013867532642845515,
+            "Pr(S_n>=0)": 9.103999172890761e-18,
+            "chi^n": 1.4579773946540773e-16,
+            "lower_bound": 1.5021127435421446e-22,
+            "n": 200,
+            "sqrt(n) Pr / chi^n": 0.8830726147980026
+          },
+          {
+            "(1/n)log Pr - log chi": -0.007787746044901039,
+            "Pr(S_n>=0)": 9.432602375240969e-34,
+            "chi^n": 2.125698083322291e-32,
+            "lower_bound": 1.2880067736492044e-40,
+            "n": 400,
+            "sqrt(n) Pr / chi^n": 0.887482794404988
+          },
+          {
+            "(1/n)log Pr - log chi": -0.004323900396960539,
+            "Pr(S_n>=0)": 1.4214326790298595e-65,
+            "chi^n": 4.518592341440061e-64,
+            "lower_bound": 1.9185213362466615e-75,
+            "n": 800,
+            "sqrt(n) Pr / chi^n": 0.8897502676878801
+          }
+        ],
+        "theta_star=(1/2)log rho": 0.6931471805599453,
+        "tilt_identity_n=30": {
+          "lhs": 0.000647278684762164,
+          "rhs": 0.000647278684762164
+        },
+        "tilted_variance_s2": 0.8
+      }
+    ],
+    "label": "NUMERICAL (floating point checks of a PROVED chain; the n = 30 distribution is exact)",
+    "ok": true
+  },
+  "all_ok": true,
+  "b_bank_design": {
+    "P": 12,
+    "T4_comb_selects_12Z": true,
+    "b=(K_3+K_4)/2_on_residues_0..11": [
+      "1",
+      "-1/4",
+      "-3/4",
+      "1/2",
+      "1/4",
+      "-1/4",
+      "0",
+      "-1/4",
+      "1/4",
+      "1/2",
+      "-3/4",
+      "-1/4"
+    ],
+    "bank": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      7,
+      8,
+      9,
+      11,
+      13,
+      16
+    ],
+    "divisors_of_P_missing_from_bank": [
+      6,
+      12
+    ],
+    "label": "EXACT",
+    "ok": true,
+    "predicted_(p-nu)/P*(b(0)-sum|b(s)|)": "-1/8",
+    "sum_abs_offcomb": "4",
+    "worst_motif": [
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0,
+      0,
+      1,
+      1,
+      0,
+      0
+    ],
+    "worst_motif_slope_V3 (query residue 0, W=I)": "-1/8",
+    "worst_wrong_symbol": 1
+  },
+  "b_cosine_span": {
+    "P=12": {
+      "D_12_in_span_matched_cosines": false,
+      "D_12_in_span_of_all_harmonics_0..6": true,
+      "cosine_expansion_of_D_12_matches_exact_fourier": true,
+      "harmonics": [
+        {
+          "a": 0,
+          "coefficient_of_cos(2 pi a n/12)_in_D_12": "1/12",
+          "in_span_of_matched_cosines_d|12": true,
+          "reduced_denominator_of_a/12": 1
+        },
+        {
+          "a": 1,
+          "coefficient_of_cos(2 pi a n/12)_in_D_12": "1/6",
+          "in_span_of_matched_cosines_d|12": true,
+          "reduced_denominator_of_a/12": 12
+        },
+        {
+          "a": 2,
+          "coefficient_of_cos(2 pi a n/12)_in_D_12": "1/6",
+          "in_span_of_matched_cosines_d|12": true,
+          "reduced_denominator_of_a/12": 6
+        },
+        {
+          "a": 3,
+          "coefficient_of_cos(2 pi a n/12)_in_D_12": "1/6",
+          "in_span_of_matched_cosines_d|12": true,
+          "reduced_denominator_of_a/12": 4
+        },
+        {
+          "a": 4,
+          "coefficient_of_cos(2 pi a n/12)_in_D_12": "1/6",
+          "in_span_of_matched_cosines_d|12": true,
+          "reduced_denominator_of_a/12": 3
+        },
+        {
+          "a": 5,
+          "coefficient_of_cos(2 pi a n/12)_in_D_12": "1/6",
+          "in_span_of_matched_cosines_d|12": false,
+          "reduced_denominator_of_a/12": 12
+        },
+        {
+          "a": 6,
+          "coefficient_of_cos(2 pi a n/12)_in_D_12": "1/12",
+          "in_span_of_matched_cosines_d|12": true,
+          "reduced_denominator_of_a/12": 2
+        }
+      ],
+      "missing_harmonics": [
+        5
+      ],
+      "rank_bank": 6,
+      "rank_with_D_12": 7
+    },
+    "P=2,3_in_span_of_matched_cosines": {
+      "2": true,
+      "3": true
+    },
+    "criterion_sweep": {
+      "P_range": [
+        2,
+        40
+      ],
+      "P_values_in_span": [
+        2,
+        3,
+        4,
+        6
+      ],
+      "claim": "in span iff all divisors d of P satisfy phi(d)<=2, i.e. P in {2,3,4,6}",
+      "mismatches_with_all_cosines_d<=48": [],
+      "mismatches_with_matched_cosines": []
+    },
+    "label": "EXACT (rank over Q of exact Fourier-coefficient vectors; characters are independent)",
+    "ok": true,
+    "prime_P_ge_5_not_in_span_{1,cos(2 pi n/P)}": [
+      {
+        "P": 5,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 7,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 11,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 13,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 17,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 19,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 23,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 29,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      },
+      {
+        "P": 31,
+        "in_span": false,
+        "rank_bank": 2,
+        "rank_with_D_P": 3
+      }
+    ]
+  },
+  "b_harmonic_criterion": {
+    "P_range": [
+      2,
+      60
+    ],
+    "P_with_all_harmonics_fundamental": [
+      2,
+      3,
+      4,
+      6
+    ],
+    "failures": [],
+    "label": "EXACT",
+    "ok": true
+  },
+  "b_ramanujan_span": {
+    "B16+1_selectable_but_not_countable": [
+      6,
+      10,
+      12,
+      14,
+      15,
+      18,
+      20,
+      21,
+      22,
+      24,
+      26,
+      28,
+      30,
+      33,
+      35,
+      36,
+      39,
+      40
+    ],
+    "B16+1_selectable_periods_T4_(lcm of subsets,<=pmax)": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      18,
+      20,
+      21,
+      22,
+      24,
+      26,
+      28,
+      30,
+      33,
+      35,
+      36,
+      39,
+      40
+    ],
+    "D_P_coefficients_in_K_basis": {
+      "12": {
+        "1": "1/12",
+        "12": "1/3",
+        "2": "1/12",
+        "3": "1/6",
+        "4": "1/6",
+        "6": "1/6"
+      },
+      "13": {
+        "1": "1/13",
+        "13": "12/13"
+      }
+    },
+    "label": "EXACT (rank over Q on gcd-class representatives)",
+    "ok": true,
+    "periods_with_D_P_in_span_(P in 2..pmax)": {
+      "B16 as in MATH.md, order 1 excluded (10 orders)": [],
+      "B16 with order 1 {1,2,3,4,5,7,8,9,11,13,16}": [
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9,
+        11,
+        13,
+        16
+      ],
+      "default {1..16}": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "divisors of 12": [
+        2,
+        3,
+        4,
+        6,
+        12
+      ]
+    },
+    "specific_cases": [
+      {
+        "D_P_in_span": true,
+        "L": 720720,
+        "P": 12,
+        "all_divisors_of_P_in_bank": true,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "default {1..16}",
+        "gcd_classes_used": 240,
+        "iff_holds": true,
+        "rank_bank": 16,
+        "rank_with_D_P": 16
+      },
+      {
+        "D_P_in_span": true,
+        "L": 720720,
+        "P": 13,
+        "all_divisors_of_P_in_bank": true,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "default {1..16}",
+        "gcd_classes_used": 240,
+        "iff_holds": true,
+        "rank_bank": 16,
+        "rank_with_D_P": 16
+      },
+      {
+        "D_P_in_span": true,
+        "L": 720720,
+        "P": 16,
+        "all_divisors_of_P_in_bank": true,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "default {1..16}",
+        "gcd_classes_used": 240,
+        "iff_holds": true,
+        "rank_bank": 16,
+        "rank_with_D_P": 16
+      },
+      {
+        "D_P_in_span": false,
+        "L": 12252240,
+        "P": 17,
+        "all_divisors_of_P_in_bank": false,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "default {1..16}",
+        "gcd_classes_used": 480,
+        "iff_holds": true,
+        "rank_bank": 16,
+        "rank_with_D_P": 17
+      },
+      {
+        "D_P_in_span": false,
+        "L": 720720,
+        "P": 24,
+        "all_divisors_of_P_in_bank": false,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "default {1..16}",
+        "gcd_classes_used": 240,
+        "iff_holds": true,
+        "rank_bank": 16,
+        "rank_with_D_P": 17
+      },
+      {
+        "D_P_in_span": false,
+        "L": 720720,
+        "P": 12,
+        "all_divisors_of_P_in_bank": false,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          11,
+          13,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "B16 with order 1 {1,2,3,4,5,7,8,9,11,13,16}",
+        "gcd_classes_used": 240,
+        "iff_holds": true,
+        "rank_bank": 11,
+        "rank_with_D_P": 12
+      },
+      {
+        "D_P_in_span": true,
+        "L": 720720,
+        "P": 13,
+        "all_divisors_of_P_in_bank": true,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          11,
+          13,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "B16 with order 1 {1,2,3,4,5,7,8,9,11,13,16}",
+        "gcd_classes_used": 240,
+        "iff_holds": true,
+        "rank_bank": 11,
+        "rank_with_D_P": 11
+      },
+      {
+        "D_P_in_span": false,
+        "L": 720720,
+        "P": 13,
+        "all_divisors_of_P_in_bank": false,
+        "bank": [
+          2,
+          3,
+          4,
+          5,
+          7,
+          8,
+          9,
+          11,
+          13,
+          16
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "B16 as in MATH.md, order 1 excluded (10 orders)",
+        "gcd_classes_used": 240,
+        "iff_holds": true,
+        "rank_bank": 10,
+        "rank_with_D_P": 11
+      },
+      {
+        "D_P_in_span": true,
+        "L": 12,
+        "P": 12,
+        "all_divisors_of_P_in_bank": true,
+        "bank": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          12
+        ],
+        "bank_linearly_independent": true,
+        "bank_name": "divisors of 12",
+        "gcd_classes_used": 6,
+        "iff_holds": true,
+        "rank_bank": 6,
+        "rank_with_D_P": 6
+      }
+    ],
+    "sweep": {
+      "P_range": [
+        2,
+        40
+      ],
+      "banks": [
+        "default {1..16}",
+        "B16 with order 1 {1,2,3,4,5,7,8,9,11,13,16}",
+        "B16 as in MATH.md, order 1 excluded (10 orders)",
+        "divisors of 12"
+      ],
+      "dependent_bank_cases": [],
+      "iff_mismatches": [],
+      "tests": 156
+    }
+  },
+  "b_residual_counterexample": {
+    "V": 16,
+    "cases": [
+      {
+        "P": 3,
+        "closed_form": "-49/2",
+        "delta": "3/4",
+        "direct_equals_closed_form": true,
+        "exact_E[E_i(true)-E_i(other)]_at_i=300": "-49/2",
+        "kernel_P_fold": [
+          "1",
+          "3/4",
+          "3/4"
+        ],
+        "motif": [
+          0,
+          1,
+          1
+        ],
+        "negative": true,
+        "slope_closed_form (p-nu)/P*(1-(P-1)delta)": "-1/12",
+        "slope_without_log_rho (W=I)": "-1/12"
+      },
+      {
+        "P": 13,
+        "closed_form": "-19/2",
+        "delta": "1/10",
+        "direct_equals_closed_form": true,
+        "exact_E[E_i(true)-E_i(other)]_at_i=1300": "-19/2",
+        "kernel_P_fold": [
+          "1",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10",
+          "1/10"
+        ],
+        "motif": [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "negative": true,
+        "slope_closed_form (p-nu)/P*(1-(P-1)delta)": "-1/130",
+        "slope_without_log_rho (W=I)": "-1/130"
+      },
+      {
+        "P": 13,
+        "closed_form": "1/2",
+        "delta": "1/12",
+        "direct_equals_closed_form": true,
+        "exact_E[E_i(true)-E_i(other)]_at_i=1300": "1/2",
+        "kernel_P_fold": [
+          "1",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12",
+          "1/12"
+        ],
+        "motif": [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "negative": false,
+        "slope_closed_form (p-nu)/P*(1-(P-1)delta)": "0",
+        "slope_without_log_rho (W=I)": "0"
+      },
+      {
+        "P": 13,
+        "closed_form": "113/26",
+        "delta": "1/13",
+        "direct_equals_closed_form": true,
+        "exact_E[E_i(true)-E_i(other)]_at_i=1300": "113/26",
+        "kernel_P_fold": [
+          "1",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13",
+          "1/13"
+        ],
+        "motif": [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "negative": false,
+        "slope_closed_form (p-nu)/P*(1-(P-1)delta)": "1/338",
+        "slope_without_log_rho (W=I)": "1/338"
+      },
+      {
+        "P": 13,
+        "closed_form": "101/2",
+        "delta": "0",
+        "direct_equals_closed_form": true,
+        "exact_E[E_i(true)-E_i(other)]_at_i=1300": "101/2",
+        "kernel_P_fold": [
+          "1",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0",
+          "0"
+        ],
+        "motif": [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ],
+        "negative": false,
+        "slope_closed_form (p-nu)/P*(1-(P-1)delta)": "1/26",
+        "slope_without_log_rho (W=I)": "1/26"
+      }
+    ],
+    "eps": "1/2",
+    "label": "EXACT",
+    "nu": "1/32",
+    "ok": true,
+    "p": "17/32",
+    "p-nu": "1/2",
+    "rho": "17",
+    "threshold": "slope < 0 iff delta > 1/(P-1) for this motif"
+  },
+  "b_span_dominance": {
+    "cosine_fund_span": {
+      "12": {
+        "Linf_optimal": {
+          "coefficients": [
+            0.12200846792814635,
+            0.07044162180172894,
+            0.244016935856292,
+            0.2440169358562923,
+            0.14088324360345822,
+            0.17863279495408213
+          ],
+          "fold": [
+            0.9999999999999999,
+            0.1547005383792524,
+            -0.15470053837925113,
+            0.15470053837925113,
+            0.15470053837925155,
+            -0.15470053837925118,
+            0.15470053837925107,
+            -0.15470053837925113,
+            0.15470053837925107,
+            0.15470053837925127,
+            -0.15470053837925113,
+            0.15470053837925113
+          ],
+          "min_max_abs_off_comb_with_f(0)=1": 0.15470053837925113
+        },
+        "argmin_coefficients": [
+          0.1666666666666666,
+          0.16666666666666646,
+          0.3333333333333328,
+          4.877942486976064e-16,
+          0.3333333333333329,
+          7.905513266243533e-16
+        ],
+        "dominance_margin_best": 6.661338147750939e-16,
+        "fold": [
+          1.0,
+          9.621932880084683e-16,
+          -2.105797092225695e-17,
+          4.84073075856104e-32,
+          3.8188045392543307e-16,
+          -4.0708177569589017e-16,
+          0.9999999999999976,
+          3.7007434154172443e-17,
+          -6.697604693372209e-18,
+          -1.4522192275683119e-31,
+          6.697604693371963e-18,
+          -9.251858538543826e-18
+        ],
+        "min_off_comb_mass_with_f(0)=1": 0.9999999999999993,
+        "orders": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          12
+        ]
+      },
+      "13": {
+        "Linf_optimal": {
+          "coefficients": [
+            0.040990829144020136,
+            0.9590091708559798
+          ],
+          "fold": [
+            1.0,
+            0.8901512781351362,
+            0.5857701308991781,
+            0.1565866109334098,
+            -0.29907850956012016,
+            -0.6768378428363366,
+            -0.8901512781351362,
+            -0.8901512781351362,
+            -0.6768378428363369,
+            -0.2990785095601206,
+            0.15658661093340998,
+            0.5857701308991772,
+            0.8901512781351362
+          ],
+          "min_max_abs_off_comb_with_f(0)=1": 0.8901512781351362
+        },
+        "argmin_coefficients": [
+          0.42808472807732223,
+          0.5719152719226778
+        ],
+        "dominance_margin_best": -4.073948366833179,
+        "fold": [
+          1.0,
+          0.9344905517643514,
+          0.7529696321737582,
+          0.49702149634220216,
+          0.22528077767928012,
+          -1.1102230246251565e-16,
+          -0.12721172545699722,
+          -0.12721172545699733,
+          -1.6653345369377348e-16,
+          0.22528077767927987,
+          0.4970214963422023,
+          0.7529696321737578,
+          0.9344905517643514
+        ],
+        "min_off_comb_mass_with_f(0)=1": 5.073948366833179,
+        "orders": [
+          1,
+          13
+        ]
+      }
+    },
+    "cosine_span_rational_part_d_in_1_2_3_4_6": {
+      "argmin": [
+        "1/6",
+        "1/6",
+        "1/3",
+        "0",
+        "1/3"
+      ],
+      "min_off_comb_mass": "1"
+    },
+    "label": "EXACT for the Ramanujan spans; cosine spans NUMERICAL (floating point)",
+    "mixtures_K3_K4": {
+      "best_a": "1/2",
+      "best_off_comb_mass": "4"
+    },
+    "ok": true,
+    "span_K1_K2_K3_K4": {
+      "argmin_beta": [
+        "1/4",
+        "1/4",
+        "0",
+        "1/2"
+      ],
+      "dominance_margin_best": "-1",
+      "min_off_comb_mass_with_f(0)=1": "2",
+      "rank": 4
+    },
+    "span_all_divisors_of_12": {
+      "argmin_beta": [
+        "1/12",
+        "1/12",
+        "1/6",
+        "1/6",
+        "1/6",
+        "1/3"
+      ],
+      "min_off_comb_mass": "0",
+      "rank": 6
+    }
+  },
+  "c3_hoeffding_constant": {
+    "i_range": [
+      1,
+      20000
+    ],
+    "i_where_earlier_exponent_was_valid": 0,
+    "label": "EXACT",
+    "ok": true,
+    "statement": "i^2/(8(i+1)) < i/8 and >= i/16 for all i >= 1"
+  },
+  "c_decomposition": {
+    "L": 120,
+    "Lambda": 120,
+    "P": 12,
+    "failures": [],
+    "fold_equals_projection_on_orders_dividing_P": true,
+    "identity_checks": 288,
+    "label": "EXACT",
+    "ok": true,
+    "orders": [
+      1,
+      4,
+      5,
+      8,
+      12
+    ]
+  },
+  "c_dominance": {
+    "P_list": [
+      3,
+      4
+    ],
+    "V": 3,
+    "cases": 240,
+    "cases_strictly_dominant": 64,
+    "label": "EXACT",
+    "mismatches": [],
+    "ok": true
+  },
+  "c_fold_projection": {
+    "D_12_folded_at_12_is_delta": true,
+    "D_12_folded_at_24_equals_D_12_on_Z/24": true,
+    "D_12_folded_at_5_is_constant_1/12": true,
+    "P_range": [
+      2,
+      24
+    ],
+    "failures": [],
+    "label": "EXACT",
+    "m_range": [
+      1,
+      16
+    ],
+    "ok": true,
+    "statement": "folded kernel of K_m at modulus P is K_m if m | P and 0 otherwise"
+  },
+  "c_random_motif": {
+    "a_characterization": {
+      "failures": [],
+      "slope_formula_checks": 10386
+    },
+    "b_exact_leakage_V16": [
+      {
+        "P": 12,
+        "Pr_all_positive": "1",
+        "Pr_fail": "0",
+        "Pr_fail_float": 0.0,
+        "V": 16,
+        "delta": "1/20"
+      },
+      {
+        "P": 12,
+        "Pr_all_positive": "2199023253797/2199023255552",
+        "Pr_fail": "1755/2199023255552",
+        "Pr_fail_float": 7.980816008057445e-10,
+        "V": 16,
+        "delta": "1/10"
+      },
+      {
+        "P": 12,
+        "Pr_all_positive": "17445975425671/17592186044416",
+        "Pr_fail": "146210618745/17592186044416",
+        "Pr_fail_float": 0.008311111443219943,
+        "V": 16,
+        "delta": "1/5"
+      },
+      {
+        "P": 12,
+        "Pr_all_positive": "8985650492281/17592186044416",
+        "Pr_fail": "8606535552135/17592186044416",
+        "Pr_fail_float": 0.4892249053304454,
+        "V": 16,
+        "delta": "1/3"
+      },
+      {
+        "P": 13,
+        "Pr_all_positive": "1",
+        "Pr_fail": "0",
+        "Pr_fail_float": 0.0,
+        "V": 16,
+        "delta": "1/20"
+      },
+      {
+        "P": 13,
+        "Pr_all_positive": "281474975731951/281474976710656",
+        "Pr_fail": "978705/281474976710656",
+        "Pr_fail_float": 3.4770586410104443e-09,
+        "V": 16,
+        "delta": "1/10"
+      },
+      {
+        "P": 13,
+        "Pr_all_positive": "138935275982003/140737488355328",
+        "Pr_fail": "1802212373325/140737488355328",
+        "Pr_fail_float": 0.012805489101630485,
+        "V": 16,
+        "delta": "1/5"
+      },
+      {
+        "P": 13,
+        "Pr_all_positive": "119024047818391/281474976710656",
+        "Pr_fail": "162450928892265/281474976710656",
+        "Pr_fail_float": 0.5771416372093974,
+        "V": 16,
+        "delta": "1/3"
+      }
+    ],
+    "b_exact_small": [
+      {
+        "D_P_fold": "1",
+        "P": 5,
+        "V": 2,
+        "leak_delta=1/2": {
+          "enumeration": "1/16",
+          "partition_method": "1/16"
+        },
+        "leak_delta=1/3": {
+          "enumeration": "11/16",
+          "partition_method": "11/16"
+        },
+        "leak_delta=1/5": {
+          "enumeration": "1",
+          "partition_method": "1"
+        },
+        "uniform_closed_form_V^(1-P)": "1/16",
+        "uniform_fold": "1/16"
+      },
+      {
+        "D_P_fold": "1",
+        "P": 5,
+        "V": 3,
+        "leak_delta=1/2": {
+          "enumeration": "1/81",
+          "partition_method": "1/81"
+        },
+        "leak_delta=1/3": {
+          "enumeration": "17/27",
+          "partition_method": "17/27"
+        },
+        "leak_delta=1/5": {
+          "enumeration": "1",
+          "partition_method": "1"
+        },
+        "uniform_closed_form_V^(1-P)": "1/81",
+        "uniform_fold": "1/81"
+      },
+      {
+        "D_P_fold": "1",
+        "P": 6,
+        "V": 3,
+        "leak_delta=1/2": {
+          "enumeration": "17/81",
+          "partition_method": "17/81"
+        },
+        "leak_delta=1/3": {
+          "enumeration": "17/81",
+          "partition_method": "17/81"
+        },
+        "leak_delta=1/5": {
+          "enumeration": "77/81",
+          "partition_method": "77/81"
+        },
+        "uniform_closed_form_V^(1-P)": "1/243",
+        "uniform_fold": "1/243"
+      },
+      {
+        "D_P_fold": "1",
+        "P": 5,
+        "V": 4,
+        "leak_delta=1/2": {
+          "enumeration": "1/256",
+          "partition_method": "1/256"
+        },
+        "leak_delta=1/3": {
+          "enumeration": "181/256",
+          "partition_method": "181/256"
+        },
+        "leak_delta=1/5": {
+          "enumeration": "1",
+          "partition_method": "1"
+        },
+        "uniform_closed_form_V^(1-P)": "1/256",
+        "uniform_fold": "1/256"
+      }
+    ],
+    "d_bound_vs_exact": {
+      "failures": [],
+      "rows": [
+        {
+          "P": 5,
+          "V": 3,
+          "bound": 1.0,
+          "exact_fail": 0.6296296296296297,
+          "n_min": 1
+        },
+        {
+          "P": 5,
+          "V": 3,
+          "bound": 0.12345679012345678,
+          "exact_fail": 0.12345679012345678,
+          "n_min": 4
+        },
+        {
+          "P": 5,
+          "V": 3,
+          "bound": 1.0,
+          "exact_fail": 0.7407407407407407,
+          "n_min": 1
+        },
+        {
+          "P": 5,
+          "V": 3,
+          "bound": 1.0,
+          "exact_fail": 0.9876543209876543,
+          "n_min": 1
+        },
+        {
+          "P": 5,
+          "V": 4,
+          "bound": 1.0,
+          "exact_fail": 0.765625,
+          "n_min": 1
+        },
+        {
+          "P": 5,
+          "V": 4,
+          "bound": 0.05859375,
+          "exact_fail": 0.05859375,
+          "n_min": 4
+        },
+        {
+          "P": 5,
+          "V": 4,
+          "bound": 1.0,
+          "exact_fail": 1.0,
+          "n_min": 1
+        },
+        {
+          "P": 5,
+          "V": 4,
+          "bound": 0.234375,
+          "exact_fail": 0.17578125,
+          "n_min": 3
+        },
+        {
+          "P": 7,
+          "V": 2,
+          "bound": 1.0,
+          "exact_fail": 0.765625,
+          "n_min": 2
+        },
+        {
+          "P": 7,
+          "V": 2,
+          "bound": 1.0,
+          "exact_fail": 1.0,
+          "n_min": 1
+        },
+        {
+          "P": 7,
+          "V": 2,
+          "bound": 1.0,
+          "exact_fail": 0.765625,
+          "n_min": 2
+        },
+        {
+          "P": 7,
+          "V": 2,
+          "bound": 1.0,
+          "exact_fail": 0.78125,
+          "n_min": 1
+        }
+      ]
+    },
+    "label": "EXACT for (a)-(d) and the enumerations; Monte Carlo rows NUMERICAL (fixed seed 20261023)",
+    "mc_V16": [
+      {
+        "N": 20000,
+        "P": 12,
+        "arm": "D_P (comb)",
+        "dominance_margin": 1.0,
+        "fail_fraction": 0.0,
+        "kappa_P(0)": 1.0,
+        "motifs_with_a_nonpositive_margin": 0,
+        "n_min": null,
+        "pair_tail_T": 0.0,
+        "positive_residue_fraction": 1.0,
+        "sum_abs_off_comb": 0.0,
+        "union_bound_P(V-1)T": 0.0,
+        "wilson95": [
+          0.0,
+          0.0001920360591335556
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 12,
+        "arm": "cosine_fund span, L1-optimal fold",
+        "dominance_margin": 6.661338147750939e-16,
+        "fail_fraction": 1.0,
+        "kappa_P(0)": 1.0,
+        "motifs_with_a_nonpositive_margin": 20000,
+        "n_min": 1,
+        "pair_tail_T": 0.0625,
+        "positive_residue_fraction": 0.06236666666666667,
+        "sum_abs_off_comb": 0.9999999999999993,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9998079639408665,
+          1.0
+        ]
+      },
+      {
+        "N": 100000,
+        "P": 12,
+        "arm": "cosine_fund span, Linf-optimal fold",
+        "dominance_margin": -0.701705922171764,
+        "fail_fraction": 0.0002,
+        "kappa_P(0)": 0.9999999999999999,
+        "motifs_with_a_nonpositive_margin": 20,
+        "n_min": 7,
+        "pair_tail_T": 9.820079185374198e-07,
+        "positive_residue_fraction": 0.9999808333333333,
+        "sum_abs_off_comb": 1.7017059221717639,
+        "union_bound_P(V-1)T": 0.00017676142533673556,
+        "wilson95": [
+          0.0001294788490328252,
+          0.00030891889891091097
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 12,
+        "arm": "pilot arith",
+        "dominance_margin": 8.576,
+        "fail_fraction": 0.0,
+        "kappa_P(0)": 8.868,
+        "motifs_with_a_nonpositive_margin": 0,
+        "n_min": null,
+        "pair_tail_T": 0.0,
+        "positive_residue_fraction": 1.0,
+        "sum_abs_off_comb": 0.29200000000000004,
+        "union_bound_P(V-1)T": 0.0,
+        "wilson95": [
+          0.0,
+          0.0001920360591335556
+        ]
+      },
+      {
+        "N": 100000,
+        "P": 12,
+        "arm": "pilot cosine_fund",
+        "dominance_margin": -2.2250000000000005,
+        "fail_fraction": 0.00016,
+        "kappa_P(0)": 5.806,
+        "motifs_with_a_nonpositive_margin": 16,
+        "n_min": 6,
+        "pair_tail_T": 8.029511491258745e-07,
+        "positive_residue_fraction": 0.9999858333333334,
+        "sum_abs_off_comb": 8.031,
+        "union_bound_P(V-1)T": 0.0001445312068426574,
+        "wilson95": [
+          9.849247719505066e-05,
+          0.00025990834379774065
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 12,
+        "arm": "pilot cosine_full",
+        "dominance_margin": 8.687000000000001,
+        "fail_fraction": 0.0,
+        "kappa_P(0)": 9.759,
+        "motifs_with_a_nonpositive_margin": 0,
+        "n_min": null,
+        "pair_tail_T": 0.0,
+        "positive_residue_fraction": 1.0,
+        "sum_abs_off_comb": 1.072,
+        "union_bound_P(V-1)T": 0.0,
+        "wilson95": [
+          0.0,
+          0.0001920360591335556
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 12,
+        "arm": "pilot cosine_learned (window fold N=8192)",
+        "dominance_margin": -4.689000000000001,
+        "fail_fraction": 1.0,
+        "kappa_P(0)": -0.195,
+        "motifs_with_a_nonpositive_margin": 20000,
+        "n_min": 1,
+        "pair_tail_T": 1.0,
+        "positive_residue_fraction": 0.021975,
+        "sum_abs_off_comb": 4.494000000000001,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9998079639408665,
+          1.0
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 12,
+        "arm": "pilot uniform",
+        "dominance_margin": -10.0,
+        "fail_fraction": 1.0,
+        "kappa_P(0)": 1.0,
+        "motifs_with_a_nonpositive_margin": 20000,
+        "n_min": 1,
+        "pair_tail_T": 0.5083183046418185,
+        "positive_residue_fraction": 0.12225833333333333,
+        "sum_abs_off_comb": 11.0,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9998079639408665,
+          1.0
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 13,
+        "arm": "D_P (comb)",
+        "dominance_margin": 1.0,
+        "fail_fraction": 0.0,
+        "kappa_P(0)": 1.0,
+        "motifs_with_a_nonpositive_margin": 0,
+        "n_min": null,
+        "pair_tail_T": 0.0,
+        "positive_residue_fraction": 1.0,
+        "sum_abs_off_comb": 0.0,
+        "union_bound_P(V-1)T": 0.0,
+        "wilson95": [
+          0.0,
+          0.0001920360591335556
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 13,
+        "arm": "cosine_fund span, L1-optimal fold",
+        "dominance_margin": -4.073948366833179,
+        "fail_fraction": 0.99915,
+        "kappa_P(0)": 1.0,
+        "motifs_with_a_nonpositive_margin": 19983,
+        "n_min": 2,
+        "pair_tail_T": 0.0697495633185099,
+        "positive_residue_fraction": 0.4411769230769231,
+        "sum_abs_off_comb": 5.073948366833179,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9986390788850734,
+          0.9994692115170936
+        ]
+      },
+      {
+        "N": 100000,
+        "P": 13,
+        "arm": "cosine_fund span, Linf-optimal fold",
+        "dominance_margin": -5.997151300998635,
+        "fail_fraction": 0.99923,
+        "kappa_P(0)": 1.0,
+        "motifs_with_a_nonpositive_margin": 99923,
+        "n_min": 2,
+        "pair_tail_T": 0.12411458580230317,
+        "positive_residue_fraction": 0.5299738461538461,
+        "sum_abs_off_comb": 6.997151300998635,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9990378401364387,
+          0.9993838059065664
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 13,
+        "arm": "pilot arith",
+        "dominance_margin": 6.317,
+        "fail_fraction": 0.0,
+        "kappa_P(0)": 6.437,
+        "motifs_with_a_nonpositive_margin": 0,
+        "n_min": null,
+        "pair_tail_T": 0.0,
+        "positive_residue_fraction": 1.0,
+        "sum_abs_off_comb": 0.11999999999999998,
+        "union_bound_P(V-1)T": 0.0,
+        "wilson95": [
+          0.0,
+          0.0001920360591335556
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 13,
+        "arm": "pilot cosine_fund",
+        "dominance_margin": -4.424000000000001,
+        "fail_fraction": 0.99935,
+        "kappa_P(0)": 0.964,
+        "motifs_with_a_nonpositive_margin": 19987,
+        "n_min": 2,
+        "pair_tail_T": 0.08327279285469302,
+        "positive_residue_fraction": 0.3836846153846154,
+        "sum_abs_off_comb": 5.388000000000001,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9988881316441914,
+          0.9996200819435518
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 13,
+        "arm": "pilot cosine_full",
+        "dominance_margin": 7.823,
+        "fail_fraction": 0.0,
+        "kappa_P(0)": 10.301,
+        "motifs_with_a_nonpositive_margin": 0,
+        "n_min": null,
+        "pair_tail_T": 0.0,
+        "positive_residue_fraction": 1.0,
+        "sum_abs_off_comb": 2.478,
+        "union_bound_P(V-1)T": 0.0,
+        "wilson95": [
+          0.0,
+          0.0001920360591335556
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 13,
+        "arm": "pilot cosine_learned (window fold N=8192)",
+        "dominance_margin": -0.726,
+        "fail_fraction": 1.0,
+        "kappa_P(0)": 0.036,
+        "motifs_with_a_nonpositive_margin": 20000,
+        "n_min": 1,
+        "pair_tail_T": 0.4427607452607276,
+        "positive_residue_fraction": 0.12555384615384615,
+        "sum_abs_off_comb": 0.762,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9998079639408665,
+          1.0
+        ]
+      },
+      {
+        "N": 20000,
+        "P": 13,
+        "arm": "pilot uniform",
+        "dominance_margin": -11.0,
+        "fail_fraction": 1.0,
+        "kappa_P(0)": 1.0,
+        "motifs_with_a_nonpositive_margin": 20000,
+        "n_min": 1,
+        "pair_tail_T": 0.5390484106017048,
+        "positive_residue_fraction": 0.12525769230769232,
+        "sum_abs_off_comb": 12.0,
+        "union_bound_P(V-1)T": 1.0,
+        "wilson95": [
+          0.9998079639408665,
+          1.0
+        ]
+      }
+    ],
+    "ok": true
+  },
+  "c_two_order_family": {
+    "cases": 48,
+    "cases_(P,V)": [
+      [
+        5,
+        3
+      ],
+      [
+        7,
+        2
+      ]
+    ],
+    "label": "EXACT",
+    "mismatches": [],
+    "ok": true
+  },
+  "c_zero_mean_and_comb": {
+    "(p-nu)/P": "1/26",
+    "D_P_constant_motif_slopes": [
+      "1/26"
+    ],
+    "D_P_slope_is_motif_independent": true,
+    "label": "EXACT",
+    "ok": true,
+    "zero_slope_failures_for_zero_mean_kernels": []
+  },
+  "d_algebra": {
+    "failures": [],
+    "label": "EXACT (algebra of the limit formulas; the limits themselves are proved in T9 L9.1/T9d)",
+    "ok": true,
+    "slopes_tested": 1000
+  },
+  "d_numeric": {
+    "P": 13,
+    "V": 16,
+    "checkpoints": [
+      247,
+      507,
+      1014,
+      2041,
+      4095,
+      8190,
+      16380,
+      32760,
+      65533
+    ],
+    "drift_fold_at_13_max_abs_dev_from_1/2": 1.2378986724570495e-14,
+    "eps": "1/2",
+    "label": "NUMERICAL (simulation, fixed seed 20261023)",
+    "motif": "mu_r = r (13 distinct symbols), query residue 0, true symbol 0, other symbol 1",
+    "note": "limit_* for the two cos(n th) kernels with th near 2pi/13 equal (kbar/P)(p+12 nu) = 0.5(p+12 nu)/13 (identical for symbols 0 and 1, which occur once each in the motif). The 'drift' theta is exactly 2pi*77/1000, so it is a 1000-periodic kernel (case (c), constant fold at modulus 13), not a T5 instance; 'near' (sqrt2 perturbation) and 'irrational' are genuine (d) instances. At finite i all three are still partly comb-like (near-resonance window ~ 1/|theta-2pi/13| ~ 1e3 steps).",
+    "ok": true,
+    "rows": [
+      {
+        "E_other/i": 0.0,
+        "E_true/i": 0.05263157894736842,
+        "gap/i": 0.05263157894736842,
+        "i": 247,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.0,
+        "E_true/i": 0.05128205128205128,
+        "gap/i": 0.05128205128205128,
+        "i": 507,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.0009861932938856016,
+        "E_true/i": 0.04930966469428008,
+        "gap/i": 0.048323471400394474,
+        "i": 1014,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.0019598236158745713,
+        "E_true/i": 0.04556589906908378,
+        "gap/i": 0.043606075453209214,
+        "i": 2041,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.002686202686202686,
+        "E_true/i": 0.0442002442002442,
+        "gap/i": 0.04151404151404151,
+        "i": 4095,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.00231990231990232,
+        "E_true/i": 0.04383394383394383,
+        "gap/i": 0.04151404151404151,
+        "i": 8190,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.0025030525030525033,
+        "E_true/i": 0.0398046398046398,
+        "gap/i": 0.0373015873015873,
+        "i": 16380,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.0027167277167277166,
+        "E_true/i": 0.040934065934065934,
+        "gap/i": 0.03821733821733822,
+        "i": 32760,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.002578853402102757,
+        "E_true/i": 0.04072757236811988,
+        "gap/i": 0.03814871896601712,
+        "i": 65533,
+        "kernel": "D_13 (exact comb)",
+        "limit_gap": 0.038461538461538464,
+        "limit_other": 0.002403846153846154,
+        "limit_true": 0.040865384615384616
+      },
+      {
+        "E_other/i": 0.0636114770951724,
+        "E_true/i": 0.057872403853762286,
+        "gap/i": -0.0057390732414101175,
+        "i": 247,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.05879114671965766,
+        "E_true/i": 0.061137110574038006,
+        "gap/i": 0.002345963854380342,
+        "i": 507,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.05291872722520872,
+        "E_true/i": 0.06308071260733003,
+        "gap/i": 0.010161985382121312,
+        "i": 1014,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.05270972906786976,
+        "E_true/i": 0.057124195829380435,
+        "gap/i": 0.004414466761510672,
+        "i": 2041,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.05240385158362691,
+        "E_true/i": 0.05632113448903666,
+        "gap/i": 0.003917282905409749,
+        "i": 4095,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.051215096824057275,
+        "E_true/i": 0.05693710287618063,
+        "gap/i": 0.0057220060521233525,
+        "i": 8190,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.05166409632843914,
+        "E_true/i": 0.05338861374611145,
+        "gap/i": 0.0017245174176723156,
+        "i": 16380,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.05198070854051247,
+        "E_true/i": 0.05440053971321817,
+        "gap/i": 0.0024198311727057055,
+        "i": 32760,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.051353275767892684,
+        "E_true/i": 0.05411390456702365,
+        "gap/i": 0.0027606287991309617,
+        "i": 65533,
+        "kernel": "(1+cos(2 pi n/13))/2  (exact period 13)",
+        "limit_gap": 0.002202768737438278,
+        "limit_other": 0.051883769724100186,
+        "limit_true": 0.054086538461538464
+      },
+      {
+        "E_other/i": 0.06401999178051156,
+        "E_true/i": 0.0579239704524348,
+        "gap/i": -0.006096021328076755,
+        "i": 247,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.0598210928431639,
+        "E_true/i": 0.061132082224863916,
+        "gap/i": 0.0013109893817000219,
+        "i": 507,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.05453936814684452,
+        "E_true/i": 0.06255489150702397,
+        "gap/i": 0.008015523360179447,
+        "i": 1014,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.05395714865743846,
+        "E_true/i": 0.05441090342313417,
+        "gap/i": 0.00045375476569570514,
+        "i": 2041,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.04832125992069545,
+        "E_true/i": 0.04574097823327051,
+        "gap/i": -0.0025802816874249427,
+        "i": 4095,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03337302753979365,
+        "E_true/i": 0.03228127141598446,
+        "gap/i": -0.001091756123809187,
+        "i": 8190,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03852398930857035,
+        "E_true/i": 0.03736264170646327,
+        "gap/i": -0.0011613476021070795,
+        "i": 16380,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.0352901806629428,
+        "E_true/i": 0.034600673584407195,
+        "gap/i": -0.000689507078535608,
+        "i": 32760,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03460321534339913,
+        "E_true/i": 0.03436966077490359,
+        "gap/i": -0.00023355456849553707,
+        "i": 65533,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*1.001=2pi*77/1000",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.06417008834118944,
+        "E_true/i": 0.057902748819740106,
+        "gap/i": -0.00626733952144934,
+        "i": 247,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.06015514786799158,
+        "E_true/i": 0.06098390202413153,
+        "gap/i": 0.0008287541561399474,
+        "i": 507,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.05477615068195615,
+        "E_true/i": 0.06184013525820803,
+        "gap/i": 0.007063984576251879,
+        "i": 1014,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.052709002977851076,
+        "E_true/i": 0.05156687956973172,
+        "gap/i": -0.001142123408119352,
+        "i": 2041,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.0419465327687829,
+        "E_true/i": 0.03840921724396102,
+        "gap/i": -0.003537315524821879,
+        "i": 4095,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03194966177944843,
+        "E_true/i": 0.03376055180181477,
+        "gap/i": 0.0018108900223663396,
+        "i": 8190,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.0331807430388699,
+        "E_true/i": 0.03264882087761205,
+        "gap/i": -0.0005319221612578514,
+        "i": 16380,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.035124809691345245,
+        "E_true/i": 0.03421328251382555,
+        "gap/i": -0.0009115271775196952,
+        "i": 32760,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03465327909033072,
+        "E_true/i": 0.035089739082224944,
+        "gap/i": 0.0004364599918942258,
+        "i": 65533,
+        "kernel": "(1+cos(n th))/2, th = 2pi/13*(1+sqrt2*1e-3) (irr.)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.0454887327045047,
+        "E_true/i": 0.021286435530500244,
+        "gap/i": -0.024202297174004458,
+        "i": 247,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.038520022188736965,
+        "E_true/i": 0.04432655915460198,
+        "gap/i": 0.005806536965865008,
+        "i": 507,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.035610067666894764,
+        "E_true/i": 0.03435597248549939,
+        "gap/i": -0.0012540951813953748,
+        "i": 1014,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03454938220393321,
+        "E_true/i": 0.03392546346014946,
+        "gap/i": -0.0006239187437837494,
+        "i": 2041,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03485832012986952,
+        "E_true/i": 0.036164470627067874,
+        "gap/i": 0.001306150497198354,
+        "i": 4095,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03433707448315243,
+        "E_true/i": 0.037485033589379955,
+        "gap/i": 0.003147959106227525,
+        "i": 8190,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.034800931893445096,
+        "E_true/i": 0.03367233727929162,
+        "gap/i": -0.0011285946141534734,
+        "i": 16380,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.03503799201278454,
+        "E_true/i": 0.03512784943862999,
+        "gap/i": 8.985742584544717e-05,
+        "i": 32760,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      },
+      {
+        "E_other/i": 0.034161398302466166,
+        "E_true/i": 0.03463593131293,
+        "gap/i": 0.0004745330104638346,
+        "i": 65533,
+        "kernel": "(1+cos(n th))/2, th = 2pi*(sqrt5-1)/2  (irrational)",
+        "limit_gap": 0.0,
+        "limit_other": 0.03485576923076923,
+        "limit_true": 0.03485576923076923
+      }
+    ],
+    "theta_drift": 0.4838052686528281,
+    "theta_drift_over_2pi_exact": "1.001/13 = 77/1000 (period 1000; gcd(1000,13)=1)",
+    "theta_irr": 3.883222077450933,
+    "theta_near": 0.4840054671581464
+  },
+  "d_window_fold": {
+    "cases": 90,
+    "envelope_bound_holds": true,
+    "label": "NUMERICAL (floating point comparison of a PROVED closed form with brute force)",
+    "max_abs_dev_closed_vs_bruteforce": 1.3616885397027545e-12,
+    "ok": true,
+    "table_kernel_envelope_P13_a1": [
+      {
+        "N": 247,
+        "bound pi/(N eta)": 18.608073189119672,
+        "|D_U(P eta)|": 0.9988160666501944
+      },
+      {
+        "N": 1014,
+        "bound pi/(N eta)": 4.532735776836843,
+        "|D_U(P eta)|": 0.9801075103758985
+      },
+      {
+        "N": 4095,
+        "bound pi/(N eta)": 1.122391716169123,
+        "|D_U(P eta)|": 0.7040825501797888
+      },
+      {
+        "N": 16380,
+        "bound pi/(N eta)": 0.28059792904228076,
+        "|D_U(P eta)|": 0.1130385400369531
+      },
+      {
+        "N": 65533,
+        "bound pi/(N eta)": 0.07013556647357146,
+        "|D_U(P eta)|": 0.01761028414166478
+      }
+    ]
+  },
+  "e_dependence": {
+    "cases": [
+      {
+        "E[(max wrong M - M_c)^+]": "1/3",
+        "V": 3,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 1,
+        "m1_closed_form_E_NLL_head": {
+          "1": 0.8675632284814612,
+          "2": 1.0419792764029772,
+          "4": 1.8561746219352424
+        },
+        "m1_closed_form_ok": true,
+        "nu": "1/6",
+        "ok": true,
+        "p": "2/3",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "1/2",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "1/2",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 0.8675632284814612,
+            "E_NLL_head": 0.8675632284814612,
+            "E_prob_true_bayes": "1/2",
+            "E_prob_true_head": "1/2",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 0.8675632284814612,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.46209812037329684,
+            "upper_bound k(V-1)chi^m": 1.6666666666666665
+          },
+          "2": {
+            "E_Brier_bayes": "1/2",
+            "E_Brier_excess=E||head-pi||^2": "2/27",
+            "E_Brier_head": "31/54",
+            "E_KL(pi||head)": 0.17441604792151605,
+            "E_NLL_bayes": 0.8675632284814612,
+            "E_NLL_head": 1.0419792764029772,
+            "E_prob_true_bayes": "1/2",
+            "E_prob_true_head": "11/18",
+            "excess_NLL": 0.174416047921516,
+            "k*E_NLL_bayes": 1.7351264569629223,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.9241962407465937,
+            "upper_bound k(V-1)chi^m": 3.333333333333333
+          },
+          "4": {
+            "E_Brier_bayes": "1/2",
+            "E_Brier_excess=E||head-pi||^2": "294/1849",
+            "E_Brier_head": "2437/3698",
+            "E_KL(pi||head)": 0.988611393453781,
+            "E_NLL_bayes": 0.8675632284814612,
+            "E_NLL_head": 1.8561746219352424,
+            "E_prob_true_bayes": "1/2",
+            "E_prob_true_head": "57/86",
+            "excess_NLL": 0.9886113934537812,
+            "k*E_NLL_bayes": 3.4702529139258447,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 1.8483924814931874,
+            "upper_bound k(V-1)chi^m": 6.666666666666666
+          }
+        },
+        "rho": "4",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "1/6",
+        "V": 3,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 2,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/6",
+        "ok": true,
+        "p": "2/3",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "43/108",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "43/108",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 0.6954056861230045,
+            "E_NLL_head": 0.6954056861230045,
+            "E_prob_true_bayes": "65/108",
+            "E_prob_true_head": "65/108",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 0.6954056861230045,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.23104906018664842,
+            "upper_bound k(V-1)chi^m": 1.3888888888888886
+          },
+          "2": {
+            "E_Brier_bayes": "43/108",
+            "E_Brier_excess=E||head-pi||^2": "77984/6040683",
+            "E_Brier_head": "1103587/2684748",
+            "E_KL(pi||head)": 0.13254292408466925,
+            "E_NLL_bayes": 0.6954056861230045,
+            "E_NLL_head": 0.8279486102076737,
+            "E_prob_true_bayes": "65/108",
+            "E_prob_true_head": "3737/5676",
+            "excess_NLL": 0.13254292408466928,
+            "k*E_NLL_bayes": 1.390811372246009,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.46209812037329684,
+            "upper_bound k(V-1)chi^m": 2.7777777777777772
+          },
+          "4": {
+            "E_Brier_bayes": "43/108",
+            "E_Brier_excess=E||head-pi||^2": "21155382304/1162933371963",
+            "E_Brier_head": "1936700603083/4651733487852",
+            "E_KL(pi||head)": 0.5763550135254293,
+            "E_NLL_bayes": 0.6954056861230045,
+            "E_NLL_head": 1.2717606996484339,
+            "E_prob_true_bayes": "65/108",
+            "E_prob_true_head": "14935097/22413996",
+            "excess_NLL": 0.5763550135254294,
+            "k*E_NLL_bayes": 2.781622744492018,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.9241962407465937,
+            "upper_bound k(V-1)chi^m": 5.5555555555555545
+          }
+        },
+        "rho": "4",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "7/36",
+        "V": 3,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 3,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/6",
+        "ok": true,
+        "p": "2/3",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "83/264",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "83/264",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 0.5596557209167345,
+            "E_NLL_head": 0.5596557209167345,
+            "E_prob_true_bayes": "181/264",
+            "E_prob_true_head": "181/264",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 0.5596557209167345,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.2695572368844232,
+            "upper_bound k(V-1)chi^m": 1.157407407407407
+          },
+          "2": {
+            "E_Brier_bayes": "83/264",
+            "E_Brier_excess=E||head-pi||^2": "13873928/466955489",
+            "E_Brier_head": "350578699/1018811976",
+            "E_KL(pi||head)": 0.1391809834732312,
+            "E_NLL_bayes": 0.5596557209167345,
+            "E_NLL_head": 0.6988367043899657,
+            "E_prob_true_bayes": "181/264",
+            "E_prob_true_head": "1128559/1491672",
+            "excess_NLL": 0.13918098347323116,
+            "k*E_NLL_bayes": 1.119311441833469,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.5391144737688464,
+            "upper_bound k(V-1)chi^m": 2.314814814814814
+          },
+          "4": {
+            "E_Brier_bayes": "83/264",
+            "E_Brier_excess=E||head-pi||^2": "14562459447702264/269457623198673767",
+            "E_Brier_head": "216607206774242317/587907541524379128",
+            "E_KL(pi||head)": 0.6429243682882034,
+            "E_NLL_bayes": 0.5596557209167345,
+            "E_NLL_head": 1.2025800892049379,
+            "E_prob_true_bayes": "181/264",
+            "E_prob_true_head": "163255372777/210252095976",
+            "excess_NLL": 0.6429243682882033,
+            "k*E_NLL_bayes": 2.238622883666938,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 1.0782289475376927,
+            "upper_bound k(V-1)chi^m": 4.629629629629628
+          }
+        },
+        "rho": "4",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "17/108",
+        "V": 3,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 4,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/6",
+        "ok": true,
+        "p": "2/3",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "44031/174064",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "44031/174064",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 0.45250389793803547,
+            "E_NLL_head": 0.45250389793803547,
+            "E_prob_true_bayes": "130033/174064",
+            "E_prob_true_head": "130033/174064",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 0.45250389793803547,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.21821300128739018,
+            "upper_bound k(V-1)chi^m": 0.9645061728395058
+          },
+          "2": {
+            "E_Brier_bayes": "44031/174064",
+            "E_Brier_excess=E||head-pi||^2": "43202084600661969700/2161852376501596324887",
+            "E_Brier_head": "9545988467468043587/34974355939358484528",
+            "E_KL(pi||head)": 0.11806187736439303,
+            "E_NLL_bayes": 0.45250389793803547,
+            "E_NLL_head": 0.5705657753024285,
+            "E_prob_true_bayes": "130033/174064",
+            "E_prob_true_head": "98432087623/122918354064",
+            "excess_NLL": 0.118061877364393,
+            "k*E_NLL_bayes": 0.9050077958760709,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.43642600257478037,
+            "upper_bound k(V-1)chi^m": 1.9290123456790116
+          },
+          "4": {
+            "E_Brier_bayes": "44031/174064",
+            "E_Brier_excess=E||head-pi||^2": "562684224791054195779076039957673245203710060/14310974639388581020662961813866904392798574813",
+            "E_Brier_head": "264522972696408124458842438743376604769769889/905041874427736349132835529730713321283704336",
+            "E_KL(pi||head)": 0.5279826478143331,
+            "E_NLL_bayes": 0.45250389793803547,
+            "E_NLL_head": 0.9804865457523686,
+            "E_prob_true_bayes": "130033/174064",
+            "E_prob_true_head": "97946879979972856593503/120335655525882193060624",
+            "excess_NLL": 0.5279826478143331,
+            "k*E_NLL_bayes": 1.8100155917521419,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.8728520051495607,
+            "upper_bound k(V-1)chi^m": 3.858024691358023
+          }
+        },
+        "rho": "4",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "55/432",
+        "V": 3,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 5,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/6",
+        "ok": true,
+        "p": "2/3",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "23519101/115683552",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "23519101/115683552",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 0.3667628270022438,
+            "E_NLL_head": 0.3667628270022438,
+            "E_prob_true_bayes": "92164451/115683552",
+            "E_prob_true_head": "92164451/115683552",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 0.3667628270022438,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.1764958098648009,
+            "upper_bound k(V-1)chi^m": 0.8037551440329215
+          },
+          "2": {
+            "E_Brier_bayes": "23519101/115683552",
+            "E_Brier_excess=E||head-pi||^2": "330505004977681244414007145342294306/24832495160793819130593488449367608911",
+            "E_Brier_head": "142842752304997647136135678441289/659431905531035322715395154156896",
+            "E_KL(pi||head)": 0.10097951513522607,
+            "E_NLL_bayes": 0.3667628270022438,
+            "E_NLL_head": 0.46774234213746996,
+            "E_prob_true_bayes": "92164451/115683552",
+            "E_prob_true_head": "211819493168994493/251605768874601504",
+            "excess_NLL": 0.10097951513522618,
+            "k*E_NLL_bayes": 0.7335256540044875,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.3529916197296018,
+            "upper_bound k(V-1)chi^m": 1.607510288065843
+          },
+          "4": {
+            "E_Brier_bayes": "23519101/115683552",
+            "E_Brier_excess=E||head-pi||^2": "61787041763579645641409726689439788920958030741249401637879144774/2709861747847146135307999016687822894281205558860500954919130102469",
+            "E_Brier_head": "225367101420767173215612938675112962360983603316377368602837307281/996730757828835360113286994643796926632167561879724489165657049184",
+            "E_KL(pi||head)": 0.4365797575216853,
+            "E_NLL_bayes": 0.3667628270022438,
+            "E_NLL_head": 0.803342584523929,
+            "E_prob_true_bayes": "92164451/115683552",
+            "E_prob_true_head": "74944142689676899404383951139086351/88037369184210768079105774924146528",
+            "excess_NLL": 0.43657975752168526,
+            "k*E_NLL_bayes": 1.467051308008975,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.7059832394592036,
+            "upper_bound k(V-1)chi^m": 3.215020576131686
+          }
+        },
+        "rho": "4",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "139/1296",
+        "V": 3,
+        "chi": 0.8333333333333333,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 6,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/6",
+        "ok": true,
+        "p": "2/3",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "499154057/3039339072",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "499154057/3039339072",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 0.2979453271314037,
+            "E_NLL_head": 0.2979453271314037,
+            "E_prob_true_bayes": "2540185015/3039339072",
+            "E_prob_true_head": "2540185015/3039339072",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 0.2979453271314037,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.14868434891640803,
+            "upper_bound k(V-1)chi^m": 0.6697959533607678
+          },
+          "2": {
+            "E_Brier_bayes": "499154057/3039339072",
+            "E_Brier_excess=E||head-pi||^2": "356147260359203665022740957259534378998/29142609185371144159465606682253657028781",
+            "E_Brier_head": "298192676294616218541746779580189380073/1689936866080114671886860913015011220032",
+            "E_KL(pi||head)": 0.08633276430919747,
+            "E_NLL_bayes": 0.2979453271314037,
+            "E_NLL_head": 0.38427809144060115,
+            "E_prob_true_bayes": "2540185015/3039339072",
+            "E_prob_true_head": "73746021906682304314141/84355823976300385699008",
+            "excess_NLL": 0.08633276430919745,
+            "k*E_NLL_bayes": 0.5958906542628074,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.29736869783281605,
+            "upper_bound k(V-1)chi^m": 1.3395919067215356
+          },
+          "4": {
+            "E_Brier_bayes": "499154057/3039339072",
+            "E_Brier_excess=E||head-pi||^2": "77260926105481015014707001142420179024755099578549999331875509954127732826802726/3611173909469898038153889000457306597841036519742297842909407493597373369501867677",
+            "E_Brier_head": "626039055803164138713923139286423658471864850385181736837832068942080307015737/3372581344849624839240339367008959236831250695779909748561925055917540297322048",
+            "E_KL(pi||head)": 0.36987803647444106,
+            "E_NLL_bayes": 0.2979453271314037,
+            "E_NLL_head": 0.6678233636058447,
+            "E_prob_true_bayes": "2540185015/3039339072",
+            "E_prob_true_head": "849447889958092990971697584765176335968144763/962840717314092292051770755698672758100501824",
+            "excess_NLL": 0.369878036474441,
+            "k*E_NLL_bayes": 1.1917813085256148,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.5947373956656321,
+            "upper_bound k(V-1)chi^m": 2.679183813443071
+          }
+        },
+        "rho": "4",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "15/32",
+        "V": 16,
+        "chi": 0.6951941016011038,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 1,
+        "m1_closed_form_E_NLL_head": {
+          "1": 1.9605913137698616,
+          "2": 2.706738523346492,
+          "4": 5.3124545995308745
+        },
+        "m1_closed_form_ok": true,
+        "nu": "1/32",
+        "ok": true,
+        "p": "17/32",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "45/64",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "45/64",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 1.960591313769862,
+            "E_NLL_head": 1.960591313769862,
+            "E_prob_true_bayes": "19/64",
+            "E_prob_true_head": "19/64",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 1.960591313769862,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 1.3280687550263512,
+            "upper_bound k(V-1)chi^m": 10.427911524016558
+          },
+          "2": {
+            "E_Brier_bayes": "45/64",
+            "E_Brier_excess=E||head-pi||^2": "4335/23104",
+            "E_Brier_head": "5145/5776",
+            "E_KL(pi||head)": 0.7461472095766303,
+            "E_NLL_bayes": 1.960591313769862,
+            "E_NLL_head": 2.706738523346493,
+            "E_prob_true_bayes": "19/64",
+            "E_prob_true_head": "77/152",
+            "excess_NLL": 0.7461472095766308,
+            "k*E_NLL_bayes": 3.921182627539724,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 2.6561375100527025,
+            "upper_bound k(V-1)chi^m": 20.855823048033116
+          },
+          "4": {
+            "E_Brier_bayes": "45/64",
+            "E_Brier_excess=E||head-pi||^2": "408569415/1744565824",
+            "E_Brier_head": "408804315/436141456",
+            "E_KL(pi||head)": 3.3518632857610116,
+            "E_NLL_bayes": 1.960591313769862,
+            "E_NLL_head": 5.312454599530875,
+            "E_prob_true_bayes": "19/64",
+            "E_prob_true_head": "44371/83536",
+            "excess_NLL": 3.3518632857610133,
+            "k*E_NLL_bayes": 7.842365255079448,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 5.312275020105405,
+            "upper_bound k(V-1)chi^m": 41.71164609606623
+          }
+        },
+        "rho": "17",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "15/64",
+        "V": 16,
+        "chi": 0.6951941016011038,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 2,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/32",
+        "ok": true,
+        "p": "17/32",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "335/608",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "335/608",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 1.408891631589853,
+            "E_NLL_head": 1.408891631589853,
+            "E_prob_true_bayes": "273/608",
+            "E_prob_true_head": "273/608",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 1.408891631589853,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.6640343775131756,
+            "upper_bound k(V-1)chi^m": 7.249422583514489
+          },
+          "2": {
+            "E_Brier_bayes": "335/608",
+            "E_Brier_excess=E||head-pi||^2": "672207970015/22688950824032",
+            "E_Brier_head": "346671614085/597077653264",
+            "E_KL(pi||head)": 0.42342727365219673,
+            "E_NLL_bayes": 1.408891631589853,
+            "E_NLL_head": 1.8323189052420497,
+            "E_prob_true_bayes": "273/608",
+            "E_prob_true_head": "1624717/3090832",
+            "excess_NLL": 0.4234272736521967,
+            "k*E_NLL_bayes": 2.817783263179706,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 1.3280687550263512,
+            "upper_bound k(V-1)chi^m": 14.498845167028978
+          },
+          "4": {
+            "E_Brier_bayes": "335/608",
+            "E_Brier_excess=E||head-pi||^2": "440090308468964970079949035/12598839674954869136730209888",
+            "E_Brier_head": "194260136714811801532774815/331548412498812345703426576",
+            "E_KL(pi||head)": 1.7346739177531931,
+            "E_NLL_bayes": 1.408891631589853,
+            "E_NLL_head": 3.143565549343046,
+            "E_prob_true_bayes": "273/608",
+            "E_prob_true_head": "38691570042181/72833883598096",
+            "excess_NLL": 1.734673917753193,
+            "k*E_NLL_bayes": 5.635566526359412,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 2.6561375100527025,
+            "upper_bound k(V-1)chi^m": 28.997690334057957
+          }
+        },
+        "rho": "17",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "75/512",
+        "V": 16,
+        "chi": 0.6951941016011038,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 3,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/32",
+        "ok": true,
+        "p": "17/32",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "126999/315392",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "126999/315392",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 1.0039894486536833,
+            "E_NLL_head": 1.0039894486536833,
+            "E_prob_true_bayes": "188393/315392",
+            "E_prob_true_head": "188393/315392",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 1.0039894486536833,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.4150214859457348,
+            "upper_bound k(V-1)chi^m": 5.039755820073108
+          },
+          "2": {
+            "E_Brier_bayes": "126999/315392",
+            "E_Brier_excess=E||head-pi||^2": "911647355350759610409579/83351695454340848490475520",
+            "E_Brier_head": "19238226495478494167307/46513222909788419916560",
+            "E_KL(pi||head)": 0.2843520166683931,
+            "E_NLL_bayes": 1.0039894486536833,
+            "E_NLL_head": 1.2883414653220768,
+            "E_prob_true_bayes": "188393/315392",
+            "E_prob_true_head": "227047576091/347756207084",
+            "excess_NLL": 0.2843520166683935,
+            "k*E_NLL_bayes": 2.0079788973073667,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.8300429718914696,
+            "upper_bound k(V-1)chi^m": 10.079511640146215
+          },
+          "4": {
+            "E_Brier_bayes": "126999/315392",
+            "E_Brier_excess=E||head-pi||^2": "18542954398996962391722873090096330463766068587924326757/1499800954971130851372464095415625171182177346197326106624",
+            "E_Brier_head": "31578140039099285699658391132396660515798157385183655/76085681563064673872385556788536179544550392968614352",
+            "E_KL(pi||head)": 1.106725733742106,
+            "E_NLL_bayes": 1.0039894486536833,
+            "E_NLL_head": 2.110715182395789,
+            "E_prob_true_bayes": "188393/315392",
+            "E_prob_true_head": "2608691420536813734331489831/3978168141886093301463478096",
+            "excess_NLL": 1.1067257337421057,
+            "k*E_NLL_bayes": 4.015957794614733,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 1.6600859437829392,
+            "upper_bound k(V-1)chi^m": 20.15902328029243
+          }
+        },
+        "rho": "17",
+        "total_probability": "1"
+      },
+      {
+        "E[(max wrong M - M_c)^+]": "1785/16384",
+        "V": 16,
+        "chi": 0.6951941016011038,
+        "eps": "1/2",
+        "flags": {
+          "brier_identity": true,
+          "kl_identity": true,
+          "lower_bound": true,
+          "power_identity": true,
+          "upper_bound": true
+        },
+        "m": 4,
+        "m1_closed_form_E_NLL_head": null,
+        "m1_closed_form_ok": true,
+        "nu": "1/32",
+        "ok": true,
+        "p": "17/32",
+        "per_k": {
+          "1": {
+            "E_Brier_bayes": "184689479/636711392",
+            "E_Brier_excess=E||head-pi||^2": "0",
+            "E_Brier_head": "184689479/636711392",
+            "E_KL(pi||head)": 0.0,
+            "E_NLL_bayes": 0.7121131515780943,
+            "E_NLL_head": 0.7121131515780943,
+            "E_prob_true_bayes": "452021913/636711392",
+            "E_prob_true_head": "452021913/636711392",
+            "excess_NLL": 0.0,
+            "k*E_NLL_bayes": 0.7121131515780943,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.30867223017214024,
+            "upper_bound k(V-1)chi^m": 3.5036085196246587
+          },
+          "2": {
+            "E_Brier_bayes": "184689479/636711392",
+            "E_Brier_excess=E||head-pi||^2": "933771928986658233381824374094382637942112047648273891/90251240354592671626351445527914587353009854959367714272",
+            "E_Brier_head": "681319716224819913612539362928700187657221973515/2267934677810009634666035830008572231809789386256",
+            "E_KL(pi||head)": 0.21658566090099923,
+            "E_NLL_bayes": 0.7121131515780943,
+            "E_NLL_head": 0.9286988124790938,
+            "E_prob_true_bayes": "452021913/636711392",
+            "E_prob_true_head": "4590049666561005691135471/6023865440475920371357936",
+            "excess_NLL": 0.2165856609009995,
+            "k*E_NLL_bayes": 1.4242263031561886,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 0.6173444603442805,
+            "upper_bound k(V-1)chi^m": 7.007217039249317
+          },
+          "4": {
+            "E_Brier_bayes": "184689479/636711392",
+            "E_Brier_excess=E||head-pi||^2": "815093044479879145450018579113116760385640305740280950002778773250165855072657869376189727520503363167219992244493/70302890287430464188204468037132508272060445608161793835475566948581853689511776859963002221038114342906057182919456",
+            "E_Brier_head": "532930900235515134191933108868019767752226177570817829566313452927792202648377745000132172433220481345379545/1766650100394131831414242213831977632266028514423986780760487902778578931146544382481235761424243261358981488",
+            "E_KL(pi||head)": 0.8289437505423972,
+            "E_NLL_bayes": 0.7121131515780943,
+            "E_NLL_head": 1.5410569021204916,
+            "E_prob_true_bayes": "452021913/636711392",
+            "E_prob_true_head": "1536658694376356549306628577327143321258951832147432543/2009491819423369582503996918578447161833994474117387888",
+            "excess_NLL": 0.8289437505423973,
+            "k*E_NLL_bayes": 2.848452606312377,
+            "lower_bound k*lam*E[(max wrong - M_c)^+]": 1.234688920688561,
+            "upper_bound k(V-1)chi^m": 14.014434078498635
+          }
+        },
+        "rho": "17",
+        "total_probability": "1"
+      }
+    ],
+    "excess_NLL_by_m (m = 1, 2, ...)": {
+      "V=16,k=2": [
+        0.7461472095766308,
+        0.4234272736521967,
+        0.2843520166683935,
+        0.2165856609009995
+      ],
+      "V=16,k=4": [
+        3.3518632857610133,
+        1.734673917753193,
+        1.1067257337421057,
+        0.8289437505423973
+      ],
+      "V=3,k=2": [
+        0.174416047921516,
+        0.13254292408466928,
+        0.13918098347323116,
+        0.118061877364393,
+        0.10097951513522618,
+        0.08633276430919745
+      ],
+      "V=3,k=4": [
+        0.9886113934537812,
+        0.5763550135254294,
+        0.6429243682882033,
+        0.5279826478143331,
+        0.43657975752168526,
+        0.369878036474441
+      ]
+    },
+    "excess_strictly_decreasing_in_m": {
+      "V=16,k=2": true,
+      "V=16,k=4": true,
+      "V=3,k=2": false,
+      "V=3,k=4": false
+    },
+    "headline_V3_eps1/2_k2_m1": {
+      "E_NLL_bayes": 0.8675632284814612,
+      "E_NLL_bayes_closed_form": "(2/3) log(3/2) + (1/3) log 6",
+      "E_NLL_head": 1.0419792764029772,
+      "E_NLL_head_closed_form": "(2/3) log(9/8) + (1/3) log 18",
+      "E_max_prob_bayes": "2/3",
+      "E_max_prob_head": "8/9",
+      "E_prob_true_bayes": "1/2",
+      "E_prob_true_head": "11/18",
+      "accuracy_of_argmax (both heads)": "2/3",
+      "check_closed_forms": true
+    },
+    "k_to_infinity": {
+      "V": 3,
+      "abs_error": 0.00012206803207415184,
+      "bound log(V)/k": 0.27465307216702745,
+      "k": 4,
+      "m": 3,
+      "ok": true
+    },
+    "label": "NUMERICAL (probabilities exact Fractions, logarithms floating point); the inequalities illustrated are PROVED in T9e",
+    "ok": true
+  },
+  "l91_component_bound": {
+    "K_m_cases": [
+      {
+        "P": 12,
+        "bound_2LambdaG": 5160.0,
+        "bound_per_component": 346.0,
+        "max_dev": 1.40625,
+        "orders": [
+          4,
+          5,
+          9,
+          16
+        ]
+      },
+      {
+        "P": 12,
+        "bound_2LambdaG": 10010.0,
+        "bound_per_component": 1002.0,
+        "max_dev": 1.9635416666666667,
+        "orders": [
+          4,
+          5,
+          6,
+          13
+        ]
+      },
+      {
+        "P": 12,
+        "bound_2LambdaG": 952.0,
+        "bound_per_component": 164.0,
+        "max_dev": 1.1458333333333333,
+        "orders": [
+          3,
+          7,
+          8,
+          12
+        ]
+      },
+      {
+        "P": 12,
+        "bound_2LambdaG": 416.0,
+        "bound_per_component": 104.0,
+        "max_dev": 2.5729166666666665,
+        "orders": [
+          1,
+          6,
+          12,
+          16
+        ]
+      },
+      {
+        "P": 12,
+        "bound_2LambdaG": 2880.0,
+        "bound_per_component": 240.0,
+        "max_dev": 3.59375,
+        "orders": [
+          1,
+          5,
+          6,
+          16
+        ]
+      },
+      {
+        "P": 12,
+        "bound_2LambdaG": 7020.0,
+        "bound_per_component": 276.0,
+        "max_dev": 2.59375,
+        "orders": [
+          1,
+          9,
+          12,
+          13
+        ]
+      },
+      {
+        "P": 13,
+        "bound_2LambdaG": 8666.666666666666,
+        "bound_per_component": 1148.3333333333333,
+        "max_dev": 2.2005208333333335,
+        "orders": [
+          1,
+          5,
+          8,
+          16
+        ]
+      },
+      {
+        "P": 13,
+        "bound_2LambdaG": 17940.0,
+        "bound_per_component": 825.5,
+        "max_dev": 5.5,
+        "orders": [
+          3,
+          4,
+          5,
+          8
+        ]
+      },
+      {
+        "P": 13,
+        "bound_2LambdaG": 7280.0,
+        "bound_per_component": 381.3333333333333,
+        "max_dev": 1.876602564102564,
+        "orders": [
+          1,
+          3,
+          4,
+          5
+        ]
+      },
+      {
+        "P": 13,
+        "bound_2LambdaG": 19032.0,
+        "bound_per_component": 3549.0,
+        "max_dev": 6.21875,
+        "orders": [
+          3,
+          6,
+          8,
+          16
+        ]
+      },
+      {
+        "P": 13,
+        "bound_2LambdaG": 35490.0,
+        "bound_per_component": 879.6666666666666,
+        "max_dev": 3.673076923076923,
+        "orders": [
+          1,
+          5,
+          6,
+          7
+        ]
+      },
+      {
+        "P": 13,
+        "bound_2LambdaG": 8528.0,
+        "bound_per_component": 1430.0,
+        "max_dev": 5.285256410256411,
+        "orders": [
+          2,
+          6,
+          13,
+          16
+        ]
+      }
+    ],
+    "cos_cases": [
+      {
+        "P": 12,
+        "bound_per_component": 529.4594135560826,
+        "components_(beta,m,a)": [
+          [
+            1.2459665019236992,
+            7,
+            6
+          ],
+          [
+            -1.6641898933079013,
+            5,
+            2
+          ],
+          [
+            1.2545234795411777,
+            16,
+            11
+          ]
+        ],
+        "max_dev": 1.5230772399460963
+      },
+      {
+        "P": 12,
+        "bound_per_component": 420.8607201178909,
+        "components_(beta,m,a)": [
+          [
+            1.7614557917448135,
+            5,
+            1
+          ],
+          [
+            0.12261765106447386,
+            13,
+            3
+          ],
+          [
+            1.0192221308118894,
+            7,
+            6
+          ]
+        ],
+        "max_dev": 2.4125436447898356
+      },
+      {
+        "P": 12,
+        "bound_per_component": 209.92517953121487,
+        "components_(beta,m,a)": [
+          [
+            0.0023803651090323896,
+            7,
+            5
+          ],
+          [
+            -0.6109067934132923,
+            16,
+            1
+          ],
+          [
+            -0.8980846787215557,
+            7,
+            1
+          ]
+        ],
+        "max_dev": 1.0954025078362892
+      },
+      {
+        "P": 12,
+        "bound_per_component": 240.4225365774183,
+        "components_(beta,m,a)": [
+          [
+            1.4809752912445502,
+            9,
+            7
+          ],
+          [
+            0.7543248423133075,
+            8,
+            5
+          ],
+          [
+            -0.8132060264730994,
+            5,
+            1
+          ]
+        ],
+        "max_dev": 2.255181761547752
+      },
+      {
+        "P": 13,
+        "bound_per_component": 651.9388808293751,
+        "components_(beta,m,a)": [
+          [
+            -1.7308538890810041,
+            9,
+            2
+          ],
+          [
+            -0.12314196041722303,
+            9,
+            5
+          ],
+          [
+            1.0485762117634132,
+            8,
+            1
+          ]
+        ],
+        "max_dev": 7.564711639038404
+      },
+      {
+        "P": 13,
+        "bound_per_component": 696.7714411352124,
+        "components_(beta,m,a)": [
+          [
+            -1.1878756790743417,
+            12,
+            7
+          ],
+          [
+            1.1174168335520918,
+            9,
+            4
+          ],
+          [
+            0.3109552414078287,
+            8,
+            5
+          ]
+        ],
+        "max_dev": 1.5701613107060464
+      },
+      {
+        "P": 13,
+        "bound_per_component": 147.46994876212605,
+        "components_(beta,m,a)": [
+          [
+            0.28158852815092095,
+            13,
+            10
+          ],
+          [
+            0.40083795664443,
+            9,
+            2
+          ],
+          [
+            0.3565581936569653,
+            5,
+            3
+          ]
+        ],
+        "max_dev": 1.9875186326066192
+      },
+      {
+        "P": 13,
+        "bound_per_component": 109.56590520584162,
+        "components_(beta,m,a)": [
+          [
+            -0.18871255350255378,
+            8,
+            5
+          ],
+          [
+            -1.7804210466169357,
+            13,
+            5
+          ],
+          [
+            0.13199311464434116,
+            7,
+            4
+          ]
+        ],
+        "max_dev": 1.1549029470890313
+      }
+    ],
+    "failures": [],
+    "label": "EXACT for the K_m cases (Fractions); cosine cases NUMERICAL (floating point)",
+    "ok": true,
+    "quoted": {
+      "D_P, P=12": {
+        "bound_2LambdaG": 24.0,
+        "bound_per_component": 24.0,
+        "gap_slope_(p-nu)kP(0)/P": 0.041666666666666664,
+        "i_informative (2B <= (i+1) g/2)": 2303,
+        "kappa_P(0)": 1.0
+      },
+      "D_P, P=13": {
+        "bound_2LambdaG": 26.0,
+        "bound_per_component": 26.0,
+        "gap_slope_(p-nu)kP(0)/P": 0.038461538461538464,
+        "i_informative (2B <= (i+1) g/2)": 2703,
+        "kappa_P(0)": 1.0
+      },
+      "beta_m=1, m=1..16, P=12": {
+        "bound_2LambdaG": 23063040.0,
+        "bound_per_component": 1632.0,
+        "gap_slope_(p-nu)kP(0)/P": 0.25,
+        "i_informative (2B <= (i+1) g/2)": 26111,
+        "kappa_P(0)": 6.0
+      },
+      "beta_m=1, m=1..16, P=13": {
+        "bound_2LambdaG": 23063040.0,
+        "bound_per_component": 3224.0,
+        "gap_slope_(p-nu)kP(0)/P": 0.07692307692307693,
+        "i_informative (2B <= (i+1) g/2)": 167647,
+        "kappa_P(0)": 2.0
+      }
+    }
+  },
+  "l92_character_fold": {
+    "P_range": [
+      1,
+      20
+    ],
+    "failures": [],
+    "label": "NUMERICAL (floating point; the statement is PROVED in L9.2')",
+    "m_range": [
+      1,
+      24
+    ],
+    "max_abs_dev": 4.9057979900624105e-14,
+    "ok": true,
+    "values_compared": 37800
+  }
+}

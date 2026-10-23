@@ -373,7 +373,7 @@ class KeyWindowTests(unittest.TestCase):
 
         from arithscope.train import RunSpec
 
-        current = {f.name for f in dataclasses.fields(RunSpec)} - {"attn_windows"}
+        current = {f.name for f in dataclasses.fields(RunSpec)} - {"attn_windows", "evidence"}
         checked = 0
         for path in sorted((Path(__file__).resolve().parent.parent / "results" / "runs").glob("*/*.json")):
             fields = json.loads(path.read_text())["spec"]

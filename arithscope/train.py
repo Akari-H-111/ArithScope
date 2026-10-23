@@ -25,6 +25,7 @@ import torch.nn.functional as F
 from . import arith
 from .attention import PositionConfig
 from .bias import CosineBankBias, LearnedFrequencyBias, RamanujanBias, RelativeBias
+from .evidence import EvidenceConfig
 from .model import ModelConfig, TinyDecoder
 from .tasks import make_task, task_dict
 
@@ -56,6 +57,7 @@ class RunSpec:
     val_every: int = 250
     data_seed: int = 20261014       # test/validation data seed, shared by all variants and seeds
     attn_windows: tuple[int | None, ...] = ()  # per-layer key window (ModelConfig); added after E1-E5
+    evidence: dict | None = None    # opt-in evidence head: EvidenceConfig fields (orders default to ``orders``)
 
     @property
     def run_id(self) -> str:
@@ -73,7 +75,7 @@ class RunSpec:
 
 # Fields added after runs existed. They are left out of the run id at their default value,
 # so every earlier spec keeps its id and file name.
-_LATER_FIELDS = {"attn_windows": ()}
+_LATER_FIELDS = {"attn_windows": (), "evidence": None}
 
 
 def _seed(*parts) -> int:
@@ -110,8 +112,13 @@ def environment_info() -> dict:
 def build_model(spec: RunSpec, vocab: int) -> TinyDecoder:
     pos = PositionConfig.from_name(spec.variant, orders=tuple(spec.orders),
                                    relbias_max_distance=spec.train_length)
+    evidence = None
+    if spec.evidence is not None:
+        fields = {"orders": spec.orders, **spec.evidence}
+        evidence = EvidenceConfig(**{**fields, "orders": tuple(fields["orders"])})
     cfg = ModelConfig(vocab_size=vocab, d_model=spec.d_model, num_layers=spec.num_layers,
-                      num_heads=spec.num_heads, d_ff=spec.d_ff, pos=pos, attn_windows=tuple(spec.attn_windows))
+                      num_heads=spec.num_heads, d_ff=spec.d_ff, pos=pos, attn_windows=tuple(spec.attn_windows),
+                      evidence=evidence)
     return TinyDecoder(cfg)
 
 
@@ -222,6 +229,34 @@ def positional_snapshot(model: TinyDecoder) -> list[dict]:
     return snap
 
 
+def evidence_snapshot(model: TinyDecoder) -> dict | None:
+    """Learned kernel coefficients and a summary of ``W_out`` (None without an evidence head).
+
+    Kept out of :func:`positional_snapshot`, which replays compare.
+    """
+    head = model.evidence
+    if head is None:
+        return None
+    w = head.w_out.detach().double()  # [V_out, V_in]
+    k = min(w.shape)
+    diag = torch.diagonal(w)
+    off = w[:k, :k] - torch.diag(diag)
+    out = {"kernel": head.cfg.kernel}
+    if head.cfg.kernel == "arith":
+        out.update(orders=list(head.cfg.orders), beta=head.kernel.beta.tolist())
+    elif head.cfg.kernel in ("cosine_fund", "cosine_full"):
+        out.update(orders=list(head.cfg.orders), components=[list(c) for c in head.kernel.components],
+                   coef=head.kernel.coef.tolist())
+    elif head.cfg.kernel == "cosine_learned":
+        out.update(omega=head.kernel.omega.tolist(), amplitude=head.kernel.amplitude.tolist())
+    n_off = off.numel() - k
+    out["w_out"] = {"shape": list(w.shape), "diag": diag.tolist(), "diag_mean": float(diag.mean()),
+                    "offdiag_mean": float(off.sum() / n_off) if n_off else None,
+                    "offdiag_abs_mean": float(off.abs().sum() / n_off) if n_off else None,
+                    "offdiag_max_abs": float(off.abs().max()), "frobenius": float(w.norm())}
+    return out
+
+
 def run(spec: RunSpec, out_dir: str | Path, threads: int = 1, verbose: bool = False,
         checkpoint_dir: str | Path | None = None) -> dict:
     out_dir = Path(out_dir)
@@ -301,6 +336,8 @@ def run(spec: RunSpec, out_dir: str | Path, threads: int = 1, verbose: bool = Fa
         "alias_vote_period": alias_period,
         "positional": positional_snapshot(model),
     }
+    if model.evidence is not None:  # a separate key, so replays of the positional snapshot are unaffected
+        record["evidence"] = evidence_snapshot(model)
     tmp = out_path.with_suffix(".tmp")
     tmp.write_text(json.dumps(record, indent=1))
     os.replace(tmp, out_path)

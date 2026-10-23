@@ -15,6 +15,7 @@ batch on every machine, and test sets are hashed into the run logs.
 from __future__ import annotations
 
 import hashlib
+import math
 from dataclasses import asdict, dataclass
 
 import torch
@@ -109,6 +110,75 @@ class PeriodicDenoising:
 
 
 @dataclass(frozen=True)
+class CopiedPeriodicDenoising:
+    """Periodic denoising with copied observations (E10 boundary law).
+
+    Draws exactly the random numbers of :class:`PeriodicDenoising` (``query_rate`` 0), in the same order, and
+    then replaces each token by the token of its block leader. For position ``t`` with residue ``r = t mod P`` and
+    visit ``v = t // P`` the leader is ``r + P (v - v mod k)``: each residue class is cut into blocks of ``k``
+    consecutive visits, one observation per block is copied to the whole block, and the per-position marginal
+    law is unchanged. ``Batch.observed`` marks the leaders, the only positions that carry new evidence, so the
+    plurality oracle and the exact Bayes posterior count leaders only. ``copies = 1`` is ``PeriodicDenoising``.
+    """
+
+    periods: tuple[int, ...] = (12,)
+    vocab_size: int = 16
+    noise: float = 0.5
+    copies: int = 4
+
+    name = "periodic_copied"
+
+    def __post_init__(self) -> None:
+        if self.copies < 1:
+            raise ValueError("copies must be a positive integer")
+
+    @property
+    def model_vocab(self) -> int:
+        return self.vocab_size
+
+    def sample(self, batch: int, length: int, gen: torch.Generator) -> Batch:
+        periods = torch.tensor(self.periods)[torch.randint(len(self.periods), (batch,), generator=gen)]
+        max_p = max(self.periods)
+        motif = torch.randint(self.vocab_size, (batch, max_p), generator=gen)
+        t = torch.arange(length)
+        residue = t[None, :] % periods[:, None]
+        truth = motif.gather(1, residue)
+        noise_tok = torch.randint(self.vocab_size, (batch, length), generator=gen)
+        flip = torch.rand(batch, length, generator=gen) < self.noise
+        independent = torch.where(flip, noise_tok, truth)
+        visit = t[None, :] // periods[:, None]
+        leader = t[None, :] - periods[:, None] * (visit % self.copies)  # r + P (v - v mod k)
+        tokens = independent.gather(1, leader)
+        observed = leader == t[None, :]
+        oracle = _plurality_oracle(tokens, residue, truth, self.vocab_size, observed)
+        return Batch(tokens, truth, torch.ones(batch, length, dtype=torch.bool), oracle, periods, observed)
+
+
+def periodic_bayes_nll(batch: Batch, task) -> torch.Tensor:
+    """Exact Bayes NLL ``[B, N]`` of the true symbol for a periodic batch (docs/MATH.md, B1).
+
+    ``NLL_t = logsumexp_b(c_b log rho) - c_true log rho`` with ``c_b`` the number of evidence positions
+    ``j <= t``, ``j = t mod P`` and ``x_j = b``: every position when ``batch.observed`` is None (independent
+    law), the observed positions otherwise (copied law). ``rho = (1 - eps + eps/V) / (eps/V)``.
+    """
+    v, eps = task.vocab_size, task.noise
+    log_rho = math.log((1.0 - eps + eps / v) / (eps / v))
+    tokens, truth = batch.tokens, batch.targets
+    b, n = tokens.shape
+    weight = torch.ones(b, n, dtype=torch.float64) if batch.observed is None else batch.observed.double()
+    out = torch.zeros(b, n, dtype=torch.float64)
+    for period in batch.group.unique().tolist():
+        rows = (batch.group == period).nonzero().squeeze(1)
+        pad = (-n) % period
+        onehot = torch.nn.functional.one_hot(torch.nn.functional.pad(tokens[rows], (0, pad)), v).double()
+        onehot = onehot * torch.nn.functional.pad(weight[rows], (0, pad)).unsqueeze(-1)
+        counts = onehot.view(len(rows), -1, period, v).cumsum(dim=1).view(len(rows), -1, v)[:, :n]
+        own = counts.gather(-1, truth[rows].unsqueeze(-1)).squeeze(-1)
+        out[rows] = torch.logsumexp(counts * log_rho, dim=-1) - own * log_rho
+    return out
+
+
+@dataclass(frozen=True)
 class TaggedDenoising:
     num_tags: int = 12
     vocab_size: int = 16
@@ -167,7 +237,7 @@ class AssociativeRecall:
         return Batch(tokens, targets, mask, mask.float(), torch.zeros(batch, dtype=torch.long))
 
 
-TASKS = {"periodic": PeriodicDenoising, "tagged": TaggedDenoising, "mqar": AssociativeRecall}
+TASKS = {"periodic": PeriodicDenoising, "periodic_copied": CopiedPeriodicDenoising, "tagged": TaggedDenoising, "mqar": AssociativeRecall}
 
 
 def make_task(kind: str, **kwargs):

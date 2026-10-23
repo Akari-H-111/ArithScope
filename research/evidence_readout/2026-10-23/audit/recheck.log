@@ -1,0 +1,32 @@
+T9 referee recheck (own code)
+[A] D_P = sum_{m|P} phi(m)/P K_m = 1[P|n] exactly, P=1..40, |n|<=3P: OK
+[B] L9.2 (Ramanujan kernels): fold(K_m)=K_m if m|P else 0, P<=30, m<=24: mismatches=0
+[B'] character version: fold(cos(2 pi a n/m))=cos(2 pi a s/m) if m|P else 0, P<=20, m<=24: mismatches=0
+[C] T9b.1: random banks (incl. P=1, orders>P): iff-mismatches=0 (criterion true/false counts [96, 120]); K_m independent in all
+[D] T9b.3: spectral criterion set == {phi(P)<=2} for P<=300: True ; set=[1, 2, 3, 4, 6]
+    harmonic criterion (1<=a<=P/2: fundamental iff a|P), P<=120: mismatches=0
+[E] T9c.5: brute force incl. V=2 and equality cases: cases=240 dominant=79 mismatches=0 (V=2 suffices: worst motif uses 2 symbols)
+[F] P=12, span{K_1,K_2,K_3,K_4} (fold of B16+{1}): min sum_{s>0}|f(s)| with f(0)=1 is 2.0000 -> dominance margin -1.0000 (positive means a dominant kernel EXISTS)
+    argmin beta = [0.25, 0.25, -0.0, 0.5]
+    P=12, span{K_d : d|12} = full: min = 0.0000 -> margin 1.0000 (D_12 itself gives 0)
+[G] P=12, span{cos(2 pi s/d): d|12} (fold of cosine_fund): min sum|f(s)| = 1.0000 -> best margin -0.0000  (argmin coef over d=[1, 2, 3, 4, 6, 12]: [0.1667, 0.1667, 0.3333, -0.0, 0.3333, -0.0])
+[G] P=13, span{cos(2 pi s/d): d|13} (fold of cosine_fund): min sum|f(s)| = 5.0739 -> best margin -4.0739  (argmin coef over d=[1, 13]: [0.4281, 0.5719])
+    P=12, span of all harmonics (fold of cosine_full): min = 0.000000 -> margin 1.000000
+    P=13, span of all harmonics (fold of cosine_full): min = 0.000000 -> margin 1.000000
+[H] convex mixtures aK_3+(1-a)K_4 at P=12: best sum|off-comb| = 4.0000 at a=0.50 (draft quotes a=1/2: 4)
+[I] T9e table, V=3 (own enumeration)
+    m=1 Bayes=0.867563  k=2 head=1.041979 (+0.174416)  k=4 head=1.856175 (+0.988611)
+    m=2 Bayes=0.695406  k=2 head=0.827949 (+0.132543)  k=4 head=1.271761 (+0.576355)
+    m=3 Bayes=0.559656  k=2 head=0.698837 (+0.139181)  k=4 head=1.202580 (+0.642924)
+    m=4 Bayes=0.452504  k=2 head=0.570566 (+0.118062)  k=4 head=0.980487 (+0.527983)
+    m=5 Bayes=0.366763  k=2 head=0.467742 (+0.100980)  k=4 head=0.803343 (+0.436580)
+    m=6 Bayes=0.297945  k=2 head=0.384278 (+0.086333)  k=4 head=0.667823 (+0.369878)
+[I] T9e table, V=16 (own enumeration)
+    m=1 Bayes=1.960591  k=2 head=2.706739 (+0.746147)  k=4 head=5.312455 (+3.351863)
+    m=2 Bayes=1.408892  k=2 head=1.832319 (+0.423427)  k=4 head=3.143566 (+1.734674)
+    m=3 Bayes=1.003989  k=2 head=1.288341 (+0.284352)  k=4 head=2.110715 (+1.106726)
+    m=4 Bayes=0.712113  k=2 head=0.928699 (+0.216586)  k=4 head=1.541057 (+0.828944)
+    V=3,k=2 excess by m=1..6: [0.174416, 0.132543, 0.139181, 0.118062, 0.10098, 0.086333]  monotone decreasing? False
+[J] T9c.3 Hoeffding constant: exp(-s^2 i^2/(8(i+1)R^2)) exceeds the draft's exp(-s^2 i/(8R^2)) for every i>=1 (count 260 of 1999); a valid uniform replacement is exp(-s^2 i/(16R^2))
+[K] L9.1 on pilot bank {1..16}, P=12: Lambda=720720, G=sum|beta|=8.10, draft bound 2*Lambda*G=1.17e+07; actual max_i<=8192 |D_i-(i+1)e| = 2.314
+    per-component bound sum 2|beta_m| lcm(m,P) = 751.3 (still valid, ~15548x smaller)
